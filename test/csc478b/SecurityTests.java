@@ -9,7 +9,7 @@ import org.junit.Test;
 import fileIO.DecryptFile;
 import fileIO.EncryptFile;
 
-public class DecryptTests {
+public class SecurityTests {
 
 	@Test
 	public final void testDecrypt() {
