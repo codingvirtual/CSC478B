@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 
 /**
  *
@@ -32,6 +33,7 @@ public class BackupUI extends javax.swing.JFrame {
      * Creates new form BackupUI
      */
     public BackupUI() {
+		getContentPane().setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
         initComponents();
     }
 
@@ -71,6 +73,9 @@ public class BackupUI extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton7.setPreferredSize(new Dimension(73, 45));
+        jButton7.setMinimumSize(new Dimension(73, 45));
+        jButton7.setMaximumSize(new Dimension(73, 45));
         jButton7.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         	}
@@ -273,7 +278,7 @@ public class BackupUI extends javax.swing.JFrame {
         });
 
         jButton7.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
-        jButton7.setText("Run Now");
+        jButton7.setText("Save");
 
         jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 12))); // NOI18N
 
@@ -300,42 +305,47 @@ public class BackupUI extends javax.swing.JFrame {
         );
         
         JButton btnSave = new JButton();
-        btnSave.setText("Save");
+        btnSave.setPreferredSize(new Dimension(73, 45));
+        btnSave.setMinimumSize(new Dimension(73, 45));
+        btnSave.setMaximumSize(new Dimension(73, 45));
+        btnSave.setText("Run Now");
         btnSave.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2Layout.setHorizontalGroup(
         	jPanel2Layout.createParallelGroup(Alignment.LEADING)
         		.addGroup(jPanel2Layout.createSequentialGroup()
+        			.addGap(0, 0, Short.MAX_VALUE)
         			.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
         				.addComponent(jLabel4)
         				.addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, 436, GroupLayout.PREFERRED_SIZE)
         				.addGroup(jPanel2Layout.createSequentialGroup()
-        					.addContainerGap()
+        					.addPreferredGap(ComponentPlacement.RELATED)
         					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
         						.addComponent(jLabel3)
-        						.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
-        							.addComponent(jButton4, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
-        							.addGroup(jPanel2Layout.createSequentialGroup()
-        								.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
-        								.addPreferredGap(ComponentPlacement.RELATED)
-        								.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-        									.addComponent(jButton3)
-        									.addComponent(jButton1)
-        									.addComponent(jButton2))
-        								.addGap(18)
-        								.addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        							.addGroup(jPanel2Layout.createSequentialGroup()
-        								.addComponent(jButton7, GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-        								.addPreferredGap(ComponentPlacement.RELATED)
-        								.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE)))))
+        						.addGroup(jPanel2Layout.createSequentialGroup()
+        							.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 280, GroupLayout.PREFERRED_SIZE)
+        							.addPreferredGap(ComponentPlacement.RELATED)
+        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
+        								.addComponent(jButton3)
+        								.addComponent(jButton1)
+        								.addComponent(jButton2))
+        							.addGap(18)
+        							.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false)
+        								.addComponent(jButton4, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        								.addGroup(jPanel2Layout.createSequentialGroup()
+        									.addComponent(jButton7, 0, 0, Short.MAX_VALUE)
+        									.addGap(4)
+        									.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
+        									.addPreferredGap(ComponentPlacement.RELATED))
+        								.addComponent(jPanel3, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
         				.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false)
         					.addGroup(jPanel2Layout.createSequentialGroup()
-        						.addContainerGap()
+        						.addPreferredGap(ComponentPlacement.RELATED)
         						.addComponent(jLabel5))
         					.addComponent(jProgressBar1, GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE)
         					.addComponent(jScrollPane3)))
-        			.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        			.addGap(6))
         );
         jPanel2Layout.setVerticalGroup(
         	jPanel2Layout.createParallelGroup(Alignment.LEADING)
@@ -345,20 +355,20 @@ public class BackupUI extends javax.swing.JFrame {
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
         				.addGroup(jPanel2Layout.createSequentialGroup()
-        					.addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING)
-        						.addGroup(jPanel2Layout.createSequentialGroup()
-        							.addComponent(jButton1)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(jButton2)
-        							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        							.addComponent(jButton3))
-        						.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-        						.addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
-        					.addGap(36)
+        					.addComponent(jButton1)
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addComponent(jButton2)
+        					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        					.addComponent(jButton3))
+        				.addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+        				.addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE))
+        			.addGap(36)
+        			.addGroup(jPanel2Layout.createParallelGroup(Alignment.TRAILING)
+        				.addGroup(jPanel2Layout.createSequentialGroup()
         					.addComponent(jLabel4)
         					.addPreferredGap(ComponentPlacement.RELATED)
         					.addComponent(jTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-        				.addComponent(jButton4, Alignment.TRAILING))
+        				.addComponent(jButton4))
         			.addPreferredGap(ComponentPlacement.RELATED)
         			.addComponent(jLabel5)
         			.addGap(30)
@@ -369,7 +379,7 @@ public class BackupUI extends javax.swing.JFrame {
         					.addComponent(jButton7, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
         					.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
         				.addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
-        			.addContainerGap())
+        			.addGap(6))
         );
         jPanel2Layout.linkSize(SwingConstants.HORIZONTAL, new Component[] {jButton2, jButton3, jButton1});
         jPanel2.setLayout(jPanel2Layout);
