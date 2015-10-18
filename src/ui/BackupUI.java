@@ -9,15 +9,25 @@ package ui;
 
 import javax.swing.UIManager;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import java.awt.Component;
+import java.awt.Desktop;
+
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.awt.event.ActionEvent;
 import java.awt.Dimension;
+import java.awt.Insets;
 
 /**
  *
@@ -122,7 +132,7 @@ public class BackupUI extends javax.swing.JFrame {
         jLabel7.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
         jLabel7.setText("Date:");
 
-        jButton6.setFont(new java.awt.Font("Helvetica Neue", 0, 14)); // NOI18N
+        jButton6.setFont(new Font("Helvetica Neue", Font.PLAIN, 12)); // NOI18N
         jButton6.setText("View Log");
 
         jLabel9.setFont(new java.awt.Font("Helvetica Neue", 0, 12)); // NOI18N
@@ -308,7 +318,7 @@ public class BackupUI extends javax.swing.JFrame {
         btnSave.setPreferredSize(new Dimension(73, 45));
         btnSave.setMinimumSize(new Dimension(73, 45));
         btnSave.setMaximumSize(new Dimension(73, 45));
-        btnSave.setText("Run Now");
+        btnSave.setText("Run");
         btnSave.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -386,31 +396,64 @@ public class BackupUI extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Helvetica Neue", 2, 18)); // NOI18N
         jLabel1.setText("Mirror Machine (Name TBD)");
+        
+        JButton btnHelp = new JButton("");
+        btnHelp.setIcon(new ImageIcon(BackupUI.class.getResource("/icons/help.png")));
+        btnHelp.setContentAreaFilled(false);
+        btnHelp.setBorderPainted(false);
+        btnHelp.setFocusPainted(false);
+        btnHelp.setRequestFocusEnabled(false);
+        btnHelp.setMinimumSize(new Dimension(25, 25));
+        btnHelp.setMaximumSize(new Dimension(25, 25));
+        btnHelp.setPreferredSize(new Dimension(25, 25));
+        btnHelp.setMargin(new Insets(0, 0, 0, 0));
+        
+        btnHelp.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		// open user's manual in browser on click
+        		File f = new File("res/users-manual.html");
+				try {
+					Desktop.getDesktop().browse(f.toURI());
+					if (System.getProperty("os.name").startsWith("Mac OS")) {
+						// firefox (for mac) workaround - wait 2 seconds, then re-open uri
+						java.util.concurrent.TimeUnit.SECONDS.sleep(2);
+						Desktop.getDesktop().browse(f.toURI());
+					}
+				} catch (IOException | InterruptedException e2) {
+					e2.printStackTrace();
+				}
+        	}
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(layout.createParallelGroup(Alignment.LEADING)
+        				.addGroup(layout.createSequentialGroup()
+        					.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 250, GroupLayout.PREFERRED_SIZE)
+        					.addPreferredGap(ComponentPlacement.RELATED, 337, Short.MAX_VALUE)
+        					.addComponent(btnHelp, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+        					.addContainerGap())
+        				.addComponent(jPanel1, GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+        				.addComponent(jPanel2, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+        	layout.createParallelGroup(Alignment.LEADING)
+        		.addGroup(layout.createSequentialGroup()
+        			.addContainerGap()
+        			.addGroup(layout.createParallelGroup(Alignment.BASELINE)
+        				.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+        				.addComponent(btnHelp, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE))
+        			.addGap(18)
+        			.addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        			.addPreferredGap(ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        			.addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        			.addContainerGap())
         );
+        getContentPane().setLayout(layout);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
