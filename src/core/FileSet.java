@@ -21,9 +21,9 @@ public class FileSet {
 	private String destination;
 	
 	public enum Recurrence {
-		DAILY,
-		WEEKLY,
-		MONTHLY
+		Daily,
+		Weekly,
+		Monthly
 	}
 	/**
 	 * Constructor that creates a new, empty FileSet.
