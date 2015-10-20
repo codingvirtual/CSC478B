@@ -22,7 +22,7 @@ public class Schedule {
 	
 	public Schedule(Date date, Recurrence interval) {
 		// TODO: add range and error checking
-		this.date = date;
+		this.setDate(date);
 		this.interval = interval;
 	}
 	
@@ -34,5 +34,13 @@ public class Schedule {
 	
 	public Recurrence getRecurrence() {
 		return interval;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 }
