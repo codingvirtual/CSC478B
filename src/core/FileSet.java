@@ -36,7 +36,8 @@ public class FileSet {
 	
 	/**
 	 * Convenience constructor that creates a new, empty FileSet with the destination path specified.
-	 * 
+	 * @param destination String representing the full path to the destination for the backup operation. This should be a folder path.
+	 * @throws IOException if the path provided in destination is invalid or unreachable.
 	 */
 	public FileSet(String destination) throws IOException {
 		fileSet = new ArrayList<String>();
