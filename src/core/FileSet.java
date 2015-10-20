@@ -20,6 +20,11 @@ public class FileSet {
 	private Schedule schedule;
 	private String destination;
 	
+	public enum Recurrence {
+		DAILY,
+		WEEKLY,
+		MONTHLY
+	}
 	/**
 	 * Constructor that creates a new, empty FileSet.
 	 * 
@@ -42,7 +47,7 @@ public class FileSet {
 		return fileSet.remove(path);
 	}
 	
-	public void setSchedule(Date date, Long interval) {
+	public void setSchedule(Date date, Recurrence interval) {
 		schedule = new Schedule(date, interval);
 	}
 	
@@ -56,21 +61,21 @@ public class FileSet {
 	public class Schedule {
 		
 		private Date date;
-		private Long interval;
+		private Recurrence interval;
 		
-		public Schedule(Date date, Long interval) {
+		public Schedule(Date date, Recurrence interval) {
 			// TODO: add range and error checking
 			this.date = date;
 			this.interval = interval;
 		}
 		
-		public Schedule setInterval(Long interval) {
+		public Schedule setRecurrence(Recurrence interval) {
 			// TODO: add range and error checking
 			this.interval = interval;
 			return this;
 		}
 		
-		public Long getInterval() {
+		public Recurrence getRecurrence() {
 			return interval;
 		}
 	}
