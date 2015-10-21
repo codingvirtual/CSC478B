@@ -11,6 +11,7 @@
 
 package core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,7 +59,7 @@ public class FileSet {
 		fileSet.add(path);
 	}
 	
-	public Boolean removePath(String path) {
+	public Boolean removePath(File path) {
 		// will return true if the path exists and was removed. 
 		// TODO: As above, however, should we throw an exception if the path doesn't exist?
 		// 
@@ -87,6 +88,8 @@ public class FileSet {
 		this.destination = destination;
 	}
 
-
+	public ArrayList<String> getFileSet() {
+		return this.fileSet;
+	}
 }
 
