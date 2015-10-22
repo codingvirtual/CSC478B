@@ -47,7 +47,7 @@ public class FileOps {
 		// Create a File object from the destination path of the FileSet
 		File destination = new File(this.filesToCopy.getDestination());
 		// Check that the destination doesn't already exist and also that it is writable
-		if (destination.exists()) throw new IOException();
+		if (destination.exists()) throw new IOException("Destination already exists - copying aborted");
 		destination.mkdir();
 		// Iterate over the entire set of files in the FileSet
 		for (String path : this.filesToCopy.getFileSet()) {
@@ -61,7 +61,9 @@ public class FileOps {
 				 * TODO: this is fraught with peril - need to think about how to do this better
 				 */
 				File sourceFile = new File(path);
-				File destFile = new File(this.filesToCopy.getDestination() + sourceFile.getName());
+				File destFile = new File(destination.getAbsolutePath() + sourceFile.getAbsolutePath());
+				File destDirTree = new File(destFile.getParent());
+				destDirTree.mkdirs();
 				// Configure the input and output streams
 				input = new FileInputStream(new File(path));
 				output = new FileOutputStream(destFile);
