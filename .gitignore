@@ -2,6 +2,4 @@ bin
 .DS_Store
 *.des
 *._decrypted*
-/build/
-.settings/
-.project
+build
