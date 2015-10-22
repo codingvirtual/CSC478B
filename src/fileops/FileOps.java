@@ -1,4 +1,4 @@
-package core;
+package fileops;
 
 /**
  * The FileOps class defines the operation and behavior of the entire backup operation.
