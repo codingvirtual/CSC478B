@@ -9,7 +9,7 @@
  * 
  * </p>
  */
-package fileops;
+package fileOpsTests;
 
 import static org.junit.Assert.*;
 
@@ -20,11 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import core.FileSet;
+import fileops.FileOps;
 
 /**
- * @author Greg
- *
- */
+* @author Greg
+*
+*/
 public class FileOpsTest {
 
 	private FileSet files = new FileSet();
