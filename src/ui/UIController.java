@@ -11,11 +11,7 @@
  */
 package ui;
 
-import java.awt.Color;
-
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import app.Application;
 import core.FileSet;
@@ -30,29 +26,24 @@ public class UIController {
 	private FileSet currentFileSet;
 
 	
-	public UIController(Application app) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+	public UIController(Application app) {
 		mApp = app;
 		currentFileSet = mApp.getCurrentFileSet();
 		System.out.println(currentFileSet.getDestination());
-		try {
-    		// set custom colors for Nimbus
-    		UIManager.put("nimbusBase", Color.GRAY);
-    		UIManager.put("nimbusFocus", new Color(157, 224, 35));
-    	    UIManager.put("nimbusSelectionBackground", new Color(0, 158, 0));
-            UIManager.put("nimbusSelection", new Color(0, 158, 0));
-    	    UIManager.put("control", new Color(242, 242, 242));
-    		// set Nimbus L&F
-    	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-    	        if ("Nimbus".equals(info.getName())) {
-    	            UIManager.setLookAndFeel(info.getClassName());
-    	            break;
-    	        }
-    	    }
-    	} catch (Exception e) {
-    		// set to System L&F if Nimbus isn't available
-    		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    		e.printStackTrace();
-    	}
+	    try {
+	        // Set System L&F
+	        UIManager.setLookAndFeel(
+	        UIManager.getSystemLookAndFeelClassName());
+	    } catch (ClassNotFoundException ex) {
+	        java.util.logging.Logger.getLogger(UIView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    } catch (InstantiationException ex) {
+	        java.util.logging.Logger.getLogger(UIView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    } catch (IllegalAccessException ex) {
+	        java.util.logging.Logger.getLogger(UIView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+	        java.util.logging.Logger.getLogger(UIView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	    }
+	    //</editor-fold>
 	
 	    /* Create and display the form */
 	    java.awt.EventQueue.invokeLater(new Runnable() {
