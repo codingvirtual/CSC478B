@@ -59,7 +59,7 @@ public class FileSet {
 		fileSet.add(path);
 	}
 	
-	public Boolean removePath(File path) {
+	public Boolean removePath(String path) {
 		// will return true if the path exists and was removed. 
 		// TODO: As above, however, should we throw an exception if the path doesn't exist?
 		// 
