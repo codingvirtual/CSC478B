@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import core.FileSet;
-import fileops.FileOps;
 
 /**
 * @author Greg
