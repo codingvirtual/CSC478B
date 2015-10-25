@@ -158,6 +158,13 @@ public class BackupUI extends javax.swing.JFrame {
         btnAddFile = new JButton();
         btnAddFile.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		JFileChooser fc = new JFileChooser();
+        		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        		int returnVal = fc.showDialog(BackupUI.this, "Add file");
+        		if (returnVal == JFileChooser.APPROVE_OPTION) {
+        			File file = fc.getSelectedFile();
+        			listModel.addElement(file);
+        		}
         	}
         });
         
@@ -171,12 +178,20 @@ public class BackupUI extends javax.swing.JFrame {
         btnRemove = new JButton();
         btnRemove.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		int i = listSources.getSelectedIndex();
+        		listModel.remove(i);
         	}
         });
         
         btnBrowse = new JButton();
         btnBrowse.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+            	JFileChooser fc = new JFileChooser();
+        		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        		int returnVal = fc.showDialog(BackupUI.this, "Set destination");
+        		if (returnVal == JFileChooser.APPROVE_OPTION) {
+        			txtDestination.setText(fc.getSelectedFile().toString());
+        		}
             }
         });
         
