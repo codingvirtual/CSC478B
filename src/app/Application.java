@@ -13,6 +13,8 @@ package app;
 
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.UnsupportedLookAndFeelException;
+
 import ui.UIController;
 import core.FileSet;
 
@@ -49,7 +51,12 @@ public class Application {
 	    try {
 			java.awt.EventQueue.invokeAndWait(new Runnable() {
 			    public void run() {
-			        new UIController(new Application());
+			        try {
+						new UIController(new Application());
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| UnsupportedLookAndFeelException e) {
+						e.printStackTrace();
+					}
 			    }
 			});
 		} catch (InvocationTargetException e) {
