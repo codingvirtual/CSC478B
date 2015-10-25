@@ -11,6 +11,8 @@
  */
 package fileOpsTests;
 
+import fileops.FileOps;
+
 import static org.junit.Assert.*;
 
 import java.io.IOException;
