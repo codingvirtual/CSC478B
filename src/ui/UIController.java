@@ -6,7 +6,7 @@
  * <h3>Revision History</h3>
  * <p>
  * 0.1.0	GP	Initial revision
- * 
+ * 0.1.1	GP 	Add doRun, addPath,removePath, and setDestination methods
  * </p>
  */
 package ui;
@@ -65,6 +65,7 @@ public class UIController {
 	}
 	
 	public void doRun() {
+		// TODO: this will need to be enhanced later. No status is provided and no result is provided.
 		FileOps ops = new FileOps(currentFileSet);
 		ops.setFilesToCopy(currentFileSet);
 		try {
@@ -84,6 +85,9 @@ public class UIController {
 	}
 	
 	public void setDestination(String destination) {
+		// FIXME: this needs to be changed. Probably should get the backup name and the destination
+		// from the View and build the true destination by appending a trailing slash (/) and the 
+		// backup name to the destination, then calling setDestination using that concatenation.
 		currentFileSet.setDestination(destination + "/Testing123");
 	}
 	

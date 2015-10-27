@@ -2,8 +2,14 @@
  * Creates a graphical user interface to control backup operations.
  * 
  * @author Ashley
- * @version 1.0
- * 
+ * @version 0.1.1
+ *
+ * <h3>Revision History</h3>
+ * <p>
+ * 0.1.0	AR	Initial revision
+ * 0.1.1	GP 	Add code to link Add File, Remove Selection, Browse, and Run
+ * 				buttons to associated code in UIController
+ * </p>
  */
 
 package ui;
@@ -167,6 +173,8 @@ public class UIView extends javax.swing.JFrame {
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			File file = fc.getSelectedFile();
         			listModel.addElement(file);
+        			// TODO: possible modifications needed below.
+        			// This is the call up to the controller to set the destination
         			mController.addPath(file.getAbsolutePath());
         		}
         	}
@@ -183,6 +191,7 @@ public class UIView extends javax.swing.JFrame {
         btnRemove.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int i = listSources.getSelectedIndex();
+        		// TODO: Here is where I call up to the controller to remove the path
         		mController.removePath(listModel.getElementAt(i).toString());
         		listModel.remove(i);
         	}
@@ -196,6 +205,12 @@ public class UIView extends javax.swing.JFrame {
         		int returnVal = fc.showDialog(UIView.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			txtDestination.setText(fc.getSelectedFile().toString());
+        			// TODO: here is where I call up to the controller to set the destination
+        			// FIXME: this code is broken. Right now, the Controller manually sets
+        			// the destination to a folder named "Testing123" inside the destination
+        			// path identified below. This should really pass the Name of Backup and
+        			// the path in "Destination" up to the Controller and let it concatenate
+        			// them and put them in the FileSet destination.
         			mController.setDestination(txtDestination.getText());
         		}
             }
