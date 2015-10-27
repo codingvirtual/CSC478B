@@ -1,7 +1,7 @@
 /**
  *
  * @author Greg Palen
- * @version 0.1.0
+ * @version 0.1.1
  *
  * <h3>Revision History</h3>
  * <p>
