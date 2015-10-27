@@ -61,12 +61,10 @@ public class UIView extends javax.swing.JFrame {
 		setResizable(false);
 		setSize(new Dimension(685, 711));
 		getContentPane().setFont(new Font("Helvetica Neue", 0, 14));
-		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		menuOpen = new JMenu("Open...");
 		menuOpen.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-		//menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(menuOpen);
 		menuItemLog = new JMenuItem("Log");
 		menuItemLog.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
@@ -190,10 +188,13 @@ public class UIView extends javax.swing.JFrame {
         btnRemove = new JButton();
         btnRemove.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		int i = listSources.getSelectedIndex();
-        		// TODO: Here is where I call up to the controller to remove the path
-        		mController.removePath(listModel.getElementAt(i).toString());
-        		listModel.remove(i);
+        		// don't remove if source list is empty or no selection was made
+        		if (listModel.getSize() != 0 && !listSources.isSelectionEmpty()) {
+        			int i = listSources.getSelectedIndex();
+        			// TODO: Here is where I call up to the controller to remove the path
+        			mController.removePath(listModel.getElementAt(i).toString());
+        			listModel.remove(i);
+        		}
         	}
         });
         
