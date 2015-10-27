@@ -354,11 +354,8 @@ public class UIView extends javax.swing.JFrame {
         lblDestination.setText("Destination:");
 
         txtDestination.setFont(new Font("Helvetica Neue", Font.PLAIN, 14)); // NOI18N
-        txtDestination.setText("C:\\file\\path\\or\\cloud\\provider\\info");
-        txtDestination.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
+        // set default destination to user's system-dependent home directory
+        txtDestination.setText(System.getProperty("user.home"));
 
         lblDestNote.setFont(new Font("Helvetica Neue", Font.PLAIN, 12)); // NOI18N
         lblDestNote.setText("A zip file containing all backup data will be stored at this location");
