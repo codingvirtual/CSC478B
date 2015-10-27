@@ -12,6 +12,7 @@
 package ui;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -19,6 +20,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import app.Application;
 import core.FileSet;
+import fileops.FileOps;
 
 /**
  * @author Greg
@@ -61,4 +63,28 @@ public class UIController {
 	        }
 	    });
 	}
+	
+	public void doRun() {
+		FileOps ops = new FileOps(currentFileSet);
+		ops.setFilesToCopy(currentFileSet);
+		try {
+			ops.run();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void addPath(String path) {
+		currentFileSet.addPath(path);
+	}
+	
+	public void removePath(String path) {
+		currentFileSet.removePath(path);
+	}
+	
+	public void setDestination(String destination) {
+		currentFileSet.setDestination(destination + "/Testing123");
+	}
+	
 }

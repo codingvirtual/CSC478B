@@ -167,6 +167,7 @@ public class UIView extends javax.swing.JFrame {
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			File file = fc.getSelectedFile();
         			listModel.addElement(file);
+        			mController.addPath(file.getAbsolutePath());
         		}
         	}
         });
@@ -182,6 +183,7 @@ public class UIView extends javax.swing.JFrame {
         btnRemove.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		int i = listSources.getSelectedIndex();
+        		mController.removePath(listModel.getElementAt(i).toString());
         		listModel.remove(i);
         	}
         });
@@ -194,6 +196,7 @@ public class UIView extends javax.swing.JFrame {
         		int returnVal = fc.showDialog(UIView.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			txtDestination.setText(fc.getSelectedFile().toString());
+        			mController.setDestination(txtDestination.getText());
         		}
             }
         });
@@ -207,6 +210,7 @@ public class UIView extends javax.swing.JFrame {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		mController.doRun();
         	}
         });
         
