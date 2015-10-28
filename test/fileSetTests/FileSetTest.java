@@ -127,15 +127,11 @@ public class FileSetTest {
 		fsreturn = fs.getFileSet();
 		assertFalse(fsreturn.contains(source));
 		
-		//test remove path when no paths added
+		//test removePath() when no paths added
 		fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.size() == 0);
-		try {
-			fs.removePath(source);
-			fail("cannot remove a file path that doesn't exist.");
-		} catch (ArrayIndexOutOfBoundsException e){
-			assertTrue(true);
-		}
+		fs.removePath(source);
+		assertTrue(fsreturn.size() == 0);
 		
 	}
 
