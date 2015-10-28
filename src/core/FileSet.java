@@ -11,18 +11,23 @@
 
 package core;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
+
+import javax.swing.DefaultListModel;
 
 import core.Schedule.Recurrence;
 
 public class FileSet {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3146908287308357247L;
+	
 	// TODO: should this be FilePath instead? If so, we'll need a convenience method to return the list as a string instead.
-	private ArrayList<String> fileSet; 
+	private DefaultListModel<String> fileSet; 
 	private Schedule schedule;
 	private String destination;
 	
@@ -32,7 +37,7 @@ public class FileSet {
 	 * 
 	 */
 	public FileSet() {
-		fileSet = new ArrayList<String>();
+		fileSet = new DefaultListModel<String>();
 	}
 	
 	/**
@@ -41,7 +46,7 @@ public class FileSet {
 	 * @throws IOException if the path provided in destination is invalid or unreachable.
 	 */
 	public FileSet(String destination) throws IOException {
-		fileSet = new ArrayList<String>();
+		fileSet = new DefaultListModel<String>();
 		this.setDestination(destination);
 	}
 	
@@ -56,14 +61,15 @@ public class FileSet {
 		// TODO: Ensure we aren't adding a duplicate. If it's a folder reference, need to check to be sure that no
 		//			parent folders are already accounted for; if it's a file, need to check that there are no parent
 		//			folders already set to back up.
-		fileSet.add(path);
+		fileSet.addElement(path);
 	}
 	
 	public Boolean removePath(String path) {
 		// will return true if the path exists and was removed. 
 		// TODO: As above, however, should we throw an exception if the path doesn't exist?
-		// 
-		return fileSet.remove(path);
+		//
+		
+		return fileSet.removeElement(path);
 	}
 
 	public Schedule getSchedule() {
@@ -88,7 +94,7 @@ public class FileSet {
 		this.destination = destination;
 	}
 
-	public ArrayList<String> getFileSet() {
+	public DefaultListModel<String> getFileSet() {
 		return this.fileSet;
 	}
 }
