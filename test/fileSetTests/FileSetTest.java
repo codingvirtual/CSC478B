@@ -27,13 +27,15 @@ public class FileSetTest {
 	private String sourceb = "/Users/zackburch/Desktop/test2.txt";
 	private String sourceFail = "/Users/zackburch/Desktop/testFail.txt";
 	private String dest = "Users/zackburch/Google Drive/Test";
-	private String destb = "Users/zackburch/Google Drive/Test";
+	private String destb = "Users/zackburch/Google Drive/TestB";
+	private String destFail = "Users/zackburch/GoogleDrive/TestFail";
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		
 	}
 
 	/**
@@ -78,8 +80,6 @@ public class FileSetTest {
 		fs.addPath(source);
 		ArrayList<String> fsreturn = fs.getFileSet(); //grab newest file set
 		assertTrue(fsreturn.contains(source));
-		File f = new File(source);
-		assertTrue(f.exists());  //make sure file is valid
 		
 		//test adding an invalid filename
 		fs.addPath(sourceFail);
@@ -101,7 +101,7 @@ public class FileSetTest {
 		fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.contains(sourceb));
 		
-		//test for duplicate with valid file between
+		//test for duplicate paths with valid path between
 		fs.addPath(source);
 		fsreturn = fs.getFileSet();
 		try {
@@ -127,7 +127,7 @@ public class FileSetTest {
 		fsreturn = fs.getFileSet();
 		assertFalse(fsreturn.contains(source));
 		
-		//test removePath() when no paths added
+		//test removePath() when no paths exist
 		fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.size() == 0);
 		fs.removePath(source);
@@ -182,6 +182,10 @@ public class FileSetTest {
 		//test that adding a new destination replaces old destination
 		fs.setDestination(destb);
 		assertEquals(fs.getDestination(), destb);
+		
+		//test adding invalid destination does not replace old destination
+		fs.setDestination(destFail);
+		assertFalse(fs.getDestination() == destFail);
 	}
 
 	/**
