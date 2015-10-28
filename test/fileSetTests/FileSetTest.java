@@ -21,6 +21,7 @@ import core.FileSet;
 public class FileSetTest {
 	
 	private String source = "/Users/zackburch/Desktop/test.txt";
+	private String sourceb = "/Users/zackburch/Desktop/test.txt";
 	private String dest = "Users/zackburch/Google Drive/Test";
 
 	/**
@@ -69,6 +70,16 @@ public class FileSetTest {
 		fs.addPath(source);
 		ArrayList<String> fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.contains(source));
+		
+		fs.addPath(source);
+		ArrayList<String> fileSet = fs.getFileSet();
+		try {
+			String test = fileSet.get(1);
+			fail("Should not allow duplicate files");
+		} catch(IndexOutOfBoundsException e) {
+			assertTrue(true);
+		}
+		
 		
 	}
 
