@@ -66,15 +66,33 @@ public class FileSetTest {
 	 */
 	@Test
 	public void testAddPath() {
+		String testPath;
 		FileSet fs = new FileSet();
 		fs.addPath(source);
 		ArrayList<String> fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.contains(source));
 		
+		
+		//test for duplicate filepaths
 		fs.addPath(source);
-		ArrayList<String> fileSet = fs.getFileSet();
+		fsreturn = fs.getFileSet();
 		try {
-			String test = fileSet.get(1);
+			testPath = fsreturn.get(1);
+			fail("Should not allow duplicate files");
+		} catch(IndexOutOfBoundsException e) {
+			assertTrue(true);
+		}
+		
+		//test add second file
+		fs.addPath(sourceb);
+		fsreturn = fs.getFileSet();
+		assertTrue(fsreturn.contains(sourceb));
+		
+		//test for duplicate with valid file between
+		fs.addPath(source);
+		fsreturn = fs.getFileSet();
+		try {
+			testPath = fsreturn.get(2);
 			fail("Should not allow duplicate files");
 		} catch(IndexOutOfBoundsException e) {
 			assertTrue(true);
