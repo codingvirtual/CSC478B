@@ -5,7 +5,10 @@ package fileSetTests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -21,8 +24,10 @@ import core.FileSet;
 public class FileSetTest {
 	
 	private String source = "/Users/zackburch/Desktop/test.txt";
-	private String sourceb = "/Users/zackburch/Desktop/test.txt";
+	private String sourceb = "/Users/zackburch/Desktop/test2.txt";
+	private String sourceFail = "/Users/zackburch/Desktop/testFail.txt";
 	private String dest = "Users/zackburch/Google Drive/Test";
+	private String destb = "Users/zackburch/Google Drive/Test";
 
 	/**
 	 * @throws java.lang.Exception
@@ -68,12 +73,20 @@ public class FileSetTest {
 	public void testAddPath() {
 		String testPath;
 		FileSet fs = new FileSet();
+		
+		//test adding a file
 		fs.addPath(source);
-		ArrayList<String> fsreturn = fs.getFileSet();
+		ArrayList<String> fsreturn = fs.getFileSet(); //grab newest file set
 		assertTrue(fsreturn.contains(source));
+		File f = new File(source);
+		assertTrue(f.exists());  //make sure file is valid
 		
+		//test adding an invalid filename
+		fs.addPath(sourceFail);
+		fsreturn = fs.getFileSet();
+		assertFalse(fsreturn.contains(sourceFail));
 		
-		//test for duplicate filepaths
+		//test for duplicate file paths
 		fs.addPath(source);
 		fsreturn = fs.getFileSet();
 		try {
@@ -111,7 +124,18 @@ public class FileSetTest {
 		ArrayList<String> fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.size() == 1);
 		fs.removePath(source);
+		fsreturn = fs.getFileSet();
 		assertFalse(fsreturn.contains(source));
+		
+		//test remove path when no paths added
+		fsreturn = fs.getFileSet();
+		assertTrue(fsreturn.size() == 0);
+		try {
+			fs.removePath(source);
+			fail("cannot remove a file path that doesn't exist.");
+		} catch (ArrayIndexOutOfBoundsException e){
+			assertTrue(true);
+		}
 		
 	}
 
@@ -158,6 +182,10 @@ public class FileSetTest {
 		FileSet fs = new FileSet();
 		fs.setDestination(dest);
 		assertEquals(fs.getDestination(), dest);
+		
+		//test that adding a new destination replaces old destination
+		fs.setDestination(destb);
+		assertEquals(fs.getDestination(), destb);
 	}
 
 	/**
