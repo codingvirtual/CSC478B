@@ -12,7 +12,14 @@
 package core;
 
 import static java.nio.file.LinkOption.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,11 +66,21 @@ public class FileSet extends DefaultListModel<String> {
 	 */
 	public static FileSet read(String absolutePath) throws Exception {
 		// Create File object and verify the file exists, is a file (not a directory), and is readable
-		Path fp = Paths.get(absolutePath).toRealPath();
-		if (!Files.isReadable(fp)) {
+		Path inPath = Paths.get(absolutePath).toRealPath();
+		if (!Files.isReadable(inPath)) {
 			throw new IOException("File not found or not readable.");
 		}
-		FileSet fileSet = new FileSet(fp.getFileName().toString());
+		ObjectInputStream in = null;
+		FileSet fileSet = null;
+		try {
+            in = new ObjectInputStream(new
+                    BufferedInputStream(new FileInputStream(inPath.toString())));
+		fileSet = (FileSet) in.readObject();
+		} catch (EOFException e) {
+			e.printStackTrace();
+		} finally {
+			in.close();
+		}
 		return fileSet;
 	}
 	
@@ -74,7 +91,15 @@ public class FileSet extends DefaultListModel<String> {
 	 * @throws IOException Will throw an IOException if the destination cannot be written to or a write error occurs.
 	 */
 	public static void save(String absolutePath, FileSet fileSet) throws IOException {
-
+		ObjectOutputStream out = null;
+		Path outPath = Paths.get(absolutePath).toRealPath();
+		try {
+			out = new ObjectOutputStream(new
+                    BufferedOutputStream(new FileOutputStream(outPath.toString())));
+			out.writeObject(fileSet);
+		} finally {
+			out.close();
+		}
 	}
 	
 
