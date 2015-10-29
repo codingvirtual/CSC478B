@@ -51,6 +51,7 @@ public class FileSet extends DefaultListModel<String> {
 	}
 
 	/**
+	 * Sets the name of the FileSet (which will become the file name if the FileSet is saved)
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
@@ -58,6 +59,7 @@ public class FileSet extends DefaultListModel<String> {
 	}
 	
 	public String getDestination() {
+
 		return destination;
 	}
 
@@ -66,12 +68,24 @@ public class FileSet extends DefaultListModel<String> {
 		this.destination = destination;
 	}
 
-	public FileSet read(String absolutePath) {
+	/**
+	 * Reads a FileSet from the path specified and returns the updated FileSet
+	 * @param absolutePath The absolute path of where to read the FileSet from
+	 * @return FileSet The FileSet that was just read in from disk.
+	 * @throws IOException Will throw an IOException if the file does not exist or cannot be read.
+	 */
+	public FileSet read(String absolutePath) throws IOException {
+
 		return this;
 	}
 	
-	public void save(String absolutePath) {
-		
+	/**
+	 * Saves the FileSet to the path specified
+	 * @param absolutePath	The absolute path of where to save the FileSet to.
+	 * @throws IOException Will throw an IOException if the destination cannot be written to or a write error occurs.
+	 */
+	public void save(String absolutePath) throws IOException {
+
 	}
 }
 
