@@ -163,6 +163,7 @@ public class UIView extends javax.swing.JFrame {
         btnAddFile.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		JFileChooser fc = new JFileChooser();
+        		fc.setPreferredSize(new Dimension(500, 400));
         		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         		int returnVal = fc.showDialog(UIView.this, "Add file");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -194,6 +195,7 @@ public class UIView extends javax.swing.JFrame {
         btnBrowse.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	JFileChooser fc = new JFileChooser();
+            	fc.setPreferredSize(new Dimension(500, 400));
         		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         		int returnVal = fc.showDialog(UIView.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
