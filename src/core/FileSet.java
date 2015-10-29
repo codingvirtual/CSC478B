@@ -24,6 +24,7 @@ public class FileSet {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 3146908287308357247L;
 	
 	// TODO: should this be FilePath instead? If so, we'll need a convenience method to return the list as a string instead.
