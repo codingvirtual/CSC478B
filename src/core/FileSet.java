@@ -66,7 +66,7 @@ public class FileSet extends DefaultListModel<String> {
 		this.destination = destination;
 	}
 
-	public FileSet read() {
+	public FileSet read(String absolutePath) {
 		return this;
 	}
 	
