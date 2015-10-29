@@ -5,7 +5,10 @@ package fileSetTests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -21,13 +24,18 @@ import core.FileSet;
 public class FileSetTest {
 	
 	private String source = "/Users/zackburch/Desktop/test.txt";
+	private String sourceb = "/Users/zackburch/Desktop/test2.txt";
+	private String sourceFail = "/Users/zackburch/Desktop/testFail.txt";
 	private String dest = "Users/zackburch/Google Drive/Test";
+	private String destb = "Users/zackburch/Google Drive/TestB";
+	private String destFail = "Users/zackburch/GoogleDrive/TestFail";
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		
 	}
 
 	/**
@@ -65,10 +73,44 @@ public class FileSetTest {
 	 */
 	@Test
 	public void testAddPath() {
+		String testPath;
 		FileSet fs = new FileSet();
+		
+		//test adding a file
 		fs.addPath(source);
-		ArrayList<String> fsreturn = fs.getFileSet();
+		ArrayList<String> fsreturn = fs.getFileSet(); //grab newest file set
 		assertTrue(fsreturn.contains(source));
+		
+		//test adding an invalid filename
+		fs.addPath(sourceFail);
+		fsreturn = fs.getFileSet();
+		assertFalse(fsreturn.contains(sourceFail));
+		
+		//test for duplicate file paths
+		fs.addPath(source);
+		fsreturn = fs.getFileSet();
+		try {
+			testPath = fsreturn.get(1);
+			fail("Should not allow duplicate files");
+		} catch(IndexOutOfBoundsException e) {
+			assertTrue(true);
+		}
+		
+		//test add second file
+		fs.addPath(sourceb);
+		fsreturn = fs.getFileSet();
+		assertTrue(fsreturn.contains(sourceb));
+		
+		//test for duplicate paths with valid path between
+		fs.addPath(source);
+		fsreturn = fs.getFileSet();
+		try {
+			testPath = fsreturn.get(2);
+			fail("Should not allow duplicate files");
+		} catch(IndexOutOfBoundsException e) {
+			assertTrue(true);
+		}
+		
 		
 	}
 
@@ -82,7 +124,14 @@ public class FileSetTest {
 		ArrayList<String> fsreturn = fs.getFileSet();
 		assertTrue(fsreturn.size() == 1);
 		fs.removePath(source);
+		fsreturn = fs.getFileSet();
 		assertFalse(fsreturn.contains(source));
+		
+		//test removePath() when no paths exist
+		fsreturn = fs.getFileSet();
+		assertTrue(fsreturn.size() == 0);
+		fs.removePath(source);
+		assertTrue(fsreturn.size() == 0);
 		
 	}
 
@@ -129,6 +178,14 @@ public class FileSetTest {
 		FileSet fs = new FileSet();
 		fs.setDestination(dest);
 		assertEquals(fs.getDestination(), dest);
+		
+		//test that adding a new destination replaces old destination
+		fs.setDestination(destb);
+		assertEquals(fs.getDestination(), destb);
+		
+		//test adding invalid destination does not replace old destination
+		fs.setDestination(destFail);
+		assertFalse(fs.getDestination() == destFail);
 	}
 
 	/**
