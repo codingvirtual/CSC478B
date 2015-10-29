@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Observable;
 
 import core.FileSet;
 
@@ -20,8 +21,9 @@ import core.FileSet;
  * 0.1.0	GP	Initial revision
  * </p>
  */
-public class FileOps {
+public class FileOps extends Observable {
 	
+		
 	private FileSet filesToCopy;
 	
 	/**
@@ -48,8 +50,15 @@ public class FileOps {
 		// Check that the destination doesn't already exist and also that it is writable
 		if (destination.exists()) throw new IOException("Destination already exists - copying aborted");
 		destination.mkdir();
+		
+		int totalBytes = 0;
+		int completedBytes = 0;
+		int totalFiles = this.filesToCopy.getSize();
+		int completedFiles = 0;
+		notifyObservers(new Progress(0, totalBytes, completedBytes, totalFiles, completedFiles));
 		// Iterate over the entire set of files in the FileSet
-		for (int i = 0; i < this.filesToCopy.getSize(); i++) {
+
+		for (int i = 0; i < totalFiles; i++) {
 			String path = this.filesToCopy.get(i);
 			// Set up input and output stream objects
 			InputStream input = null;
@@ -73,7 +82,9 @@ public class FileOps {
 				// Read and write {buf} bytes at a time
 				while ((bytesRead = input.read(buf)) > 0) {
 					output.write(buf, 0, bytesRead);
+					completedBytes += bytesRead;
 				}
+				notifyObservers(new Progress(0, totalBytes, completedBytes, totalFiles, completedFiles++));
 			} finally {
 				// Something went wrong - close the streams before bailing
 				input.close();
@@ -81,5 +92,29 @@ public class FileOps {
 			}
 			
 		}
+	}
+	
+	public class Progress {
+		public int percentComplete;
+		public long totalBytes;
+		public long completedBytes;
+		public int totalFiles;
+		public int completedFiles;
+		/**
+		 * @param percentComplete
+		 * @param totalBytes
+		 * @param completedBytes
+		 * @param totalFiles
+		 * @param completedFiles
+		 */
+		public Progress(int percentComplete, long totalBytes, long completedBytes, int totalFiles, int completedFiles) {
+			this.percentComplete = percentComplete;
+			this.totalBytes = totalBytes;
+			this.completedBytes = completedBytes;
+			this.totalFiles = totalFiles;
+			this.completedFiles = completedFiles;
+		}
+		
+
 	}
 }
