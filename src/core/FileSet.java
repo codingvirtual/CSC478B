@@ -70,7 +70,7 @@ public class FileSet extends DefaultListModel<String> {
 		return this;
 	}
 	
-	public void save() {
+	public void save(String absolutePath) {
 		
 	}
 }
