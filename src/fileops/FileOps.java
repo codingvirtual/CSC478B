@@ -56,9 +56,9 @@ public class FileOps extends Observable {
 		Path destParent = Paths.get(filesToCopy.getDestination()).toRealPath(NOFOLLOW_LINKS);
 		Path destination = destParent.resolve(filesToCopy.getName());
 		// Check that the destination doesn't already exist and also that it is writable
-		if (Files.exists(destination) || !Files.isWritable(destination)) throw new IOException("Destination already exists - copying aborted");
+		if (Files.exists(destination) || !Files.isWritable(destParent)) throw new IOException("Destination already exists - copying aborted");
 		
-		
+		Files.createDirectories(destination);
 		ArrayList<Path> filesToCopy = new ArrayList<Path>();
 		for (int i = 0; i < totalFiles; i++) {
 			Path sourcePath = Paths.get(this.filesToCopy.get(i)).toRealPath(NOFOLLOW_LINKS);
@@ -79,12 +79,15 @@ public class FileOps extends Observable {
 		// Copy all the files in the FileSet one by one
 		for (Path sourcePath : filesToCopy) {
 			try {
-				Files.copy(sourcePath, destination, ATOMIC_MOVE, COPY_ATTRIBUTES, NOFOLLOW_LINKS);
+				Path destPath = destination.resolve(sourcePath.toString().substring(1));
+				Files.createDirectories(destPath.getParent());
+				Files.copy(sourcePath, destPath);
 				// Update number of bytes copied
 				completedBytes += Files.size(sourcePath);
 				// Notify observers of new progress
 				notifyObservers(new Progress(totalBytes, completedBytes, totalFiles, completedFiles++));
 			} catch (Exception e) {
+				System.err.println("Failed trying to copy " + sourcePath.toString());
 				e.printStackTrace();
 			}
 			

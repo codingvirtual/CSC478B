@@ -114,11 +114,11 @@ public class FileSet extends DefaultListModel<String> {
 	}
 
 	@SuppressWarnings("unused")
+	public
 	/**
 	 * Sets the name of the FileSet (which will become the file name if the FileSet is saved)
 	 * @param name the name to set
-	 */
-	private Boolean setName(String name) throws Exception {
+	 */ Boolean setName(String name) throws Exception {
 		// TODO: add error checking to make sure the name we get is in a valid format for the filesystem
 		if (name == null) {
 			throw new IllegalArgumentException("Name is null");
@@ -142,7 +142,7 @@ public class FileSet extends DefaultListModel<String> {
 			throw new IllegalArgumentException("Destination is null");
 		}
 		Path testDest = Paths.get(destination).toRealPath(NOFOLLOW_LINKS);
-		if (Files.isDirectory(testDest, NOFOLLOW_LINKS)) throw new IOException("Destination does not exist or is not a directory");
+		if (!Files.isDirectory(testDest, NOFOLLOW_LINKS)) throw new IOException("Destination does not exist or is not a directory");
 		this.destination = testDest.toRealPath(NOFOLLOW_LINKS).toString();
 	}
 }

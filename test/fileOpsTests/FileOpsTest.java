@@ -14,6 +14,8 @@ package fileOpsTests;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.After;
 import org.junit.Before;
@@ -34,8 +36,9 @@ public class FileOpsTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		files.setDestination("/Users/Greg/Google Drive/Copy");
-		//files.addPath("/Users/Greg/Documents/Udacity Classes/Developing Scalable Apps/ud859-master/Lesson_2/00_Conference_Central/src/main/webapp/index.html");
+		files.setName("Copy");
+		files.setDestination("/Users/Greg/Google Drive/");
+		files.addElement("/Users/Greg/Documents/Udacity Classes/Developing Scalable Apps/ud859-master/Lesson_2/00_Conference_Central/src/main/webapp/index.html");
 	}
 
 	/**
@@ -65,7 +68,7 @@ public class FileOpsTest {
 			assertTrue(true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			fail("IO Exception occurred");
+			fail("Running FileOps failed");
 			e.printStackTrace();
 		}
 	}
