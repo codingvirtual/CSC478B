@@ -11,7 +11,7 @@
 
 package core;
 
-import java.io.File;
+import static java.nio.file.LinkOption.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -116,9 +116,9 @@ public class FileSet extends DefaultListModel<String> {
 		if (destination == null) {
 			throw new IllegalArgumentException("Destination is null");
 		}
-		File testDest = new File(destination);
-		if (!testDest.isDirectory()) throw new IOException("Destination does not exist or is not a directory");
-		this.destination = testDest.getAbsolutePath();
+		Path testDest = Paths.get(destination).toRealPath(NOFOLLOW_LINKS);
+		if (Files.isDirectory(testDest, NOFOLLOW_LINKS)) throw new IOException("Destination does not exist or is not a directory");
+		this.destination = testDest.toRealPath(NOFOLLOW_LINKS).toString();
 	}
 }
 
