@@ -25,6 +25,9 @@ public class FileSet extends DefaultListModel<String> {
 	
 	private String destination;
 	
+	public FileSet() {
+		
+	}
 	
 	/**
 	 * Convenience constructor that creates a new, empty FileSet with the destination path specified.
