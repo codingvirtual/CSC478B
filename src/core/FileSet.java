@@ -23,7 +23,6 @@ public class FileSet extends DefaultListModel<String> {
 	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 3146908287308357247L;
 	
-	private Schedule schedule;
 	private String destination;
 	
 	
