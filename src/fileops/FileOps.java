@@ -18,7 +18,6 @@ import core.FileSet;
  * <h3>Revision History</h3>
  * <p>
  * 0.1.0	GP	Initial revision
- * 
  * </p>
  */
 public class FileOps {

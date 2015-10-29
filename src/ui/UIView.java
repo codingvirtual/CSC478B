@@ -2,8 +2,14 @@
  * Creates a graphical user interface to control backup operations.
  * 
  * @author Ashley
- * @version 1.0
- * 
+ * @version 0.1.1
+ *
+ * <h3>Revision History</h3>
+ * <p>
+ * 0.1.0	AR	Initial revision
+ * 0.1.1	GP 	Add code to link Add File, Remove Selection, Browse, and Run
+ * 				buttons to associated code in UIController
+ * </p>
  */
 
 package ui;
@@ -55,12 +61,10 @@ public class UIView extends javax.swing.JFrame {
 		setResizable(false);
 		setSize(new Dimension(685, 711));
 		getContentPane().setFont(new Font("Helvetica Neue", 0, 14));
-		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		menuOpen = new JMenu("Open...");
 		menuOpen.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-		//menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(menuOpen);
 		menuItemLog = new JMenuItem("Log");
 		menuItemLog.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
@@ -167,6 +171,9 @@ public class UIView extends javax.swing.JFrame {
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			File file = fc.getSelectedFile();
         			listModel.addElement(file);
+        			// TODO: possible modifications needed below.
+        			// This is the call up to the controller to set the destination
+        			mController.addPath(file.getAbsolutePath());
         		}
         	}
         });
@@ -181,8 +188,13 @@ public class UIView extends javax.swing.JFrame {
         btnRemove = new JButton();
         btnRemove.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		int i = listSources.getSelectedIndex();
-        		listModel.remove(i);
+        		// don't remove if source list is empty or no selection was made
+        		if (listModel.getSize() != 0 && !listSources.isSelectionEmpty()) {
+        			int i = listSources.getSelectedIndex();
+        			// TODO: Here is where I call up to the controller to remove the path
+        			mController.removePath(listModel.getElementAt(i).toString());
+        			listModel.remove(i);
+        		}
         	}
         });
         
@@ -194,6 +206,13 @@ public class UIView extends javax.swing.JFrame {
         		int returnVal = fc.showDialog(UIView.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			txtDestination.setText(fc.getSelectedFile().toString());
+        			// TODO: here is where I call up to the controller to set the destination
+        			// FIXME: this code is broken. Right now, the Controller manually sets
+        			// the destination to a folder named "Testing123" inside the destination
+        			// path identified below. This should really pass the Name of Backup and
+        			// the path in "Destination" up to the Controller and let it concatenate
+        			// them and put them in the FileSet destination.
+        			mController.setDestination(txtDestination.getText());
         		}
             }
         });
@@ -207,6 +226,7 @@ public class UIView extends javax.swing.JFrame {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		mController.doRun();
         	}
         });
         
@@ -334,11 +354,8 @@ public class UIView extends javax.swing.JFrame {
         lblDestination.setText("Destination:");
 
         txtDestination.setFont(new Font("Helvetica Neue", Font.PLAIN, 14)); // NOI18N
-        txtDestination.setText("C:\\file\\path\\or\\cloud\\provider\\info");
-        txtDestination.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            }
-        });
+        // set default destination to user's system-dependent home directory
+        txtDestination.setText(System.getProperty("user.home"));
 
         lblDestNote.setFont(new Font("Helvetica Neue", Font.PLAIN, 12)); // NOI18N
         lblDestNote.setText("A zip file containing all backup data will be stored at this location");
