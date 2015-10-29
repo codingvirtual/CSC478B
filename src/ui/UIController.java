@@ -51,6 +51,8 @@ public class UIController {
     	            break;
     	        }
     	    }
+    	    UIManager.getLookAndFeelDefaults().put("List[Selected].textBackground", Color.GRAY);
+    	    UIManager.getLookAndFeelDefaults().put("List[Selected].textForeground", Color.WHITE);
     	} catch (Exception e) {
     		// set to System L&F if Nimbus isn't available
     		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
