@@ -1,11 +1,12 @@
 package fileops;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import static java.nio.file.StandardCopyOption.*;
+import static java.nio.file.LinkOption.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Observable;
 
 import core.FileSet;
@@ -45,50 +46,46 @@ public class FileOps extends Observable {
 	}
 	
 	public void run() throws IOException {
-		// Create a File object from the destination path of the FileSet
-		File destination = new File(this.filesToCopy.getDestination());
-		// Check that the destination doesn't already exist and also that it is writable
-		if (destination.exists()) throw new IOException("Destination already exists - copying aborted");
-		destination.mkdir();
 		
-		int totalBytes = 0;
-		int completedBytes = 0;
+		long totalBytes = 0;
+		long completedBytes = 0;
 		int totalFiles = this.filesToCopy.getSize();
 		int completedFiles = 0;
-		notifyObservers(new Progress(0, totalBytes, completedBytes, totalFiles, completedFiles));
-		// Iterate over the entire set of files in the FileSet
-
+		
+		// Create a File object from the destination path of the FileSet
+		Path destParent = Paths.get(filesToCopy.getDestination()).toRealPath(NOFOLLOW_LINKS);
+		Path destination = destParent.resolve(filesToCopy.getName());
+		// Check that the destination doesn't already exist and also that it is writable
+		if (Files.exists(destination) || !Files.isWritable(destination)) throw new IOException("Destination already exists - copying aborted");
+		
+		
+		ArrayList<Path> filesToCopy = new ArrayList<Path>();
 		for (int i = 0; i < totalFiles; i++) {
-			String path = this.filesToCopy.get(i);
-			// Set up input and output stream objects
-			InputStream input = null;
-			OutputStream output = null;
-			// Try the copy operation
+			Path sourcePath = Paths.get(this.filesToCopy.get(i)).toRealPath(NOFOLLOW_LINKS);
+
+			// Validate the file is readable.
+			if (!Files.isReadable(sourcePath)) throw new IOException("File " + sourcePath.getFileName().toString() + " is not readable.");
+			
+			// Add the file size ("length") to the total number of bytes to be copied
+			totalBytes += Files.size(sourcePath);
+			
+			// Add the file to the ArrayList
+			filesToCopy.add(sourcePath);
+		}
+
+		// Notify observers that operation is about to begin.
+		notifyObservers(new Progress(totalBytes, completedBytes, totalFiles, completedFiles));
+
+		// Copy all the files in the FileSet one by one
+		for (Path sourcePath : filesToCopy) {
 			try {
-				/* Create a File object for the destination file by appending the
-				 * source path to the destination path.
-				 * TODO: this is fraught with peril - need to think about how to do this better
-				 */
-				File sourceFile = new File(path);
-				File destFile = new File(destination.getAbsolutePath() + sourceFile.getAbsolutePath());
-				File destDirTree = new File(destFile.getParent());
-				destDirTree.mkdirs();
-				// Configure the input and output streams
-				input = new FileInputStream(new File(path));
-				output = new FileOutputStream(destFile);
-				// Set up a buffer for the operation
-				byte[] buf = new byte[1024];
-				int bytesRead;
-				// Read and write {buf} bytes at a time
-				while ((bytesRead = input.read(buf)) > 0) {
-					output.write(buf, 0, bytesRead);
-					completedBytes += bytesRead;
-				}
-				notifyObservers(new Progress(0, totalBytes, completedBytes, totalFiles, completedFiles++));
-			} finally {
-				// Something went wrong - close the streams before bailing
-				input.close();
-				output.close();
+				Files.copy(sourcePath, destination, ATOMIC_MOVE, COPY_ATTRIBUTES, NOFOLLOW_LINKS);
+				// Update number of bytes copied
+				completedBytes += Files.size(sourcePath);
+				// Notify observers of new progress
+				notifyObservers(new Progress(totalBytes, completedBytes, totalFiles, completedFiles++));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			
 		}
@@ -107,8 +104,7 @@ public class FileOps extends Observable {
 		 * @param totalFiles
 		 * @param completedFiles
 		 */
-		public Progress(int percentComplete, long totalBytes, long completedBytes, int totalFiles, int completedFiles) {
-			this.percentComplete = percentComplete;
+		public Progress(long totalBytes, long completedBytes, int totalFiles, int completedFiles) {
 			this.totalBytes = totalBytes;
 			this.completedBytes = completedBytes;
 			this.totalFiles = totalFiles;
