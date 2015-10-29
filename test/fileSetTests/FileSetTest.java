@@ -137,8 +137,12 @@ public class FileSetTest {
 		assertEquals(fs.getDestination(), destb);
 		
 		//test adding invalid destination does not replace old destination
-		fs.setDestination(destFail);
-		assertFalse(fs.getDestination() == destFail);
+		try { 
+			fs.setDestination(destFail);
+		} catch (IOException e){
+			assertFalse(fs.getDestination() == destFail);
+		}
+		
 	}
 
 }
