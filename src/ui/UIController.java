@@ -77,11 +77,11 @@ public class UIController {
 	}
 	
 	public void addPath(String path) {
-		currentFileSet.addPath(path);
+		currentFileSet.addElement(path);
 	}
 	
 	public void removePath(String path) {
-		currentFileSet.removePath(path);
+		currentFileSet.removeElement(path);
 	}
 	
 	public void setDestination(String destination) {
