@@ -49,7 +49,8 @@ public class FileOps {
 		if (destination.exists()) throw new IOException("Destination already exists - copying aborted");
 		destination.mkdir();
 		// Iterate over the entire set of files in the FileSet
-		for (String path : this.filesToCopy.getFileSet()) {
+		for (int i = 0; i < this.filesToCopy.getSize(); i++) {
+			String path = this.filesToCopy.get(i);
 			// Set up input and output stream objects
 			InputStream input = null;
 			OutputStream output = null;
