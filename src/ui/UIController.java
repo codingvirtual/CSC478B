@@ -31,7 +31,8 @@ public class UIController {
 	private Application mApp;
 	private FileSet currentFileSet;
 
-	
+
+
 	public UIController(Application app) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 		mApp = app;
 		currentFileSet = mApp.getCurrentFileSet();
@@ -76,14 +77,6 @@ public class UIController {
 		}
 	}
 	
-	public void addPath(String path) {
-		currentFileSet.addElement(path);
-	}
-	
-	public void removePath(String path) {
-		currentFileSet.removeElement(path);
-	}
-	
 	public void setDestination(String destination) {
 		// FIXME: this needs to be changed. Probably should get the backup name and the destination
 		// from the View and build the true destination by appending a trailing slash (/) and the 
@@ -91,4 +84,10 @@ public class UIController {
 		currentFileSet.setDestination(destination + "/Testing123");
 	}
 	
+	/**
+	 * @return the currentFileSet
+	 */
+	public FileSet getCurrentFileSet() {
+		return currentFileSet;
+	}
 }
