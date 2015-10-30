@@ -30,7 +30,12 @@ public class Application {
 		// look for current FileSet file on disk
 		// if exists, read it and set the currentFileSet to it
 		// else create a new FileSet and set it as current
-		currentFileSet = new FileSet("Default");
+		try {
+			currentFileSet = new FileSet("Default");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

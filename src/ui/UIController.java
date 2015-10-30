@@ -83,7 +83,12 @@ public class UIController {
 		// FIXME: this needs to be changed. Probably should get the backup name and the destination
 		// from the View and build the true destination by appending a trailing slash (/) and the 
 		// backup name to the destination, then calling setDestination using that concatenation.
-		currentFileSet.setDestination(destination + "/Testing123");
+		try {
+			currentFileSet.setDestination(destination + "/Testing123");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
