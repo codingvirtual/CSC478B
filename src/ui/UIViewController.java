@@ -266,6 +266,7 @@ public class UIViewController extends javax.swing.JFrame {
         			// them and put them in the FileSet destination.
         			try {
 						mCurrentFileSet.setDestination(txtDestination.getText());
+						mCurrentFileSet.setName(txtNameBackup.getText());
 					} catch (Exception e1) {
 						// TODO If an error is thrown, it's likely because the selected
 						// destination does not have write-access. Show a dialog to the user
@@ -285,6 +286,16 @@ public class UIViewController extends javax.swing.JFrame {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		// FIXME: see Issue #35
+    			try {
+					mCurrentFileSet.setDestination(txtDestination.getText());
+					mCurrentFileSet.setName(txtNameBackup.getText());
+				} catch (Exception e1) {
+					// TODO If an error is thrown, it's likely because the selected
+					// destination does not have write-access. Show a dialog to the user
+					// and have them pick a different location
+					e1.printStackTrace();
+				}
         		FileOps ops = new FileOps(mCurrentFileSet, UIViewController.this);
         		ops.run();
         	}
@@ -581,7 +592,7 @@ public class UIViewController extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     public void handleProgress(List<Progress> progressItems) {
-    	System.out.println("got progress");
+    	System.out.println("got " + progressItems.size() + " progress objects.");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
