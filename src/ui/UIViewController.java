@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -51,6 +53,7 @@ import org.jdesktop.swingx.JXDatePicker;
 import app.Application;
 import core.FileSet;
 import fileops.FileOps;
+import fileops.Progress;
 
 //public void doRun() {
 //	// TODO: this will need to be enhanced later. No status is provided and no result is provided.
@@ -165,6 +168,20 @@ public class UIViewController extends javax.swing.JFrame {
         spinTime = new JSpinner();
         txtNameBackup = new JTextField();
         txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
+        // TODO: create ActionListener for txtNameBackup. It should respond to losing focus
+        // and when it does lose focus, it should do this
+        
+        // try {
+        //     // this next line is going to throw an exception for sure if the destination
+        //     // box isn't filled in.
+        //     mCurrentFileSet.setName(txtNameBackup.getText());
+        // } catch (IOException e) {
+        //     // error is probably because the name isn't valid or the ultimate destination
+        //	   // isn't writeable.
+        //     // do something about error like a dialog box or something.
+        //     e.printStackTrace();
+        // }
+        
         txtDestination = new JTextField();
         grpRadioSyncSwitch = new ButtonGroup();
         grpRadioFreq = new ButtonGroup();
@@ -268,13 +285,8 @@ public class UIViewController extends javax.swing.JFrame {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		FileOps ops = new FileOps(mCurrentFileSet, this);
-        		try {
-        			ops.run();
-        		} catch (IOException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-        		}
+        		FileOps ops = new FileOps(mCurrentFileSet, UIViewController.this);
+        		ops.run();
         	}
         });
         
@@ -568,6 +580,9 @@ public class UIViewController extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void handleProgress(List<Progress> progressItems) {
+    	System.out.println("got progress");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup grpRadioSyncSwitch;

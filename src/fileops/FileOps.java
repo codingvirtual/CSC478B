@@ -11,7 +11,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import core.FileSet;
-import ui.UIView;
+import ui.UIViewController;
 
 /**
  * The FileOps class defines the operation and behavior of the entire backup operation.
@@ -28,11 +28,16 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	
 		
 	private final FileSet filesToCopy;
-	private final UIView mView;
+	private final UIViewController mView;
 
-	public FileOps(FileSet files, UIView view) {
+	public FileOps(FileSet files, UIViewController view) {
 		this.filesToCopy = files;
 		this.mView = view;
+	}
+	
+	public FileOps(FileSet files) {
+		mView = null;
+		this.filesToCopy = files;
 	}
 	
 
@@ -91,7 +96,9 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	
 	@Override
 	protected void process(List<Progress> progressItems) {
-		mView.handleProgress(progressItems);
+		if (mView != null) {
+			mView.handleProgress(progressItems);
+		}
 	}
 
 }
