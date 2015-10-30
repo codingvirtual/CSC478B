@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -41,20 +43,62 @@ import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.MatteBorder;
 import org.jdesktop.swingx.JXDatePicker;
 
-public class UIView extends javax.swing.JFrame {
+import app.Application;
+import core.FileSet;
+import fileops.FileOps;
+import fileops.Progress;
+
+//public void doRun() {
+//	// TODO: this will need to be enhanced later. No status is provided and no result is provided.
+
+//}
+
+
+public class UIViewController extends javax.swing.JFrame {
 
 	private static final long serialVersionUID = -7478454925642500957L;
-	private UIController mController;
+	private Application mApp;
+	private FileSet mCurrentFileSet;
 	
 	/**
      * Creates new form UIView
      */
-    public UIView(UIController controller) {
-    	mController = controller;
+    public UIViewController(Application app) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+    	
+    	mApp = app;
+    	mCurrentFileSet = mApp.getCurrentFileSet();
+    	
+    	try {
+    		// set custom colors for Nimbus
+    		UIManager.put("nimbusBase", Color.GRAY);
+    		UIManager.put("nimbusFocus", new Color(157, 224, 35));
+    	    UIManager.put("nimbusSelectionBackground", new Color(0, 158, 0));
+            UIManager.put("nimbusSelection", new Color(0, 158, 0));
+    	    UIManager.put("control", new Color(242, 242, 242));
+    		// set Nimbus L&F
+    	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+    	        if ("Nimbus".equals(info.getName())) {
+    	            UIManager.setLookAndFeel(info.getClassName());
+    	            break;
+    	        }
+    	    }
+    	    UIManager.getLookAndFeelDefaults().put("List[Selected].textBackground", Color.GRAY);
+    	    UIManager.getLookAndFeelDefaults().put("List[Selected].textForeground", Color.WHITE);
+    	} catch (Exception e) {
+    		// set to System L&F if Nimbus isn't available
+    		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    		e.printStackTrace();
+    	}
+
+        
+        
 		setResizable(false);
 		setSize(new Dimension(685, 711));
 		getContentPane().setFont(new Font("Helvetica Neue", 0, 14));
@@ -100,7 +144,7 @@ public class UIView extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-    	listModel = mController.getCurrentFileSet();
+    	listModel = mCurrentFileSet;
     	listSources = new JList<String>(listModel);
     	panelSettings = new JPanel();
     	panelFreq = new JPanel();
@@ -124,6 +168,20 @@ public class UIView extends javax.swing.JFrame {
         spinTime = new JSpinner();
         txtNameBackup = new JTextField();
         txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
+        // TODO: create ActionListener for txtNameBackup. It should respond to losing focus
+        // and when it does lose focus, it should do this
+        
+        // try {
+        //     // this next line is going to throw an exception for sure if the destination
+        //     // box isn't filled in.
+        //     mCurrentFileSet.setName(txtNameBackup.getText());
+        // } catch (IOException e) {
+        //     // error is probably because the name isn't valid or the ultimate destination
+        //	   // isn't writeable.
+        //     // do something about error like a dialog box or something.
+        //     e.printStackTrace();
+        // }
+        
         txtDestination = new JTextField();
         grpRadioSyncSwitch = new ButtonGroup();
         grpRadioFreq = new ButtonGroup();
@@ -165,7 +223,7 @@ public class UIView extends javax.swing.JFrame {
         		JFileChooser fc = new JFileChooser();
         		fc.setPreferredSize(new Dimension(500, 400));
         		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        		int returnVal = fc.showDialog(UIView.this, "Add file");
+        		int returnVal = fc.showDialog(UIViewController.this, "Add file");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			File file = fc.getSelectedFile();
         			listModel.addElement(file.getAbsolutePath());
@@ -197,7 +255,7 @@ public class UIView extends javax.swing.JFrame {
             	JFileChooser fc = new JFileChooser();
             	fc.setPreferredSize(new Dimension(500, 400));
         		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        		int returnVal = fc.showDialog(UIView.this, "Set destination");
+        		int returnVal = fc.showDialog(UIViewController.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			txtDestination.setText(fc.getSelectedFile().toString());
         			// TODO: here is where I call up to the controller to set the destination
@@ -206,7 +264,14 @@ public class UIView extends javax.swing.JFrame {
         			// path identified below. This should really pass the Name of Backup and
         			// the path in "Destination" up to the Controller and let it concatenate
         			// them and put them in the FileSet destination.
-        			mController.setDestination(txtDestination.getText());
+        			try {
+						mCurrentFileSet.setDestination(txtDestination.getText());
+					} catch (Exception e1) {
+						// TODO If an error is thrown, it's likely because the selected
+						// destination does not have write-access. Show a dialog to the user
+						// and have them pick a different location
+						e1.printStackTrace();
+					}
         		}
             }
         });
@@ -220,7 +285,8 @@ public class UIView extends javax.swing.JFrame {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		mController.doRun();
+        		FileOps ops = new FileOps(mCurrentFileSet, UIViewController.this);
+        		ops.run();
         	}
         });
         
@@ -514,6 +580,9 @@ public class UIView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void handleProgress(List<Progress> progressItems) {
+    	System.out.println("got progress");
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup grpRadioSyncSwitch;

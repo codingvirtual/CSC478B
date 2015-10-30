@@ -1,15 +1,17 @@
 package fileops;
 
 import java.io.IOException;
-import static java.nio.file.StandardCopyOption.*;
 import static java.nio.file.LinkOption.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Observable;
+import java.util.List;
+
+import javax.swing.SwingWorker;
 
 import core.FileSet;
+import ui.UIViewController;
 
 /**
  * The FileOps class defines the operation and behavior of the entire backup operation.
@@ -22,31 +24,28 @@ import core.FileSet;
  * 0.1.0	GP	Initial revision
  * </p>
  */
-public class FileOps extends Observable {
+public class FileOps extends SwingWorker<Void, Progress> {
 	
 		
-	private FileSet filesToCopy;
+	private final FileSet filesToCopy;
+	private final UIViewController mView;
+
+	public FileOps(FileSet files, UIViewController view) {
+		this.filesToCopy = files;
+		this.mView = view;
+	}
 	
-	/**
-	 * @return the filesToCopy
-	 */
-	public FileSet getFilesToCopy() {
-		return filesToCopy;
-	}
-
-	/**
-	 * @param filesToCopy the filesToCopy to set
-	 */
-	public void setFilesToCopy(FileSet filesToCopy) {
-		this.filesToCopy = filesToCopy;
-	}
-
 	public FileOps(FileSet files) {
+		mView = null;
 		this.filesToCopy = files;
 	}
 	
-	public void run() throws IOException {
-		
+
+	/* (non-Javadoc)
+	 * @see javax.swing.SwingWorker#doInBackground()
+	 */
+	@Override
+	protected Void doInBackground() throws Exception {		
 		long totalBytes = 0;
 		long completedBytes = 0;
 		int totalFiles = this.filesToCopy.getSize();
@@ -74,7 +73,7 @@ public class FileOps extends Observable {
 		}
 
 		// Notify observers that operation is about to begin.
-		notifyObservers(new Progress(totalBytes, completedBytes, totalFiles, completedFiles));
+		publish(new Progress(totalBytes, completedBytes, totalFiles, completedFiles));
 
 		// Copy all the files in the FileSet one by one
 		for (Path sourcePath : filesToCopy) {
@@ -85,62 +84,21 @@ public class FileOps extends Observable {
 				// Update number of bytes copied
 				completedBytes += Files.size(sourcePath);
 				// Notify observers of new progress
-				notifyObservers(new Progress(totalBytes, completedBytes, totalFiles, completedFiles++));
+				publish(new Progress(totalBytes, completedBytes, totalFiles, completedFiles++));
 			} catch (Exception e) {
 				System.err.println("Failed trying to copy " + sourcePath.toString());
 				e.printStackTrace();
 			}
 			
 		}
+		return null;
 	}
 	
-	public class Progress {
-		/**
-		 * The Progress class represents a point-in-time progress indication of the copy operation.
-		 * 
-		 * When completedBytes = 0 and completedFiles = 0, that should be considered "not started"
-		 * or "about to start."
-		 * 
-		 * When completedBytes == totalBytes or completedFiles == totalFiles, that should be construed
-		 * as "finished."
-		 * 
-		 * Anything else is "in progress" and the user of this class can decide how to calculate
-		 * percentage completion.
-		 * 
-		 * The FileOps class reports back a Progress object to it's Observers in the following manner:
-		 * 
-		 * a)	Right before the copy operation begins and after basic destination path validation is
-		 * 		checked, a Progress object with completedBytes = 0 and completedFiles = 0 will be
-		 * 		sent to Observers. This would be considered "starting up."
-		 * b)	After each file finishes copying, a Progress object is returned with updated values
-		 * 		for completedBytes (which will have been incremented by the size of the file that was
-		 * 		just copied) and for completedFiles (which will be incremented by 1). To calculate
-		 * 		percentage completion, you can either use completedBytes / totalBytes or
-		 * 		completedFiles / totalFiles. In the latter case, remember that completedFiles and
-		 * 		totalFiles are integers so you'll need to cast to a Float to prevent rounding.
-		 * c)	When the last file is copied, a Progress object will be returned just like in b)
-		 * 		above, but in this case, completedBytes should equal totalBytes and completedFiles
-		 * 		should equal totalFiles. It is suggested to use the completedFiles == totalFiles
-		 * 		comparison just in case the File System erroneously reports file sizes.
-		 */
-		public long totalBytes;
-		public long completedBytes;
-		public int totalFiles;
-		public int completedFiles;
-		/**
-		 * @param percentComplete
-		 * @param totalBytes
-		 * @param completedBytes
-		 * @param totalFiles
-		 * @param completedFiles
-		 */
-		public Progress(long totalBytes, long completedBytes, int totalFiles, int completedFiles) {
-			this.totalBytes = totalBytes;
-			this.completedBytes = completedBytes;
-			this.totalFiles = totalFiles;
-			this.completedFiles = completedFiles;
+	@Override
+	protected void process(List<Progress> progressItems) {
+		if (mView != null) {
+			mView.handleProgress(progressItems);
 		}
-		
-
 	}
+
 }
