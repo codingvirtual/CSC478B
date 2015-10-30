@@ -286,6 +286,7 @@ public class UIViewController extends javax.swing.JFrame {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		// FIXME: see Issue #35
     			try {
 					mCurrentFileSet.setDestination(txtDestination.getText());
 					mCurrentFileSet.setName(txtNameBackup.getText());
