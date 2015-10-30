@@ -53,6 +53,7 @@ import org.jdesktop.swingx.JXDatePicker;
 import app.Application;
 import core.FileSet;
 import fileops.FileOps;
+import fileops.FileOpsMessageHandler;
 import fileops.Progress;
 
 //public void doRun() {
@@ -61,7 +62,7 @@ import fileops.Progress;
 //}
 
 
-public class UIViewController extends javax.swing.JFrame {
+public class UIViewController extends javax.swing.JFrame implements FileOpsMessageHandler{
 
 	private static final long serialVersionUID = -7478454925642500957L;
 	private Application mApp;
@@ -595,6 +596,14 @@ public class UIViewController extends javax.swing.JFrame {
     	System.out.println("got " + progressItems.size() + " progress objects.");
     }
 
+	/* (non-Javadoc)
+	 * @see fileops.FileOpsMessageHandler#handleCompletion()
+	 */
+	@Override
+	public void handleCompletion() {
+		System.out.println("got completion notice from FileOps");
+	}
+	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup grpRadioSyncSwitch;
     private ButtonGroup grpRadioFreq;
@@ -632,4 +641,5 @@ public class UIViewController extends javax.swing.JFrame {
     private JMenuItem menuItemLog;
     private JMenuItem menuItemManual;
     private JList<String> listSources;
+
 }
