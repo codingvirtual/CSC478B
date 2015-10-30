@@ -45,7 +45,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	 * @see javax.swing.SwingWorker#doInBackground()
 	 */
 	@Override
-	protected Void doInBackground() throws Exception {		
+	public Void doInBackground() throws Exception {		
 		System.out.println("starting backup");
 		long totalBytes = 0;
 		long completedBytes = 0;
@@ -108,14 +108,14 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	}
 	
 	@Override
-	protected void process(List<Progress> progressItems) {
+	public void process(List<Progress> progressItems) {
 		if (messageHandler != null) {
 			messageHandler.handleProgress(progressItems);
 		}
 	}
 	
 	@Override
-	protected void done() {
+	public void done() {
 		if (messageHandler != null) {
 			messageHandler.handleCompletion();
 		}
