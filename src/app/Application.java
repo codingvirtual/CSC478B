@@ -30,7 +30,7 @@ public class Application {
 		// look for current FileSet file on disk
 		// if exists, read it and set the currentFileSet to it
 		// else create a new FileSet and set it as current
-		currentFileSet = new FileSet();
+		currentFileSet = new FileSet("Default");
 	}
 	
 	/**
@@ -45,6 +45,26 @@ public class Application {
 	 */
 	public void setCurrentFileSet(FileSet currentFileSet) {
 		this.currentFileSet = currentFileSet;
+	}
+	
+	public void getFileSet(String absolutePath) {
+		/**
+		 * Reads a FileSet from the specified location
+		 */
+		
+	}
+	
+	public void saveFileSet(String absolutePath) {
+		/**
+		 * Saves FileSet to a specific location
+		 */
+	}
+	
+	public void saveFileSet() {
+		/**
+		 * Saves FileSet to the default location (whatever that may be)
+		 */
+		
 	}
 
 	public static void main(String args[]) {
