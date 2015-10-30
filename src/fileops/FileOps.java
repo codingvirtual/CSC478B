@@ -11,7 +11,6 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import core.FileSet;
-import ui.UIViewController;
 
 /**
  * The FileOps class defines the operation and behavior of the entire backup operation.
