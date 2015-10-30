@@ -14,6 +14,9 @@ package fileOpsTests;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +28,7 @@ import fileops.FileOps;
 * @author Greg
 *
 */
-public class FileOpsTest {
+public class FileOpsTest implements Observer {
 
 	private FileSet files = new FileSet();
 	/**
@@ -68,5 +71,14 @@ public class FileOpsTest {
 			fail("Running FileOps failed");
 			e.printStackTrace();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	@Override
+	public void update(Observable o, Object arg) {
+		FileOps.Progress progress = (FileOps.Progress) arg;
+		assert(true);
 	}
 }
