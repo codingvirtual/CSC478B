@@ -61,4 +61,10 @@ public class Progress {
 		this.totalFiles = totalFiles;
 		this.completedFiles = completedFiles;
 	}
+	
+	@Override
+	public String toString() {
+		return ("Total Bytes: " + totalBytes + "; Completed Bytes: " + completedBytes
+				+ "; Total Files: " + totalFiles + "; Completed Files: " + completedFiles);
+	}
 }
