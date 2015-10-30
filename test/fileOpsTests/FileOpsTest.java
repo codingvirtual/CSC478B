@@ -63,6 +63,7 @@ public class FileOpsTest implements Observer {
 	@Test
 	public void testRun() {
 		FileOps testOps = new FileOps(this.files);
+		testOps.addObserver(this);
 		try {
 			testOps.run();
 			assertTrue(true);
