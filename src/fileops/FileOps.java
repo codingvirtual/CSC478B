@@ -28,15 +28,16 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	
 		
 	private final FileSet filesToCopy;
-	private final UIViewController mView;
+	private final FileOpsMessageHandler messageHandler;
 
-	public FileOps(FileSet files, UIViewController view) {
+
+	public FileOps(FileSet files, FileOpsMessageHandler handler) {
 		this.filesToCopy = files;
-		this.mView = view;
+		this.messageHandler = handler;
 	}
 	
 	public FileOps(FileSet files) {
-		mView = null;
+		this.messageHandler = null;
 		this.filesToCopy = files;
 	}
 	
@@ -109,8 +110,15 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	
 	@Override
 	protected void process(List<Progress> progressItems) {
-		if (mView != null) {
-			mView.handleProgress(progressItems);
+		if (messageHandler != null) {
+			messageHandler.handleProgress(progressItems);
+		}
+	}
+	
+	@Override
+	protected void done() {
+		if (messageHandler != null) {
+			messageHandler.handleCompletion();
 		}
 	}
 
