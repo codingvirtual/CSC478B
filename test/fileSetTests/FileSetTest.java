@@ -27,7 +27,8 @@ public class FileSetTest {
 	private String destb = "Users/zackburch/Google Drive/Test2";
 	private String destFail = "Users/zackburch/GoogleDrive/TestFail";
 	private String fsPath = "/Users/zackburch/Desktop/test";
-	private String invalidFsPath = "/Users/zackburch/Desktop/invalid";
+	private String invalidFsPathDir = "/Users/zackburch/Desktop/invalid";
+	private String invalidFsPathFile = "/Users/zackburch/Desktop/test/testpath.txt";
 	private String backupName = "backup";
 	private String invalidBackupName = "back*up";
 
@@ -255,16 +256,16 @@ public class FileSetTest {
 		 * of the file set to be the end file?
 		 */
 		
-		//TODO - Pass empty file set to be saved - desired behavior?
+		//test save empty file set to be saved
 		FileSet fs1 = new FileSet();
 		try {
 			FileSet.save(fsPath, fs1);
-			assert(true);
+			fail("FileSet is required to have a name");
 		} catch (IOException e) {
-			fail("Could not save the file set");
+			assert(true);
 		}
 		
-		//TODO - Pass named file set to be saved - desired behavior?
+		// test save named file set at valid location
 		FileSet fs2;
 		try {
 			fs2 = new FileSet(backupName);
@@ -279,12 +280,42 @@ public class FileSetTest {
 			fail("Could not create the file set");
 		}
 		
-		//TODO - Pass fully parameterized empty file set to be saved - desired behavior?
+		//test save named file set at non-existent directory
 		FileSet fs3;
 		try {
-			fs3 = new FileSet(backupName, dest);
+			fs3 = new FileSet(backupName);
 			try {
-				FileSet.save(fsPath, fs3);
+				FileSet.save(invalidFsPathDir, fs3);
+				fail("Directory does not exist, should refuse save");
+			} catch (IOException e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
+		
+		// test save named file set at "file" path
+		FileSet fs4;
+		try {
+			fs4 = new FileSet(backupName);
+			try {
+				FileSet.save(invalidFsPathFile, fs4);
+				fail("Filepath should be a directory, not File");
+			} catch (IOException e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
+		
+		//test save fully parameterized empty file set at valid location
+		FileSet fs5;
+		try {
+			fs5 = new FileSet(backupName, dest);
+			try {
+				FileSet.save(fsPath, fs5);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -294,14 +325,44 @@ public class FileSetTest {
 			fail("Could not create the file set");
 		}
 		
-		//Pass fully parameterized file set with files to be saved
-		FileSet fs4;
+		//test save fully parameterized empty file set at non-existent directory
+		FileSet fs6;
 		try {
-			fs4 = new FileSet(backupName, dest);
-			fs4.addElement(source);
-			fs4.addElement(sourceb);
+			fs6 = new FileSet(backupName, dest);
 			try {
-				FileSet.save(fsPath, fs4);
+				FileSet.save(invalidFsPathDir, fs6);
+				fail("Directory does not exist, should refuse save");
+			} catch (IOException e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
+		
+		//test save fully parameterized empty file set at "file" path
+		FileSet fs7;
+		try {
+			fs7 = new FileSet(backupName, dest);
+			try {
+				FileSet.save(invalidFsPathFile, fs7);
+				fail("Filepath should be a directory, not File");
+			} catch (IOException e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
+		
+		//test save fully parameterized file set with files at valid location
+		FileSet fs8;
+		try {
+			fs8 = new FileSet(backupName, dest);
+			fs8.addElement(source);
+			fs8.addElement(sourceb);
+			try {
+				FileSet.save(fsPath, fs8);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -310,7 +371,45 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
+		
+		//test save fully parameterized file set with files at non-existent directory
+		FileSet fs9;
+		try {
+			fs9 = new FileSet(backupName, dest);
+			fs9.addElement(source);
+			fs9.addElement(sourceb);
+			try {
+				FileSet.save(invalidFsPathDir, fs9);
+				fail("Directory does not exist, should refuse save");
+			} catch (IOException e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
+		
+		//test save fully parameterized file set with files at "file" path
+		FileSet fs10;
+		try {
+			fs10 = new FileSet(backupName, dest);
+			fs10.addElement(source);
+			fs10.addElement(sourceb);
+			try {
+				FileSet.save(fsPath, fs10);
+				fail("Filepath should be a directory, not File");
+			} catch (IOException e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
 	}
 	
-	//TODO - implement read() tests
+	@Test
+	public void testRead() {
+		
+		
+	}
 }
