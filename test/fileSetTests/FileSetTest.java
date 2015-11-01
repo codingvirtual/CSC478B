@@ -250,11 +250,6 @@ public class FileSetTest {
 	
 	@Test
 	public void testSave() {
-		/**
-		 * TODO - what is required of the absolutePath?
-		 * Could we not use a predetermined location in the filesystem, and use the "name"
-		 * of the file set to be the end file?
-		 */
 		
 		//test save empty file set to be saved
 		FileSet fs1 = new FileSet();
