@@ -10,6 +10,7 @@
  * 0.1.1	GP 	Add code to link Add File, Remove Selection, Browse, and Run
  * 				buttons to associated code in UIController
  * 0.1.2	AR	Add status text & circular progress bar
+ * 0.1.3	AR	Display warning dialog boxes
  * </p>
  */
 
@@ -53,6 +54,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
@@ -76,6 +78,8 @@ import core.FileSet;
 import fileops.FileOps;
 import fileops.FileOpsMessageHandler;
 import fileops.Progress;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
@@ -202,19 +206,24 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         spinTime = new JSpinner();
         txtNameBackup = new JTextField();
         txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-        // TODO: create ActionListener for txtNameBackup. It should respond to losing focus
-        // and when it does lose focus, it should do this
+        txtNameBackup.addFocusListener(new FocusAdapter() {
+        	@Override
+        	public void focusLost(FocusEvent e) {
+        		try {
+        			if (txtNameBackup.getText().isEmpty()) {
+        				throw new Exception("Invalid backup name");
+        			}
+                     mCurrentFileSet.setName(txtNameBackup.getText());
+                 } catch (Exception e1) {
+                	 JOptionPane.showMessageDialog(getRootPane(),
+                			 "Please enter a valid backup name.",
+                			 "Invalid Name",
+                			 JOptionPane.WARNING_MESSAGE);
+                	 System.err.println("Exception: " + e1.getMessage());
+                 }
+        	}
+        });
         
-        // try {
-        //     // this next line is going to throw an exception for sure if the destination
-        //     // box isn't filled in.
-        //     mCurrentFileSet.setName(txtNameBackup.getText());
-        // } catch (IOException e) {
-        //     // error is probably because the name isn't valid or the ultimate destination
-        //	   // isn't writeable.
-        //     // do something about error like a dialog box or something.
-        //     e.printStackTrace();
-        // }
         txtStatus = new JTextPane();
         txtStatus.setForeground(new Color(0, 128, 0));
         txtStatus.setFont(new Font("Helvetica Neue", Font.BOLD | Font.ITALIC, 13));
@@ -305,21 +314,14 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         		int returnVal = fc.showDialog(UIViewController.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			txtDestination.setText(fc.getSelectedFile().toString());
-        			// TODO: here is where I call up to the controller to set the destination
+        			// here is where I call up to the controller to set the destination
         			// FIXME: this code is broken. Right now, the Controller manually sets
         			// the destination to a folder named "Testing123" inside the destination
         			// path identified below. This should really pass the Name of Backup and
         			// the path in "Destination" up to the Controller and let it concatenate
         			// them and put them in the FileSet destination.
-        			try {
-						mCurrentFileSet.setDestination(txtDestination.getText());
-						mCurrentFileSet.setName(txtNameBackup.getText());
-					} catch (Exception e1) {
-						// TODO If an error is thrown, it's likely because the selected
-						// destination does not have write-access. Show a dialog to the user
-						// and have them pick a different location
-						e1.printStackTrace();
-					}
+        			
+        			// check for invalid destination in btnRun()
         		}
             }
         });
@@ -333,7 +335,32 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		// FIXME: see Issue #35
+        		try {
+    				if (txtDestination.getText().isEmpty()) {
+    					throw new Exception("Invalid destination path");
+    				}
+    				if (txtNameBackup.getText().isEmpty()) {
+    					throw new Exception("Invalid backup name");
+    				}
+					mCurrentFileSet.setDestination(txtDestination.getText());
+					mCurrentFileSet.setName(txtNameBackup.getText());
+				} catch (Exception e1) {
+					if (txtDestination.getText().isEmpty()) {
+						JOptionPane.showMessageDialog(getRootPane(),
+	                			 "Please enter a valid destination path.",
+	                			 "Invalid Destination",
+	                			 JOptionPane.WARNING_MESSAGE);
+                	 System.err.println("Exception: " + e1.getMessage());
+					}
+					if (txtNameBackup.getText().isEmpty()) {
+						JOptionPane.showMessageDialog(getRootPane(),
+	                			 "Please enter a valid backup name.",
+	                			 "Invalid Name",
+	                			 JOptionPane.WARNING_MESSAGE);
+	                	 System.err.println("Exception: " + e1.getMessage());
+					}
+                	 return;
+				}
         		
         		btnRun.setEnabled(false);
         		panelProgress.setVisible(true);
@@ -348,7 +375,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         			panelProgress.add(progressCirc);
         			panelProgress.revalidate();
         			panelProgress.repaint();
-        		}
+        		}	
         		
             	try {
             		if (doc.getLength() == 0) {
@@ -358,16 +385,6 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
             		}
 				} catch (BadLocationException e2) {
 					e2.printStackTrace();
-				}
-        		
-        		try {
-					mCurrentFileSet.setDestination(txtDestination.getText());
-					mCurrentFileSet.setName(txtNameBackup.getText());
-				} catch (Exception e1) {
-					// TODO If an error is thrown, it's likely because the selected
-					// destination does not have write-access. Show a dialog to the user
-					// and have them pick a different location
-					e1.printStackTrace();
 				}
         		
         		FileOps worker = new FileOps(mCurrentFileSet, UIViewController.this);
@@ -509,6 +526,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         txtDestination.setFont(new Font("Helvetica Neue", Font.PLAIN, 14)); // NOI18N
         // set default destination to user's system-dependent home directory
         txtDestination.setText(System.getProperty("user.home"));
+        try {
+			mCurrentFileSet.setDestination(txtDestination.getText());
+			mCurrentFileSet.setName(txtNameBackup.getText());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 
         lblDestNote.setFont(new Font("Helvetica Neue", Font.PLAIN, 12)); // NOI18N
         lblDestNote.setText("A zip file containing all backup data will be stored at this location");
