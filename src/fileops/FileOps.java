@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingWorker;
 import core.FileSet;
+import ui.UIViewController;
 
 /**
  * The FileOps class defines the operation and behavior of the entire backup operation.
@@ -63,7 +64,9 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		System.out.println("created destination backup directory");
 		
 		// Check that the destination doesn't already exist and also that it is writable
-		if (Files.exists(destination) || !Files.isWritable(destParent)) throw new IOException("Destination already exists - copying aborted");
+		if (Files.exists(destination) || !Files.isWritable(destParent)) {
+			throw new IOException("Destination already exists - copying aborted");
+		}
 
 		Files.createDirectories(destination);
 		System.out.println("created destination directory");
@@ -71,7 +74,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		ArrayList<Path> filesToCopy = new ArrayList<Path>();
 		for (int i = 0; i < totalFiles; i++) {
 			Path sourcePath = Paths.get(this.filesToCopy.get(i)).toRealPath(NOFOLLOW_LINKS);
-
+			
 			// Validate the file is readable.
 			if (!Files.isReadable(sourcePath)) throw new IOException("File " + sourcePath.getFileName().toString() + " is not readable.");
 			
@@ -107,6 +110,8 @@ public class FileOps extends SwingWorker<Void, Progress> {
 				    int progress = (int) Math.round(((double) completedBytes / (double) totalBytes) * 100);
 				    setProgress(progress);    // set circular progress
 				}
+				in.close();
+				out.close();
 				
 				String sourceCopied = sourcePath.toString();
 				System.out.println("Directory created");
@@ -120,6 +125,16 @@ public class FileOps extends SwingWorker<Void, Progress> {
 			}
 		}
 		return null;
+	}
+	
+	public static Boolean isValidDest(FileSet fs) throws IOException {
+		Path destParent = Paths.get(fs.getDestination()).toRealPath(NOFOLLOW_LINKS);
+		Path destination = destParent.resolve(fs.getName());
+		// Check that the destination doesn't already exist and also that it is writable
+		if (Files.exists(destination) || !Files.isWritable(destParent)) {
+			return false;
+		}
+		return true;
 	}
 	
 	@Override

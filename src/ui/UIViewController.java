@@ -209,18 +209,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         txtNameBackup.addFocusListener(new FocusAdapter() {
         	@Override
         	public void focusLost(FocusEvent e) {
-        		try {
-        			if (txtNameBackup.getText().isEmpty()) {
-        				throw new Exception("Invalid backup name");
-        			}
-                     mCurrentFileSet.setName(txtNameBackup.getText());
-                 } catch (Exception e1) {
-                	 JOptionPane.showMessageDialog(getRootPane(),
-                			 "Please enter a valid backup name.",
-                			 "Invalid Name",
-                			 JOptionPane.WARNING_MESSAGE);
-                	 System.err.println("Exception: " + e1.getMessage());
-                 }
+        			txtNameBackup.setText(txtNameBackup.getText().trim());
         	}
         });
         
@@ -233,6 +222,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         txtStatus.setMargin(new java.awt.Insets(0, 0, 0, 0));
         doc = txtStatus.getDocument();
         txtDestination = new JTextField();
+        txtDestination.addFocusListener(new FocusAdapter() {
+        	@Override
+        	public void focusLost(FocusEvent e) {
+        		txtDestination.setText(txtDestination.getText().trim());
+        	}
+        });
         grpRadioSyncSwitch = new ButtonGroup();
         grpRadioFreq = new ButtonGroup();
         try {
@@ -336,32 +331,54 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		try {
-    				if (txtDestination.getText().isEmpty()) {
-    					throw new Exception("Invalid destination path");
-    				}
-    				if (txtNameBackup.getText().isEmpty()) {
-    					throw new Exception("Invalid backup name");
-    				}
+        			if (txtDestination.getText().isEmpty() && txtNameBackup.getText().isEmpty()) {
+        				throw new Exception("invalid backup name and destination");
+        			}
+        			if (txtDestination.getText().isEmpty()) {
+    					throw new Exception("invalid destination path");
+        			}
+        			if (txtNameBackup.getText().isEmpty()) {
+						throw new Exception("invalid backup name");
+					}
+        		} catch (Exception e1) {
+        			if (txtDestination.getText().isEmpty() && txtNameBackup.getText().isEmpty()) {
+        				JOptionPane.showMessageDialog(getRootPane(),
+            					"-Please enter a valid destination path.\n"
+            						+ "-Please enter a valid backup name.",
+            					"Invalid Entries",
+            					JOptionPane.WARNING_MESSAGE);
+        			}
+        			else if (txtDestination.getText().isEmpty()) {
+        				JOptionPane.showMessageDialog(getRootPane(),
+            					"Please enter a valid destination path.",
+            					"Invalid Destination",
+            					JOptionPane.WARNING_MESSAGE);
+        			} else {
+        				JOptionPane.showMessageDialog(getRootPane(),
+    							"Please enter a valid backup name.",
+    							"Invalid Name",
+    							JOptionPane.WARNING_MESSAGE);
+        			}
+        			System.err.println("Exception: " + e1.getMessage());
+        			return;
+        		}
+				
+        		
+				try {
 					mCurrentFileSet.setDestination(txtDestination.getText());
 					mCurrentFileSet.setName(txtNameBackup.getText());
-				} catch (Exception e1) {
-					if (txtDestination.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(getRootPane(),
-	                			 "Please enter a valid destination path.",
-	                			 "Invalid Destination",
-	                			 JOptionPane.WARNING_MESSAGE);
-                	 System.err.println("Exception: " + e1.getMessage());
-					}
-					if (txtNameBackup.getText().isEmpty()) {
-						JOptionPane.showMessageDialog(getRootPane(),
-	                			 "Please enter a valid backup name.",
-	                			 "Invalid Name",
-	                			 JOptionPane.WARNING_MESSAGE);
-	                	 System.err.println("Exception: " + e1.getMessage());
-					}
-                	 return;
+					if (FileOps.isValidDest(mCurrentFileSet) == false)  {
+    					throw new Exception("backup already exists");
+    				}
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(getRootPane(),
+							"Either a backup already exists, or you cannot write to this location.",
+							"Invalid Destination",
+							JOptionPane.ERROR_MESSAGE);
+					System.err.println("Exception: " + e2.getMessage());
+					return;
 				}
-        		
+				
         		btnRun.setEnabled(false);
         		panelProgress.setVisible(true);
         		progressCirc.setValue(0);
@@ -704,6 +721,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    
 
     @Override public void handleProgress(List<Progress> progressItems) {
     	for (Progress p : progressItems) {
