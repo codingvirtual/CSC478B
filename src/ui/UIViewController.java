@@ -9,6 +9,7 @@
  * 0.1.0	AR	Initial revision
  * 0.1.1	GP 	Add code to link Add File, Remove Selection, Browse, and Run
  * 				buttons to associated code in UIController
+ * 0.1.2	AR	Add status text & circular progress bar
  * </p>
  */
 
@@ -19,57 +20,73 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.MatteBorder;
+import javax.swing.plaf.basic.BasicProgressBarUI;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import org.jdesktop.swingx.JXDatePicker;
-
 import app.Application;
 import core.FileSet;
 import fileops.FileOps;
 import fileops.FileOpsMessageHandler;
 import fileops.Progress;
 
-//public void doRun() {
-//	// TODO: this will need to be enhanced later. No status is provided and no result is provided.
 
-//}
-
-
-public class UIViewController extends javax.swing.JFrame implements FileOpsMessageHandler{
-
-	private static final long serialVersionUID = -7478454925642500957L;
+public class UIViewController extends JFrame implements FileOpsMessageHandler {
+	private static final long serialVersionUID = 1L;
+	static final Color drkGreen = new Color(0, 158, 0);
+	private Document doc;
 	private Application mApp;
 	private FileSet mCurrentFileSet;
 	
 	/**
-     * Creates new form UIView
+     * Creates new form UIViewController
      */
     public UIViewController(Application app) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
     	
@@ -80,8 +97,8 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
     		// set custom colors for Nimbus
     		UIManager.put("nimbusBase", Color.GRAY);
     		UIManager.put("nimbusFocus", new Color(157, 224, 35));
-    	    UIManager.put("nimbusSelectionBackground", new Color(0, 158, 0));
-            UIManager.put("nimbusSelection", new Color(0, 158, 0));
+    	    UIManager.put("nimbusSelectionBackground", drkGreen);
+            UIManager.put("nimbusSelection", drkGreen);
     	    UIManager.put("control", new Color(242, 242, 242));
     		// set Nimbus L&F
     	    for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -97,9 +114,8 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
     		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     		e.printStackTrace();
     	}
+    	
 
-        
-        
 		setResizable(false);
 		setSize(new Dimension(685, 711));
 		getContentPane().setFont(new Font("Helvetica Neue", 0, 14));
@@ -118,7 +134,6 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
 		menuOpen.add(menuItemManual);
 		menuItemManual.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
 				// open user's manual in browser on click
         		File f = new File("res/users-manual.html");
 				try {
@@ -131,10 +146,11 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
 				} catch (IOException | InterruptedException e2) {
 					e2.printStackTrace();
 				}
-				
 			}
 		});
+		
         initComponents();
+        
     }
 
     /**
@@ -147,17 +163,34 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
     private void initComponents() {
     	listModel = mCurrentFileSet;
     	listSources = new JList<String>(listModel);
+    	listSources.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
     	panelSettings = new JPanel();
     	panelFreq = new JPanel();
     	panelFreq.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
     	panelBackup = new JPanel();
     	panelNameBackup = new JPanel();
     	panelNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
+    	panelProgress = new JPanel();
+    	panelProgress.setOpaque(false);
+    	panelProgress.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
+    	progressCirc = new JProgressBar() {
+    		private static final long serialVersionUID = 1L;
+    		@Override public void updateUI() {
+                super.updateUI();
+                setUI(new ProgressCircle());
+                setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+            }
+        };
+        progressCirc.setStringPainted(true);
+        progressCirc.setFont(new Font("Helvetica Neue", Font.BOLD, 14));
+    	panelProgress.add(progressCirc);
+    	panelProgress.setVisible(false);
     	scrollSources = new JScrollPane();
+    	scrollSources.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
     	scrollStatus = new JScrollPane();
-    	scrollStatus.setFont(new Font("Helvetica Neue", Font.PLAIN, 12));
+    	scrollStatus.setViewportBorder(null);
     	lblAppTitle = new JLabel();
-    	lblAppTitle.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 0)));
+    	lblAppTitle.setBorder(new MatteBorder(0, 0, 1, 0, Color.BLACK));
     	lblSchedSync = new JLabel();
     	lblDate = new JLabel();
     	lblTime = new JLabel();
@@ -182,10 +215,23 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         //     // do something about error like a dialog box or something.
         //     e.printStackTrace();
         // }
-        
+        txtStatus = new JTextPane();
+        txtStatus.setForeground(new Color(0, 128, 0));
+        txtStatus.setFont(new Font("Helvetica Neue", Font.BOLD | Font.ITALIC, 13));
+        txtStatus.setOpaque(false);
+        txtStatus.setEditable(false);
+        txtStatus.setBackground(new Color(0, 0, 0, 0));
+        txtStatus.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        doc = txtStatus.getDocument();
         txtDestination = new JTextField();
         grpRadioSyncSwitch = new ButtonGroup();
         grpRadioFreq = new ButtonGroup();
+        try {
+			checkMark = ImageIO.read(new File("res/icons/green-check.png"));
+		} catch (IOException e3) {
+			e3.printStackTrace();
+		}
+		lblCheck = new JLabel(new ImageIcon(checkMark));
         
         radioOn = new JRadioButton();
         radioOn.addActionListener(new ActionListener() {
@@ -288,7 +334,33 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		// FIXME: see Issue #35
-    			try {
+        		
+        		btnRun.setEnabled(false);
+        		panelProgress.setVisible(true);
+        		progressCirc.setValue(0);
+        		txtStatus.setCaretPosition(doc.getLength());
+        		
+        		// re-add progress circle if previous backup removed it
+        		if (progressCirc.isDisplayable() == false) {
+        			panelProgress.remove(lblCheck);
+        			panelProgress.revalidate();
+        			panelProgress.repaint();
+        			panelProgress.add(progressCirc);
+        			panelProgress.revalidate();
+        			panelProgress.repaint();
+        		}
+        		
+            	try {
+            		if (doc.getLength() == 0) {
+            			doc.insertString(doc.getLength(), "Backup running...", null);
+            		} else {
+            			doc.insertString(doc.getLength(), "\nBackup running...", null);
+            		}
+				} catch (BadLocationException e2) {
+					e2.printStackTrace();
+				}
+        		
+        		try {
 					mCurrentFileSet.setDestination(txtDestination.getText());
 					mCurrentFileSet.setName(txtNameBackup.getText());
 				} catch (Exception e1) {
@@ -297,11 +369,20 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
 					// and have them pick a different location
 					e1.printStackTrace();
 				}
-        		FileOps ops = new FileOps(mCurrentFileSet, UIViewController.this);
-        		ops.run();
+        		
+        		FileOps worker = new FileOps(mCurrentFileSet, UIViewController.this);
+                	
+        		worker.addPropertyChangeListener(new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent event) {
+                        if ("progress".equals(event.getPropertyName())) {
+                        	progressCirc.setIndeterminate(false);
+                            progressCirc.setValue((Integer)event.getNewValue());
+                        }
+                    }
+                });
+        		worker.execute();  // worker.run();
         	}
         });
-        
         
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -457,6 +538,7 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         btnRun.setMaximumSize(new Dimension(73, 45));
         
         scrollStatus.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Status", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 12))); // NOI18N
+        scrollStatus.setFont(new Font("Helvetica Neue", Font.PLAIN, 12));
         
         panelNameBackup.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Name of Backup", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 12))); // NOI18N
 
@@ -483,39 +565,43 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         		.addGroup(gl_panelBackup.createSequentialGroup()
         			.addContainerGap()
         			.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
+        				.addComponent(lblSources)
         				.addGroup(gl_panelBackup.createSequentialGroup()
         					.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
+        						.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
+        							.addGroup(gl_panelBackup.createSequentialGroup()
+        								.addPreferredGap(ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+        								.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
+        									.addGroup(gl_panelBackup.createSequentialGroup()
+        										.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
+        											.addComponent(scrollSources, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 288, GroupLayout.PREFERRED_SIZE)
+        											.addComponent(txtDestination, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 288, GroupLayout.PREFERRED_SIZE))
+        										.addPreferredGap(ComponentPlacement.UNRELATED)
+        										.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
+        											.addComponent(btnAddFolder, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+        											.addComponent(btnAddFile, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+        											.addGroup(gl_panelBackup.createSequentialGroup()
+        												.addGroup(gl_panelBackup.createParallelGroup(Alignment.TRAILING, false)
+        													.addComponent(btnBrowse, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        													.addComponent(btnRemove, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        												.addGap(9))))
+        									.addGroup(gl_panelBackup.createSequentialGroup()
+        										.addGap(6)
+        										.addComponent(lblDestNote, GroupLayout.PREFERRED_SIZE, 405, GroupLayout.PREFERRED_SIZE))))
+        							.addComponent(scrollStatus, GroupLayout.PREFERRED_SIZE, 466, GroupLayout.PREFERRED_SIZE))
         						.addGroup(gl_panelBackup.createSequentialGroup()
-        							.addPreferredGap(ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-        							.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
-        								.addGroup(gl_panelBackup.createSequentialGroup()
-        									.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
-        										.addComponent(scrollSources, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 288, GroupLayout.PREFERRED_SIZE)
-        										.addComponent(txtDestination, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 288, GroupLayout.PREFERRED_SIZE))
-        									.addPreferredGap(ComponentPlacement.UNRELATED)
-        									.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING)
-        										.addComponent(btnAddFolder, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-        										.addComponent(btnAddFile, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-        										.addGroup(gl_panelBackup.createSequentialGroup()
-        											.addGroup(gl_panelBackup.createParallelGroup(Alignment.TRAILING, false)
-        												.addComponent(btnBrowse, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        												.addComponent(btnRemove, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        											.addGap(9))))
-        								.addGroup(gl_panelBackup.createSequentialGroup()
-        									.addGap(6)
-        									.addComponent(lblDestNote, GroupLayout.PREFERRED_SIZE, 405, GroupLayout.PREFERRED_SIZE))))
-        						.addComponent(scrollStatus, GroupLayout.PREFERRED_SIZE, 466, GroupLayout.PREFERRED_SIZE))
-        					.addPreferredGap(ComponentPlacement.UNRELATED)
-        					.addGroup(gl_panelBackup.createParallelGroup(Alignment.TRAILING, false)
-        						.addComponent(panelNameBackup, GroupLayout.PREFERRED_SIZE, 164, GroupLayout.PREFERRED_SIZE)
-        						.addGroup(gl_panelBackup.createSequentialGroup()
-        							.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        							.addPreferredGap(ComponentPlacement.RELATED)
-        							.addComponent(btnRun, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        							.addGap(6)))
-        					.addPreferredGap(ComponentPlacement.RELATED))
-        				.addComponent(lblSources)
-        				.addComponent(lblDestination))
+        							.addComponent(lblDestination)
+        							.addGap(404)))
+        					.addPreferredGap(ComponentPlacement.RELATED)
+        					.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING, false)
+        						.addGroup(gl_panelBackup.createParallelGroup(Alignment.TRAILING, false)
+        							.addComponent(panelNameBackup, GroupLayout.PREFERRED_SIZE, 164, GroupLayout.PREFERRED_SIZE)
+        							.addGroup(gl_panelBackup.createSequentialGroup()
+        								.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        								.addPreferredGap(ComponentPlacement.RELATED)
+        								.addComponent(btnRun, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        								.addGap(6)))
+        						.addComponent(panelProgress, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         			.addGap(18))
         );
         gl_panelBackup.setVerticalGroup(
@@ -534,9 +620,9 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         						.addComponent(btnAddFolder)
         						.addPreferredGap(ComponentPlacement.RELATED)
         						.addComponent(btnRemove))))
-        			.addGroup(gl_panelBackup.createParallelGroup(Alignment.LEADING, false)
+        			.addPreferredGap(ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+        			.addGroup(gl_panelBackup.createParallelGroup(Alignment.TRAILING, false)
         				.addGroup(gl_panelBackup.createSequentialGroup()
-        					.addGap(25)
         					.addComponent(lblDestination)
         					.addPreferredGap(ComponentPlacement.RELATED)
         					.addGroup(gl_panelBackup.createParallelGroup(Alignment.BASELINE)
@@ -544,17 +630,21 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         						.addComponent(btnBrowse))
         					.addPreferredGap(ComponentPlacement.RELATED)
         					.addComponent(lblDestNote)
-        					.addGap(25)
-        					.addComponent(scrollStatus, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE)
+        					.addGap(20)
+        					.addComponent(scrollStatus, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
         					.addContainerGap())
-        				.addGroup(Alignment.TRAILING, gl_panelBackup.createSequentialGroup()
+        				.addGroup(gl_panelBackup.createSequentialGroup()
+        					.addComponent(panelProgress, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)
         					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         					.addGroup(gl_panelBackup.createParallelGroup(Alignment.BASELINE)
         						.addComponent(btnRun, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
         						.addComponent(btnSave, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
         					.addGap(11))))
         );
+        panelProgress.setLayout(new GridLayout(1, 1, 0, 0));
         gl_panelBackup.linkSize(SwingConstants.HORIZONTAL, new Component[] {btnAddFile, btnAddFolder, btnRemove});
+        
+        scrollStatus.setViewportView(txtStatus);
         
         scrollSources.setViewportView(listSources);
         panelBackup.setLayout(gl_panelBackup);
@@ -592,21 +682,45 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void handleProgress(List<Progress> progressItems) {
+    @Override public void handleProgress(List<Progress> progressItems) {
+    	for (Progress p : progressItems) {
+    		if (p.sourceCopied != "") {
+    			txtStatus.setCaretPosition(doc.getLength());
+    	    	try {
+    				doc.insertString(doc.getLength(), "\nSuccessfully copied " + p.sourceCopied, null);
+    			} catch (BadLocationException e) {
+    				e.printStackTrace();
+    			}
+    		}
+    	}
     	System.out.println("got " + progressItems.size() + " progress objects.");
     }
+    
 
 	/* (non-Javadoc)
 	 * @see fileops.FileOpsMessageHandler#handleCompletion()
 	 */
-	@Override
-	public void handleCompletion() {
+	@Override public void handleCompletion() {
+		btnRun.setEnabled(true);
+		txtStatus.setCaretPosition(doc.getLength());
+		try {
+			doc.insertString(doc.getLength(), "\nBACKUP COMPLETE.", null);
+			panelProgress.remove(progressCirc);
+			panelProgress.revalidate();
+			panelProgress.repaint();
+			panelProgress.add(lblCheck);
+			panelProgress.revalidate();
+			panelProgress.repaint();
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 		System.out.println("got completion notice from FileOps");
 	}
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private ButtonGroup grpRadioSyncSwitch;
     private ButtonGroup grpRadioFreq;
+    private BufferedImage checkMark;
     private DefaultListModel<String> listModel;
     private JButton btnAddFile;
     private JButton btnAddFolder;
@@ -615,6 +729,7 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
     private JButton btnSave;
     private JButton btnRun;
     private JLabel lblAppTitle;
+    private JLabel lblCheck;
     private JLabel lblSchedSync;
     private JLabel lblSources;
     private JLabel lblDestination;
@@ -625,6 +740,8 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
     private JPanel panelBackup;
     private JPanel panelNameBackup;
     private JPanel panelFreq;
+    private JPanel panelProgress;
+    private JProgressBar progressCirc;
     private JRadioButton radioOn;
     private JRadioButton radioOff;
     private JRadioButton radioDaily;
@@ -635,11 +752,67 @@ public class UIViewController extends javax.swing.JFrame implements FileOpsMessa
     private JSpinner spinTime;
     private JTextField txtDestination;
     private JTextField txtNameBackup;
+    private JTextPane txtStatus;
     private JXDatePicker jXDatePicker;
     private JMenuBar menuBar;
     private JMenu menuOpen;
     private JMenuItem menuItemLog;
     private JMenuItem menuItemManual;
     private JList<String> listSources;
+}
 
+class ProgressCircle extends BasicProgressBarUI {
+	
+    @Override public Dimension getPreferredSize(JComponent c) {
+        Dimension d = super.getPreferredSize(c);
+        int v = Math.max(d.width, d.height);
+        d.setSize(v, v);
+        return d;
+    }
+    
+    // set progressCirc string color
+    @Override protected Color getSelectionBackground() { return UIViewController.drkGreen; }
+    
+    @Override public void paint(Graphics g, JComponent c) {
+        Insets b = progressBar.getInsets();   // area for border
+        int barRectWidth  = progressBar.getWidth()  - b.right - b.left;
+        int barRectHeight = progressBar.getHeight() - b.top - b.bottom;
+        if (barRectWidth <= 0 || barRectHeight <= 0) {
+            return;
+        }
+
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        double degree = 360 * progressBar.getPercentComplete();
+        double sz = Math.min(barRectWidth, barRectHeight);
+        double cx = b.left + barRectWidth  * .5;
+        double cy = b.top  + barRectHeight * .5;
+        double or = sz * .5;
+        double ir = or * .8;    // change circle width
+        Shape inner  = new Ellipse2D.Double(cx - ir, cy - ir, ir * 2, ir * 2);
+        Shape outer  = new Ellipse2D.Double(cx - or, cy - or, sz, sz);
+        Shape sector = new Arc2D.Double(cx - or, cy - or, sz, sz, 90 - degree, degree, Arc2D.PIE);
+
+        Area foreground = new Area(sector);
+        Area background = new Area(outer);
+        Area hole = new Area(inner);
+
+        foreground.subtract(hole);
+        background.subtract(hole);
+
+        // draw the track
+        g2.setPaint(new Color(0xDDDDDD));
+        g2.fill(background);
+
+        // draw the circular sector
+        g2.setPaint(new Color(150, 255, 105));
+        g2.fill(foreground);
+        g2.dispose();
+
+        // deal with possible text painting
+        if (progressBar.isStringPainted()) {
+            paintString(g, b.left, b.top, barRectWidth, barRectHeight, 0, b);
+        }
+    }
 }

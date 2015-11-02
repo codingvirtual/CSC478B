@@ -6,15 +6,14 @@
  * <h3>Revision History</h3>
  * <p>
  * 0.1.0	GP	Initial revision
+ * 0.1.1	AR	Add SwingUtilities to main()
  * 
  * </p>
  */
 package app;
 
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.UnsupportedLookAndFeelException;
-
 import ui.UIViewController;
 import core.FileSet;
 
@@ -74,24 +73,24 @@ public class Application {
 
 	public static void main(String args[]) {
 		
-	    try {
-			java.awt.EventQueue.invokeAndWait(new Runnable() {
+//	    try {
+//			java.awt.EventQueue.invokeAndWait(new Runnable() {
+	    	javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			    public void run() {
 			        try {
-						new UIViewController(new Application()).setVisible(true);;
+						new UIViewController(new Application()).setVisible(true);
 					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 							| UnsupportedLookAndFeelException e) {
 						e.printStackTrace();
 					}
 			    }
 			});
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-        
+//		} catch (InvocationTargetException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+	}     
 }

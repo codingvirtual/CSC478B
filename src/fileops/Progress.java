@@ -11,6 +11,7 @@
  */
 package fileops;
 
+
 /**
  * @author Greg
  *
@@ -44,10 +45,12 @@ public class Progress {
 	 * 		should equal totalFiles. It is suggested to use the completedFiles == totalFiles
 	 * 		comparison just in case the File System erroneously reports file sizes.
 	 */
+	public String sourceCopied;
 	public long totalBytes;
 	public long completedBytes;
 	public int totalFiles;
 	public int completedFiles;
+	
 	/**
 	 * @param percentComplete
 	 * @param totalBytes
@@ -55,7 +58,8 @@ public class Progress {
 	 * @param totalFiles
 	 * @param completedFiles
 	 */
-	public Progress(long totalBytes, long completedBytes, int totalFiles, int completedFiles) {
+	public Progress(String sourceCopied, long totalBytes, long completedBytes, int totalFiles, int completedFiles) {
+		this.sourceCopied = sourceCopied;
 		this.totalBytes = totalBytes;
 		this.completedBytes = completedBytes;
 		this.totalFiles = totalFiles;
