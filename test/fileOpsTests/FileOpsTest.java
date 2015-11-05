@@ -13,6 +13,7 @@ package fileOpsTests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -21,7 +22,9 @@ import java.util.concurrent.Executors;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import core.FileSet;
 import fileops.FileOps;
@@ -40,14 +43,20 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	private Boolean completionReceived = false;
 	final CountDownLatch latch = new CountDownLatch(1);
 	
+	
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
 		files.setName("Copy");
-		files.setDestination("/Users/Greg/Google Drive/");
-		files.addElement("/Users/Greg/Documents/Udacity Classes/Developing Scalable Apps/ud859-master/Lesson_2/00_Conference_Central/src/main/webapp/index.html");
+		File path = tempFolder.getRoot();
+		String dest = path.toString();
+		files.setDestination(dest);
+		files.addElement("/Users/zackburch/Desktop/test/test.txt");
 	}
 
 	/**
