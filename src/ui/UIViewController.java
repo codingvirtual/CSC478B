@@ -324,6 +324,18 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         btnSave = new JButton();
         btnSave.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		try {
+					mCurrentFileSet.setName(txtNameBackup.getText());
+				} catch (Exception e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				}
+        		try {
+					FileSet.save(txtDestination.getText(), mCurrentFileSet);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	}
         });
         
