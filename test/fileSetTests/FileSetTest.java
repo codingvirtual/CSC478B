@@ -20,15 +20,18 @@ import core.FileSet;
 
 public class FileSetTest {
 	
+	//Need to rename these to tester's file system
 	private String source = "/Users/zackburch/Desktop/test/test.txt";
 	private String sourceb = "/Users/zackburch/Desktop/test/test2.txt";
 	private String sourceFail = "/Users/zackburch/Desktop/testFail.txt";
-	private String dest = "Users/zackburch/Google Drive/Test";
-	private String destb = "Users/zackburch/Google Drive/Test2";
-	private String destFail = "Users/zackburch/GoogleDrive/TestFail";
-	private String fsPath = "/Users/zackburch/Desktop/test";
-	private String invalidFsPathDir = "/Users/zackburch/Desktop/invalid";
-	private String invalidFsPathFile = "/Users/zackburch/Desktop/test/testpath.txt";
+	private String dest = "Users/zackburch/Google Drive/Test/";
+	private String destb = "Users/zackburch/Google Drive/Test2/";
+	private String destFail = "Users/zackburch/GoogleDrive/TestFail/";
+	private String fsPathDir = "/Users/zackburch/Desktop/test/";
+	private String invalidFsPathDir = "/Users/zackburch/Desktop/invalid/";
+	private String fsPathFile = "/Users/zackburch/Desktop/test/testpath.txt";
+	
+	//Backup "name" test variables
 	private String backupName = "backup";
 	private String invalidBackupName = "back*up";
 
@@ -180,13 +183,13 @@ public class FileSetTest {
 	public void testGetName() {
 		
 		//test null in empty constructor
-		FileSet fs1 = new FileSet();
-		assertEquals(fs1.getName(), null);
+		FileSet fs = new FileSet();
+		assertEquals(fs.getName(), null);
 		
 		//test when valid name is present
 		try { 
-			fs1.setName(backupName);
-			assertEquals(fs1.getName(),backupName);
+			fs.setName(backupName);
+			assertEquals(fs.getName(),backupName);
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
@@ -197,33 +200,33 @@ public class FileSetTest {
 	
 		//test valid input via setter
 		try {
-			FileSet fs1 = new FileSet();
-			fs1.setName(backupName);
-			assertEquals(fs1.getName(),backupName);
+			FileSet fs = new FileSet();
+			fs.setName(backupName);
+			assertEquals(fs.getName(),backupName);
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
 		
 		//test valid input via single param constructor
 		try {
-			FileSet fs2 = new FileSet(backupName);
-			assertEquals(fs2.getName(), backupName);
+			FileSet fs = new FileSet(backupName);
+			assertEquals(fs.getName(), backupName);
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
 		
 		//test valid input via dual param constructor
 		try {
-			FileSet fs3 = new FileSet(backupName, dest);
-			assertEquals(fs3.getName(), backupName);
+			FileSet fs = new FileSet(backupName, dest);
+			assertEquals(fs.getName(), backupName);
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
 		
 		//test invalid input via setter
 		try {
-			FileSet fs4 = new FileSet();
-			fs4.setName(invalidBackupName);
+			FileSet fs = new FileSet();
+			fs.setName(invalidBackupName);
 			fail("Should not accept backup names with prohibited characters");
 		} catch (Exception e) {
 			assert(true);
@@ -232,7 +235,7 @@ public class FileSetTest {
 		//test invalid input via single param constructor
 		try {
 			@SuppressWarnings("unused")
-			FileSet fs5 = new FileSet(invalidBackupName);
+			FileSet fs = new FileSet(invalidBackupName);
 			fail("Should not accept backup names with prohibited characters");
 		} catch (Exception e) {
 			assert(true);
@@ -241,7 +244,7 @@ public class FileSetTest {
 		//test invalid input via single param constructor
 		try {
 			@SuppressWarnings("unused")
-			FileSet fs6 = new FileSet(invalidBackupName, dest);
+			FileSet fs = new FileSet(invalidBackupName, dest);
 			fail("Should not accept backup names with prohibited characters");
 		} catch (Exception e) {
 			assert(true);
@@ -252,20 +255,19 @@ public class FileSetTest {
 	public void testSave() {
 		
 		//test save empty file set to be saved
-		FileSet fs1 = new FileSet();
 		try {
-			FileSet.save(fsPath, fs1);
+			FileSet fs = new FileSet();
+			FileSet.save(fsPathDir, fs);
 			fail("FileSet is required to have a name");
 		} catch (IOException e) {
 			assert(true);
 		}
 		
 		// test save named file set at valid location
-		FileSet fs2;
 		try {
-			fs2 = new FileSet(backupName);
+			FileSet fs = new FileSet(backupName);
 			try {
-				FileSet.save(fsPath, fs2);
+				FileSet.save(fsPathDir, fs);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -276,11 +278,10 @@ public class FileSetTest {
 		}
 		
 		//test save named file set at non-existent directory
-		FileSet fs3;
 		try {
-			fs3 = new FileSet(backupName);
+			FileSet fs = new FileSet(backupName);
 			try {
-				FileSet.save(invalidFsPathDir, fs3);
+				FileSet.save(invalidFsPathDir, fs);
 				fail("Directory does not exist, should refuse save");
 			} catch (IOException e) {
 				assert(true);
@@ -291,11 +292,10 @@ public class FileSetTest {
 		}
 		
 		// test save named file set at "file" path
-		FileSet fs4;
 		try {
-			fs4 = new FileSet(backupName);
+			FileSet fs = new FileSet(backupName);
 			try {
-				FileSet.save(invalidFsPathFile, fs4);
+				FileSet.save(fsPathFile, fs);
 				fail("Filepath should be a directory, not File");
 			} catch (IOException e) {
 				assert(true);
@@ -306,11 +306,10 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized empty file set at valid location
-		FileSet fs5;
 		try {
-			fs5 = new FileSet(backupName, dest);
+			FileSet fs = new FileSet(backupName, dest);
 			try {
-				FileSet.save(fsPath, fs5);
+				FileSet.save(fsPathDir, fs);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -321,11 +320,10 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized empty file set at non-existent directory
-		FileSet fs6;
 		try {
-			fs6 = new FileSet(backupName, dest);
+			FileSet fs = new FileSet(backupName, dest);
 			try {
-				FileSet.save(invalidFsPathDir, fs6);
+				FileSet.save(invalidFsPathDir, fs);
 				fail("Directory does not exist, should refuse save");
 			} catch (IOException e) {
 				assert(true);
@@ -336,11 +334,10 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized empty file set at "file" path
-		FileSet fs7;
 		try {
-			fs7 = new FileSet(backupName, dest);
+			FileSet fs = new FileSet(backupName, dest);
 			try {
-				FileSet.save(invalidFsPathFile, fs7);
+				FileSet.save(fsPathFile, fs);
 				fail("Filepath should be a directory, not File");
 			} catch (IOException e) {
 				assert(true);
@@ -351,13 +348,12 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized file set with files at valid location
-		FileSet fs8;
 		try {
-			fs8 = new FileSet(backupName, dest);
-			fs8.addElement(source);
-			fs8.addElement(sourceb);
+			FileSet fs = new FileSet(backupName, dest);
+			fs.addElement(source);
+			fs.addElement(sourceb);
 			try {
-				FileSet.save(fsPath, fs8);
+				FileSet.save(fsPathDir, fs);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -368,13 +364,12 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized file set with files at non-existent directory
-		FileSet fs9;
 		try {
-			fs9 = new FileSet(backupName, dest);
-			fs9.addElement(source);
-			fs9.addElement(sourceb);
+			FileSet fs = new FileSet(backupName, dest);
+			fs.addElement(source);
+			fs.addElement(sourceb);
 			try {
-				FileSet.save(invalidFsPathDir, fs9);
+				FileSet.save(invalidFsPathDir, fs);
 				fail("Directory does not exist, should refuse save");
 			} catch (IOException e) {
 				assert(true);
@@ -385,13 +380,12 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized file set with files at "file" path
-		FileSet fs10;
 		try {
-			fs10 = new FileSet(backupName, dest);
-			fs10.addElement(source);
-			fs10.addElement(sourceb);
+			FileSet fs = new FileSet(backupName, dest);
+			fs.addElement(source);
+			fs.addElement(sourceb);
 			try {
-				FileSet.save(fsPath, fs10);
+				FileSet.save(fsPathDir, fs);
 				fail("Filepath should be a directory, not File");
 			} catch (IOException e) {
 				assert(true);
@@ -404,7 +398,51 @@ public class FileSetTest {
 	
 	@Test
 	public void testRead() {
+		//test with valid path argument
+		try {
+			FileSet fs1 = new FileSet(backupName, dest);
+			fs1.addElement(source);
+			fs1.addElement(sourceb);
+			try {
+				FileSet.save(fsPathDir, fs1);
+				assert(true);
+			} catch (IOException e) {
+				fail("Could not save the file set");
+			}
+			try {
+				String path = fsPathDir + backupName;
+				FileSet fs2 = FileSet.read(path);
+				assertEquals(fs1,fs2);
+			} catch (Exception e) {
+				fail("IO Error on read()");
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
 		
-		
+		//test with invalid path argument
+		try {
+			FileSet fs1 = new FileSet(backupName, dest);
+			fs1.addElement(source);
+			fs1.addElement(sourceb);
+			try {
+				FileSet.save(fsPathDir, fs1);
+				assert(true);
+			} catch (IOException e) {
+				fail("Could not save the file set");
+			}
+			try {
+				String path = fsPathDir + backupName + "1";
+				@SuppressWarnings("unused")
+				FileSet fs2 = FileSet.read(path);
+				fail("Should not accept non-existant filepath");
+			} catch (Exception e) {
+				assert(true);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("Could not create the file set");
+		}
 	}
 }
