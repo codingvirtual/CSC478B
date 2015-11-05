@@ -24,10 +24,10 @@ public class FileSetTest {
 	private String source = "/Users/zackburch/Desktop/test/test.txt";
 	private String sourceb = "/Users/zackburch/Desktop/test/test2.txt";
 	private String sourceFail = "/Users/zackburch/Desktop/testFail.txt";
-	private String dest = "Users/zackburch/Google Drive/Test/";
-	private String destb = "Users/zackburch/Google Drive/Test2/";
-	private String destFail = "Users/zackburch/GoogleDrive/TestFail/";
-	private String fsPathDir = "/Users/zackburch/Desktop/test/";
+	private String dest = "/Users/zackburch/Google Drive/Test/";
+	private String destb = "/Users/zackburch/Google Drive/Test2/";
+	private String destFail = "/Users/zackburch/GoogleDrive/TestFail/";
+	private String fsPathDir = "/Users/zackburch/Desktop/test/test/";
 	private String invalidFsPathDir = "/Users/zackburch/Desktop/invalid/";
 	private String fsPathFile = "/Users/zackburch/Desktop/test/testpath.txt";
 	
@@ -255,6 +255,7 @@ public class FileSetTest {
 	public void testSave() {
 		
 		//test save empty file set to be saved
+		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet();
 			FileSet.save(fsPathDir, fs);
@@ -264,6 +265,7 @@ public class FileSetTest {
 		}
 		
 		// test save named file set at valid location
+		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName);
 			try {
@@ -306,6 +308,7 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized empty file set at valid location
+		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			try {
@@ -348,6 +351,7 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized file set with files at valid location
+		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			fs.addElement(source);
@@ -380,6 +384,7 @@ public class FileSetTest {
 		}
 		
 		//test save fully parameterized file set with files at "file" path
+		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			fs.addElement(source);
@@ -399,6 +404,7 @@ public class FileSetTest {
 	@Test
 	public void testRead() {
 		//test with valid path argument
+		//TODO - Null Pointer on save()
 		try {
 			FileSet fs1 = new FileSet(backupName, dest);
 			fs1.addElement(source);
