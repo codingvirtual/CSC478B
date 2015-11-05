@@ -85,17 +85,19 @@ public class FileSet extends DefaultListModel<String> {
 	}
 	
 	/**
-	 * Saves the FileSet to the path specified
-	 * @param absolutePath	The absolute path of where to save the FileSet to.
-	 * @param fileSet The FileSet object to save to disk.
+	 * Saves a FileSet to a directory. The file will have the name contained in fileSet.name and will be stored in the path
+	 * provided in the absolutePath parameter.
+	 * @param absolutePath	The absolute path to the directory of where to save the FileSet to.
+	 * @param fileSet The FileSet object to save to disk. fileSet.name will be the filename it is saved with.
 	 * @throws IOException Will throw an IOException if the destination cannot be written to or a write error occurs.
 	 */
 	public static void save(String absolutePath, FileSet fileSet) throws IOException {
 		ObjectOutputStream out = null;
 		Path outPath = Paths.get(absolutePath).toRealPath();
+		Path outFile = outPath.resolve(fileSet.getName());
 		try {
 			out = new ObjectOutputStream(new
-                    BufferedOutputStream(new FileOutputStream(outPath.toString())));
+                    BufferedOutputStream(new FileOutputStream(outFile.toString())));
 			out.writeObject(fileSet);
 		} finally {
 			out.close();
