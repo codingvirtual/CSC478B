@@ -48,7 +48,7 @@ public class FileSetTest {
 	@Test
 	public void testFileSet() {
 		FileSet fs = new FileSet();
-		assertTrue(true);
+		assertNotNull(fs);
 	}
 
 	/**
