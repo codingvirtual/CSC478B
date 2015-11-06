@@ -15,6 +15,7 @@ import static java.nio.file.LinkOption.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,7 +44,14 @@ public class FileSet extends DefaultListModel<String> {
 	
 	public FileSet(String name) throws Exception {
 		super();
-		this.setName(name);
+		Path homeDir = Paths.get(System.getProperty("user.home"));
+		Path testFilePath = homeDir.resolve(name);
+		File testFile = testFilePath.toFile();
+		if (testFile.createNewFile()) {
+			this.setName(name);
+		} else {
+			throw new IOException("FileSet with name " + name + " could not be created.");
+		}
 	}
 	
 	/**
