@@ -309,14 +309,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         		int returnVal = fc.showDialog(UIViewController.this, "Set destination");
         		if (returnVal == JFileChooser.APPROVE_OPTION) {
         			txtDestination.setText(fc.getSelectedFile().toString());
-        			// here is where I call up to the controller to set the destination
-        			// FIXME: this code is broken. Right now, the Controller manually sets
-        			// the destination to a folder named "Testing123" inside the destination
-        			// path identified below. This should really pass the Name of Backup and
-        			// the path in "Destination" up to the Controller and let it concatenate
-        			// them and put them in the FileSet destination.
-        			
-        			// check for invalid destination in btnRun()
+        			try {
+						mCurrentFileSet.setDestination(txtDestination.getText());
+					} catch (Exception e1) {
+						// FIXME: user has somehow entered a "bad" destination. Make them fix it.
+						e1.printStackTrace();
+					}
         		}
             }
         });
