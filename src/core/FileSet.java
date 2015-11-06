@@ -43,7 +43,6 @@ public class FileSet extends DefaultListModel<String> {
 	}
 	
 	public FileSet(String name) throws Exception {
-		super();
 		setName(name);
 	}
 	
@@ -53,7 +52,6 @@ public class FileSet extends DefaultListModel<String> {
 	 * @throws IOException if the path provided in destination is invalid or unreachable.
 	 */
 	public FileSet(String name, String destination) throws Exception {
-		super();
 		setName(name);
 		setDestination(destination);
 	}
@@ -130,7 +128,7 @@ public class FileSet extends DefaultListModel<String> {
 		File testFile = testFilePath.toFile();
 		if (testFile.createNewFile()) {
 			testFile.delete();
-			this.setName(name);
+			this.name = name;
 		} else {
 			throw new IOException("FileSet with name " + name + " could not be created.");
 		}
