@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,18 +35,18 @@ public class FileSet extends DefaultListModel<String> {
 	 * 
 	 */
 	private static final long serialVersionUID = 3146908287308357247L;
-	
+
 	private String destination;
 	private String name;
-	
+
 	public FileSet() {
-		
+
 	}
-	
+
 	public FileSet(String name) throws Exception {
 		setName(name);
 	}
-	
+
 	/**
 	 * Convenience constructor that creates a new, empty FileSet with the destination path specified.
 	 * @param destination String representing the full path to the destination for the backup operation. This should be a folder path.
@@ -72,9 +73,9 @@ public class FileSet extends DefaultListModel<String> {
 		ObjectInputStream in = null;
 		FileSet fileSet = null;
 		try {
-            in = new ObjectInputStream(new
-                    BufferedInputStream(new FileInputStream(inPath.toString())));
-		fileSet = (FileSet) in.readObject();
+			in = new ObjectInputStream(new
+					BufferedInputStream(new FileInputStream(inPath.toString())));
+			fileSet = (FileSet) in.readObject();
 		} catch (EOFException e) {
 			e.printStackTrace();
 		} finally {
@@ -82,7 +83,7 @@ public class FileSet extends DefaultListModel<String> {
 		}
 		return fileSet;
 	}
-	
+
 	/**
 	 * Saves a FileSet to a directory. The file will have the name contained in fileSet.name and will be stored in the path
 	 * provided in the absolutePath parameter.
@@ -96,22 +97,39 @@ public class FileSet extends DefaultListModel<String> {
 		Path outFile = outPath.resolve(fileSet.getName());
 		try {
 			out = new ObjectOutputStream(new
-                    BufferedOutputStream(new FileOutputStream(outFile.toString())));
+					BufferedOutputStream(new FileOutputStream(outFile.toString())));
 			out.writeObject(fileSet);
 		} finally {
 			out.close();
 		}
 	}
-	
 
-	
+	public void addElement(String path) throws IllegalArgumentException {
+		if (super.contains(path)) return;
+		if (validExistingPath(path)) {
+			super.addElement(path);
+		} else {
+			throw new IllegalArgumentException("Adding path failed - `" + path + "` appears to be invalid.");
+		}
+	}
+
 	// --- Getters & Setters -- //
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	public static boolean validExistingPath(String path) {
+		Path testPath = Paths.get(path);
+		File testFile = testPath.toFile();
+		return testFile.exists();
+	}
 
 	/**
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -123,17 +141,11 @@ public class FileSet extends DefaultListModel<String> {
 		if (name == null) {
 			throw new IllegalArgumentException("Name is null");
 		}
-		Path homeDir = Paths.get(System.getProperty("user.home"));
-		Path testFilePath = homeDir.resolve(name);
-		File testFile = testFilePath.toFile();
-		if (testFile.createNewFile()) {
-			testFile.delete();
+		if (validFileName(name)) {
 			this.name = name;
-		} else {
-			throw new IOException("FileSet with name " + name + " could not be created.");
 		}
 	}
-	
+
 	public String getDestination() {
 		return destination;
 	}
@@ -146,6 +158,27 @@ public class FileSet extends DefaultListModel<String> {
 		Path testDest = Paths.get(destination).toRealPath(NOFOLLOW_LINKS);
 		if (!Files.isDirectory(testDest, NOFOLLOW_LINKS)) throw new IOException("Destination does not exist or is not a directory");
 		this.destination = testDest.toRealPath(NOFOLLOW_LINKS).toString();
+	}
+
+	public static boolean validFileName(String fileName) throws IOException {
+		// Create a temporary directory
+		Path testFileDir = Files.createTempDirectory(null);
+		File testFile = testFileDir.resolve(fileName).toFile();
+		// createNewFile() will return true if the file system can create a new, empty file
+		// with the name specified at the path specified. If a file with that name already
+		// exists, it will fail, hence the check before-hand to see if the file already exists.
+		// If the file DOES exist, then obviously the fileName is valid, so use it.
+		if (testFile.exists()) {
+			testFile.delete();
+			testFileDir.toFile().delete();
+			return true;
+		} else if (testFile.createNewFile()) {
+			testFile.delete();
+			testFileDir.toFile().delete();
+			return true;
+		} else {
+			throw new IOException("FileSet with name " + fileName + " could not be created.");
+		}
 	}
 }
 
