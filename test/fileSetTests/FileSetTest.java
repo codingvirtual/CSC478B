@@ -6,6 +6,8 @@ package fileSetTests;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.junit.After;
 import org.junit.Before;
@@ -326,16 +328,41 @@ public class FileSetTest {
 	}
 	
 	@Test
+	public void given_ValidPath_when_InvokeFileSetSave_then_Success() {
+		
+		String fullPathToFileSet = fsPathDir + backupName;
+		
+		try {
+			FileSet fs = null;
+			try {
+				fs = new FileSet(backupName);
+			} catch (Exception e) {
+				// This should not happen.
+				fail("Error creating FileSet in test. This should not happen.");
+				e.printStackTrace();
+			}
+			FileSet.save(fullPathToFileSet, fs);
+			assertTrue(Files.exists(Paths.get(fullPathToFileSet)));
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("Error writing file");
+		}
+	}
+	
+	@Test
 	public void testSave() {
+		
+		String fullPathToFileSet = fsPathDir + backupName;
+		String invalidFullPathToFileSet = fsPathDir + invalidBackupName;
 		
 		//test save empty file set to be saved
 		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet();
-			FileSet.save(fsPathDir, fs);
-			fail("FileSet is required to have a name");
+			FileSet.save(fullPathToFileSet, fs);
+			assertTrue(true);
 		} catch (IOException e) {
-			assert(true);
+			fail("FileSet is required to have a name");
 		}
 		
 		// test save named file set at valid location
@@ -343,7 +370,7 @@ public class FileSetTest {
 		try {
 			FileSet fs = new FileSet(backupName);
 			try {
-				FileSet.save(fsPathDir, fs);
+				FileSet.save(fullPathToFileSet, fs);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -357,7 +384,7 @@ public class FileSetTest {
 		try {
 			FileSet fs = new FileSet(backupName);
 			try {
-				FileSet.save(invalidFsPathDir, fs);
+				FileSet.save(invalidFullPathToFileSet, fs);
 				fail("Directory does not exist, should refuse save");
 			} catch (IOException e) {
 				assert(true);
@@ -386,7 +413,7 @@ public class FileSetTest {
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			try {
-				FileSet.save(fsPathDir, fs);
+				FileSet.save(fullPathToFileSet, fs);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -400,7 +427,7 @@ public class FileSetTest {
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			try {
-				FileSet.save(invalidFsPathDir, fs);
+				FileSet.save(invalidFullPathToFileSet, fs);
 				fail("Directory does not exist, should refuse save");
 			} catch (IOException e) {
 				assert(true);
@@ -431,7 +458,7 @@ public class FileSetTest {
 			fs.addElement(source);
 			fs.addElement(sourceb);
 			try {
-				FileSet.save(fsPathDir, fs);
+				FileSet.save(fullPathToFileSet, fs);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -447,7 +474,7 @@ public class FileSetTest {
 			fs.addElement(source);
 			fs.addElement(sourceb);
 			try {
-				FileSet.save(invalidFsPathDir, fs);
+				FileSet.save(invalidFullPathToFileSet, fs);
 				fail("Directory does not exist, should refuse save");
 			} catch (IOException e) {
 				assert(true);
@@ -464,7 +491,7 @@ public class FileSetTest {
 			fs.addElement(source);
 			fs.addElement(sourceb);
 			try {
-				FileSet.save(fsPathDir, fs);
+				FileSet.save(fullPathToFileSet, fs);
 				fail("Filepath should be a directory, not File");
 			} catch (IOException e) {
 				assert(true);
@@ -472,6 +499,21 @@ public class FileSetTest {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			fail("Could not create the file set");
+		}
+	}
+	
+	@Test
+	public void given_ValidPath_when_InvokeFileSetRead_then_Success() {
+		
+		String fullPathToFileSet = fsPathDir + backupName;
+		FileSet fs = null;
+		try {
+			fs = FileSet.read(fullPathToFileSet);
+			assertNotNull(fs);
+			assertTrue(fs.getName().equals(backupName));
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("Error reading FileSet from disk.");
 		}
 	}
 	
