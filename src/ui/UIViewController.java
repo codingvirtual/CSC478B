@@ -327,15 +327,10 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         		try {
 					mCurrentFileSet.setName(txtNameBackup.getText());
 				} catch (Exception e2) {
-					// TODO Auto-generated catch block
+					// TODO Ideally, show the user a dialog box and get them to pick a different name
 					e2.printStackTrace();
 				}
-        		try {
-					FileSet.save(txtDestination.getText(), mCurrentFileSet);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				mApp.saveFileSet();
         	}
         });
         
