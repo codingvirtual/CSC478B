@@ -44,14 +44,7 @@ public class FileSet extends DefaultListModel<String> {
 	
 	public FileSet(String name) throws Exception {
 		super();
-		Path homeDir = Paths.get(System.getProperty("user.home"));
-		Path testFilePath = homeDir.resolve(name);
-		File testFile = testFilePath.toFile();
-		if (testFile.createNewFile()) {
-			this.setName(name);
-		} else {
-			throw new IOException("FileSet with name " + name + " could not be created.");
-		}
+		setName(name);
 	}
 	
 	/**
@@ -123,23 +116,24 @@ public class FileSet extends DefaultListModel<String> {
 		return name;
 	}
 
-	@SuppressWarnings("unused")
-	public
 	/**
 	 * Sets the name of the FileSet (which will become the file name if the FileSet is saved)
 	 * @param name the name to set
-	 */ Boolean setName(String name) throws Exception {
+	 */ 
+	public void setName(String name) throws Exception {
 		// TODO: add error checking to make sure the name we get is in a valid format for the filesystem
 		if (name == null) {
 			throw new IllegalArgumentException("Name is null");
 		}
-		// FIXME: implement proper name validation below and get rid of "true"
-		if (true) {
-			this.name = name;
+		Path homeDir = Paths.get(System.getProperty("user.home"));
+		Path testFilePath = homeDir.resolve(name);
+		File testFile = testFilePath.toFile();
+		if (testFile.createNewFile()) {
+			testFile.delete();
+			this.setName(name);
 		} else {
-			throw new IllegalArgumentException("Supplied name does not conform to file system naming requirements");
+			throw new IOException("FileSet with name " + name + " could not be created.");
 		}
-		return true;
 	}
 	
 	public String getDestination() {
