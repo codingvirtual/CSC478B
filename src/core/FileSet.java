@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,18 +59,24 @@ public class FileSet extends DefaultListModel<String> {
 
 	/**
 	 * Factory method that reads a FileSet from the path specified and constructs a FileSet object from the contents of the file
-	 * @param absolutePath The absolute path of where to read the FileSet from
-	 * @return FileSet The FileSet that was just read in from disk.
+	 * 
+	 * @param fullPathToFile 	The absolute path of where to read the FileSet from
+	 * @return FileSet 			The FileSet that was just read in from disk.
 	 * @throws Exception 
 	 */
-	public static FileSet read(String absolutePath) throws Exception {
+	public static FileSet read(String fullPathToFile) throws Exception {
 		// Create File object and verify the file exists, is a file (not a directory), and is readable
-		Path inPath = Paths.get(absolutePath).toRealPath();
+		Path inPath = Paths.get(fullPathToFile);
+		if (!Files.exists(inPath)) {
+			throw new IOException("File at " + fullPathToFile + " does not appear to exist.");
+		}
 		if (!Files.isReadable(inPath)) {
-			throw new IOException("File not found or not readable.");
+			throw new IOException("File at " + fullPathToFile + " does not appear to be readable (may"
+					+ "be corrupt or you don't have necessary privileges to read it.");
 		}
 		ObjectInputStream in = null;
 		FileSet fileSet = null;
+		
 		try {
 			in = new ObjectInputStream(new
 					BufferedInputStream(new FileInputStream(inPath.toString())));
@@ -87,18 +92,33 @@ public class FileSet extends DefaultListModel<String> {
 	/**
 	 * Saves a FileSet to a directory. The file will have the name contained in fileSet.name and will be stored in the path
 	 * provided in the absolutePath parameter.
-	 * @param absolutePath	The absolute path to the directory of where to save the FileSet to.
-	 * @param fileSet The FileSet object to save to disk. fileSet.name will be the filename it is saved with.
-	 * @throws IOException Will throw an IOException if the destination cannot be written to or a write error occurs.
+	 * 
+	 * @param fullPathToFile	The absolute path indicating where to create and save the FileSet. This should be a FILE
+		 * 						path and NOT a directory. The name of the saved FileSet will be the right-most element
+		 * 						in the filePath parameter. If a file with this complete path already exists, it will be 
+		 * 						overwritten with the contents of the FileSet passed in via this parameter.
+	 * @param fileSet 			The FileSet object to save to disk. 
+	 * 
+	 * @throws IOException 		Will throw an IOException if the destination cannot be written to or a write error occurs.
+	 * 
 	 */
-	public static void save(String absolutePath, FileSet fileSet) throws IOException {
+	public static void save(String fullPathToFile, FileSet fileSet) throws IOException {
 		ObjectOutputStream out = null;
-		Path outPath = Paths.get(absolutePath).toRealPath();
-		Path outFile = outPath.resolve(fileSet.getName());
+		Path outFilePath = Paths.get(fullPathToFile);
+		Path outDirPath = outFilePath.getParent();
+		
+		if (Files.exists(outFilePath)) {
+			Files.delete(outFilePath);
+		}
+		if (!Files.exists(outDirPath)) {
+			Files.createDirectories(outDirPath);
+		}
 		try {
 			out = new ObjectOutputStream(new
-					BufferedOutputStream(new FileOutputStream(outFile.toString())));
+					BufferedOutputStream(Files.newOutputStream(outFilePath)));
 			out.writeObject(fileSet);
+		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			out.close();
 		}
