@@ -137,7 +137,6 @@ public class FileSet extends DefaultListModel<String> {
 	 * @param name the name to set
 	 */ 
 	public void setName(String name) throws Exception {
-		// TODO: add error checking to make sure the name we get is in a valid format for the filesystem
 		if (name == null) {
 			throw new IllegalArgumentException("Name is null");
 		}
