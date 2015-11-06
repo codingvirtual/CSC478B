@@ -328,7 +328,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					// FIXME: Ideally, show the user a dialog box and get them to pick a different name
 					e2.printStackTrace();
 				}
-				mApp.saveFileSet();
+				mApp.saveDefaultFileSet();
         	}
         });
         
