@@ -20,27 +20,30 @@ import core.FileSet;
 
 public class FileSetTest {
 	
+	private String testRoot = System.getProperty("user.home");
+
 	//Need to rename these to tester's file system
-	private String source = "/Users/zackburch/Desktop/test/test.txt";
-	private String sourceb = "/Users/zackburch/Desktop/test/test2.txt";
-	private String sourceFail = "/Users/zackburch/Desktop/testFail.txt";
-	private String dest = "/Users/zackburch/Google Drive/Test/";
-	private String destb = "/Users/zackburch/Google Drive/Test2/";
-	private String destFail = "/Users/zackburch/GoogleDrive/TestFail/";
-	private String fsPathDir = "/Users/zackburch/Desktop/test/test/";
-	private String invalidFsPathDir = "/Users/zackburch/Desktop/invalid/";
-	private String fsPathFile = "/Users/zackburch/Desktop/test/testpath.txt";
+	private String source = testRoot + "/Desktop/test/test.txt";
+	private String sourceb = testRoot + "/Desktop/test/test2.txt";
+	private String sourceFail = testRoot + "/Desktop/testFail.txt";
+	private String dest = testRoot + "/Google Drive/Test/";
+	private String destb = testRoot + "/Google Drive/Test2/";
+	private String destFail = testRoot + "/GoogleDrive/TestFail/";
+	private String destFail2 = testRoot + "/GoogleDrive/TestFail/@@@//*";
+	private String fsPathDir = testRoot + "/Desktop/test/test/";
+	private String invalidFsPathDir = testRoot + "/Desktop/invalid/";
+	private String invalidFsPathDir2 = testRoot + "/Desktop/@@@//*";
+	private String fsPathFile = testRoot + "/Desktop/test/testpath.txt";
 	
 	//Backup "name" test variables
 	private String backupName = "backup";
-	private String invalidBackupName = "back*up";
+	private String invalidBackupName = "@@@//*";
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		
 	}
 
 	/**
@@ -64,13 +67,34 @@ public class FileSetTest {
 	 * Test method for {@link core.FileSet#FileSet(java.lang.String)}.
 	 */
 	@Test
-	public void testFileSetName() {
+	public void given_ValidFileSetName_when_CreatingFileSet_then_Success() {
 		try {
-			@SuppressWarnings("unused")
 			FileSet fs = new FileSet("name");
+			assertNotNull(fs);
 		} catch (Exception e) {
 			fail("Could not set up fileset with name");
 			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void given_valid_fileName_when_validated_then_testPasses() {
+		try {
+			assertTrue(FileSet.validFileName(backupName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void given_invalid_fileName_when_validated_then_testFails() {
+		try {
+			System.out.println(FileSet.validFileName(invalidBackupName));
+			assertFalse(FileSet.validFileName(invalidBackupName));
+		} catch (IOException e) {
+			System.out.println("exception occurred");
+			e.printStackTrace();
+			assert(true);
 		}
 	}
 	
@@ -88,6 +112,23 @@ public class FileSetTest {
 		}
 	}
 
+	/**
+	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
+	 */
+	@Test
+	public void given_InvalidPath_when_TryingToAddToFileSet_then_ExceptionShouldOccur() {
+		FileSet fs = new FileSet();
+		
+		try {
+			//test adding an invalid filename
+			fs.addElement(sourceFail);
+			assertFalse(fs.contains(sourceFail));
+			fail("Adding an invalid filename or path should have caused an excpetion.");
+		} catch (Exception e) {
+			assertTrue(true);
+		}
+	}
+	
 	/**
 	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 */
@@ -116,6 +157,39 @@ public class FileSetTest {
 		assertFalse(fs.getSize() > 2);
 	}
 
+	/**
+	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
+	 */
+	@Test
+	public void given_InvalidPath_when_AddingToFileSet_then_ExceptionShouldOccur() {
+		FileSet fs = new FileSet();
+
+		//test adding an invalid filename, which should throw an exception
+		try {
+			fs.addElement(sourceFail);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertFalse(fs.contains(sourceFail));
+			assertTrue(true);
+		}
+	}
+	
+	/**
+	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
+	 */
+	@Test
+	public void given_ValidPath_when_AddingItTwice_then_DuplicateShouldntOccur() {
+		FileSet fs = new FileSet();
+		
+		//test adding a file
+		fs.addElement(source);
+		assertTrue(fs.contains(source));
+		
+		//test for duplicate file paths
+		fs.addElement(source);
+		assertFalse(fs.getSize() > 1);
+	}
+	
 	/**
 	 * Test method for {@link core.FileSet#removePath(java.io.File)}.
 	 */
