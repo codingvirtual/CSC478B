@@ -16,8 +16,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -79,7 +77,7 @@ public class FileSet extends DefaultListModel<String> {
 		
 		try {
 			in = new ObjectInputStream(new
-					BufferedInputStream(new FileInputStream(inPath.toString())));
+					BufferedInputStream(Files.newInputStream(inPath)));
 			fileSet = (FileSet) in.readObject();
 		} catch (EOFException e) {
 			e.printStackTrace();
