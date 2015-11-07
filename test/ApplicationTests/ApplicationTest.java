@@ -87,6 +87,8 @@ public class ApplicationTest {
 	public void testSetCurrentFileSet() {
 		Application app = null;
 		FileSet fs = null;
+		FileSet fs2 = null;
+		
 		try {
 			fs = new FileSet("testFileSet");
 		} catch (Exception e) {
@@ -102,8 +104,22 @@ public class ApplicationTest {
 			e.printStackTrace();
 		}
 		app.setCurrentFileSet(fs);
-		FileSet fs2 = app.getCurrentFileSet();
+		try {
+			fs2 = app.getCurrentFileSet();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail("Exception while trying to get current"
+					+ "file set.");
+		}
+		assertNotNull(fs2);
 		assertEquals(fs, fs2);
 	}
 
+	@Test
+	public void testSaveDefaultFileSet() throws Exception {
+		Application app = new Application();
+		app.saveDefaultFileSet();
+		
+	}
 }

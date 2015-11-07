@@ -13,6 +13,7 @@
 package app;
 
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -27,18 +28,19 @@ import core.FileSet;
 public class Application {
 
 	private FileSet mCurrentFileSet;
-	
+
 	public Application() throws Exception {
 		// look for current FileSet file on disk
 		// if exists, read it and set the currentFileSet to it
 		// else create a new FileSet and set it as current
 		getDefaultFileSet();
 	}
-	
+
 	/**
 	 * @return the currentFileSet
+	 * @throws Exception 
 	 */
-	public FileSet getCurrentFileSet() {
+	public FileSet getCurrentFileSet() throws Exception {
 		if (mCurrentFileSet == null) {
 			getDefaultFileSet();
 		}
@@ -53,68 +55,71 @@ public class Application {
 				+ "to a 'null' object.");
 		this.mCurrentFileSet = fileSet;
 	}
-	
-	private void getDefaultFileSet() {
+
+	private void getDefaultFileSet() throws Exception {
 		/**
 		 * Reads a FileSet from the specified location
 		 */
 		Path defaultFileSet = Paths.get(System.getProperty("user.home"));
-		defaultFileSet.resolve("Mirror");
-		defaultFileSet.resolve("DefaultFileSet");
-		try {
-			mCurrentFileSet = FileSet.read(defaultFileSet.toAbsolutePath().toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			mCurrentFileSet = new FileSet();
+		defaultFileSet = defaultFileSet.resolve("Mirror");
+		defaultFileSet = defaultFileSet.resolve("DefaultFileSet");
+		if (Files.isReadable(defaultFileSet)) {
+			try {
+				mCurrentFileSet = FileSet.read(defaultFileSet.toAbsolutePath().toString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			mCurrentFileSet = new FileSet("DefaultFileSet");
 		}
 	}
-	
-	
+
+
 	public void saveDefaultFileSet() {
 		/**
 		 * Saves FileSet to the default location (whatever that may be)
 		 */
-		Path appFilesDir = Paths.get(System.getProperty("user.home"));
-		appFilesDir.resolve("Mirror");
+		Path defaultFSPath = Paths.get(System.getProperty("user.home"));
+		defaultFSPath = defaultFSPath.resolve("Mirror");
+		defaultFSPath = defaultFSPath.resolve("DefaultFileSet");
 		try {
-			FileSet.save(appFilesDir.toAbsolutePath().toString(), mCurrentFileSet);
-			} catch (Exception e) {
+			FileSet.save(defaultFSPath.toString(), mCurrentFileSet);
+		} catch (Exception e) {
 			// FIXME: generate an error if unable to set name (this shouldn't happen)
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String args[]) {
-		
-//	    try {
-//			java.awt.EventQueue.invokeAndWait(new Runnable() {
-		
-		
-		
-		
-	    	javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			    public void run() {
-			        try {
-						new UIViewController(new Application()).setVisible(true);
-					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-							| UnsupportedLookAndFeelException e) {
-						e.printStackTrace();
-					} catch (Exception e) {
-						System.out.println("Unable to create Application object.");
-						e.printStackTrace();
-					}
-			    }
-			});
-	    	
-	    	
-	    	
-//		} catch (InvocationTargetException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
+		//	    try {
+		//			java.awt.EventQueue.invokeAndWait(new Runnable() {
+
+
+
+
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					new UIViewController(new Application()).setVisible(true);
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+						| UnsupportedLookAndFeelException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					System.out.println("Unable to create Application object.");
+					e.printStackTrace();
+				}
+			}
+		});
+
+
+
+		//		} catch (InvocationTargetException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (InterruptedException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 	}     
 }
