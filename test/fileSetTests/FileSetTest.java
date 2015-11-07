@@ -31,15 +31,15 @@ public class FileSetTest {
 	private String dest = testRoot + "/Google Drive/Test/";
 	private String destb = testRoot + "/Google Drive/Test2/";
 	private String destFail = testRoot + "/GoogleDrive/TestFail/";
-	private String destFail2 = testRoot + "/GoogleDrive/TestFail/@@@//*";
+	private String destFail2 = testRoot + "/GoogleDrive/TestFail//.....//*";
 	private String fsPathDir = testRoot + "/Desktop/test/test/";
 	private String invalidFsPathDir = testRoot + "/Desktop/invalid/";
-	private String invalidFsPathDir2 = testRoot + "/Desktop/@@@//*";
+	private String invalidFsPathDir2 = testRoot + "/Desktop//.....//*";
 	private String fsPathFile = testRoot + "/Desktop/test/testpath.txt";
 	
 	//Backup "name" test variables
 	private String backupName = "backup";
-	private String invalidBackupName = "@@@//*";
+	private String invalidBackupName = "/.....//*";
 
 	/**
 	 * @throws java.lang.Exception
