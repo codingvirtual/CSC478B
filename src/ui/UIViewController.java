@@ -91,8 +91,9 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	
 	/**
      * Creates new form UIViewController
+	 * @throws Exception 
      */
-    public UIViewController(Application app) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+    public UIViewController(Application app) throws Exception {
     	
     	mApp = app;
     	mCurrentFileSet = mApp.getCurrentFileSet();
