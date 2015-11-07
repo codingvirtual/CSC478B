@@ -67,7 +67,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 import javax.swing.text.BadLocationException;
