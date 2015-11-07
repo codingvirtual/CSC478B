@@ -69,9 +69,10 @@ public class ApplicationTest {
 		// first within this block and then see if getCurrentFileSet
 		// retrieves it properly, but that assumes that setCurrentFileSet
 		// works properly.
+		FileSet fs = null;
 		try {
-			FileSet fs = new Application().getCurrentFileSet();
-			assertTrue(true);
+			fs = new Application().getCurrentFileSet();
+			assertNotNull(fs);
 		} catch (Exception e) {
 			fail("Exception trying to create Application object while testing"
 					+ "getCurrentFileSet.");
