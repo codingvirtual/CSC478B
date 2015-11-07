@@ -60,7 +60,6 @@ public class FileSetTest {
 	 */
 	@Test
 	public void testFileSet() {
-		@SuppressWarnings("unused")
 		FileSet fs = new FileSet();
 		assertNotNull(fs);
 	}
