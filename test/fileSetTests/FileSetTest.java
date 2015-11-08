@@ -54,12 +54,16 @@ public class FileSetTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+	
+	/**
+	 * TEST CONSTRUCTORS
+	 */
 
 	/**
 	 * Test method for {@link core.FileSet#FileSet()}.
 	 */
 	@Test
-	public void testFileSet() {
+	public void given_EmptyDefaultConstructor_when_Validated_then_TestSucceeds() {
 		FileSet fs = new FileSet();
 		assertNotNull(fs);
 	}
@@ -70,7 +74,7 @@ public class FileSetTest {
 	@Test
 	public void given_ValidFileSetName_when_CreatingFileSet_then_Success() {
 		try {
-			FileSet fs = new FileSet("name");
+			FileSet fs = new FileSet(backupName);
 			assertNotNull(fs);
 		} catch (Exception e) {
 			fail("Could not set up fileset with name");
@@ -78,6 +82,24 @@ public class FileSetTest {
 		}
 	}
 	
+	/**
+	 * Test method for {@link core.FileSet#FileSet(java.lang.String, java.lang.String)}.
+	 */
+	@Test
+	public void given_ValidDestValidName_when_Validated_then_TestSucceeds() {
+		try {
+			FileSet fs = new FileSet(backupName, dest);
+			assertNotNull(fs);
+		} catch (Exception e) {
+			fail("Could not set up fileset with name and destination");
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/*
+	 * TEST VALID FILE NAME
+	 */
 	@Test
 	public void given_valid_fileName_when_validated_then_testPasses() {
 		try {
@@ -99,20 +121,21 @@ public class FileSetTest {
 		}
 	}
 	
+	/*
+	 * TEST ADD PATH
+	 */
+	
 	/**
-	 * Test method for {@link core.FileSet#FileSet(java.lang.String, java.lang.String)}.
+	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 */
 	@Test
-	public void testFileSetNameDest() {
-		try {
-			@SuppressWarnings("unused")
-			FileSet fs = new FileSet("name", dest);
-		} catch (Exception e) {
-			fail("Could not set up fileset with name and destination");
-			e.printStackTrace();
-		}
+	public void given_ValidPath_when_AddingToFileSet_then_ExceptionShouldntOccur() {
+		FileSet fs = new FileSet();
+		//test adding a file
+		fs.addElement(source);
+		assertTrue(fs.contains(source));
 	}
-
+	
 	/**
 	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 */
@@ -128,34 +151,6 @@ public class FileSetTest {
 		} catch (Exception e) {
 			assertTrue(true);
 		}
-	}
-	
-	/**
-	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
-	 */
-	@Test
-	public void testAddPath() {
-		FileSet fs = new FileSet();
-		
-		//test adding a file
-		fs.addElement(source);
-		assertTrue(fs.contains(source));
-		
-		//test adding an invalid filename
-		fs.addElement(sourceFail);
-		assertFalse(fs.contains(sourceFail));
-		
-		//test for duplicate file paths
-		fs.addElement(source);
-		assertFalse(fs.getSize() > 1);
-		
-		//test add second file
-		fs.addElement(sourceb);
-		assertTrue(fs.contains(sourceb));
-		
-		//test for duplicate paths with valid path between
-		fs.addElement(source);
-		assertFalse(fs.getSize() > 2);
 	}
 
 	/**
@@ -192,29 +187,53 @@ public class FileSetTest {
 	}
 	
 	/**
+	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
+	 */
+	@Test
+	public void given_ValidPath_when_AddingItTwiceWithValidFileBetween_then_DuplicateShouldntOccur() {
+		FileSet fs = new FileSet();
+		
+		//test adding a file
+		fs.addElement(source);
+		assertTrue(fs.contains(source));
+		
+		//test adding second file
+		fs.addElement(sourceb);
+		assertTrue(fs.contains(sourceb));
+		
+		//test for duplicate file paths
+		fs.addElement(source);
+		assertFalse(fs.getSize() > 2);
+	}
+	
+	/*TEST REMOVE PATH
+	
+	/**
 	 * Test method for {@link core.FileSet#removePath(java.io.File)}.
 	 */
 	@Test
-	public void testRemovePath() {
+	public void given_ExistingFile_when_RemovingPath_then_TestSucceeds() {
 		FileSet fs = new FileSet();
 		fs.addElement(source);
 		assertTrue(fs.size() == 1);
 		fs.removeElement(source);
 		assertFalse(fs.contains(source));
-		
-		//test removePath() when no paths exist
-		assertTrue(fs.size() == 0);
+	}
+	
+	@Test
+	public void given_EmptyFileSet_when_RemovingFile_then_FileSetRemainsEmpty(){
+		FileSet fs = new FileSet();
 		fs.removeElement(source);
 		assertTrue(fs.size() == 0);
 	}
-
 	
+	//TEST GET DESTINATION
 
 	/**
 	 * Test method for {@link core.FileSet#getDestination()}.
 	 */
 	@Test
-	public void testGetDestination() {
+	public void given_EmptyFileSet_when_GetDestination_then_NullReturned() {
 		FileSet fs = new FileSet();
 		assertEquals(fs.getDestination(), null);
 		try {
@@ -222,46 +241,84 @@ public class FileSetTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals(fs.getDestination(), dest);
+		assertEquals(fs.getDestination()+"/", dest);
+	}
+	
+	@Test
+	public void given_FileSetWithDest_when_GetDestination_then_DestinationReturned(){
+		FileSet fs = new FileSet();
+		try {
+			fs.setDestination(dest);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertEquals(fs.getDestination()+"/", dest);
 	}
 
+	
+	//TEST SET DESTINATION
 	/**
 	 * Test method for {@link core.FileSet#setDestination(java.lang.String)}.
 	 */
 	@Test
-	public void testSetDestination() {
+	public void given_EmptyFileSet_when_SetDestWithValidDest_then_TestSucceeds() {
 		FileSet fs = new FileSet();
 		try {
 			fs.setDestination(dest);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-		assertEquals(fs.getDestination(), dest);
+		assertEquals(fs.getDestination()+"/", dest);
+	}
+	
+	@Test
+	public void given_FileSetWithDest_when_SetDestWithNewValidDest_then_TestSucceeds() {
+		FileSet fs = new FileSet();
+		//test set first destination
+		try {
+			fs.setDestination(dest);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			fail("could not set destination");
+		}
+		assertEquals(fs.getDestination()+"/", dest);
 		
-		//test that adding a new destination replaces old destination
+		//test set replacement destination
 		try {
 			fs.setDestination(destb);
 		} catch (Exception e1) {
 			e1.printStackTrace();
+			fail("Could not replace destination");
 		}
-		assertEquals(fs.getDestination(), destb);
-		
+		assertEquals(fs.getDestination()+"/", destb);
+	}
+	
+	@Test
+	public void given_InvalidDestination_when_SetDest_then_Exception(){
+		FileSet fs = new FileSet();
 		//test adding invalid destination does not replace old destination
 		try { 
 			fs.setDestination(destFail);
 		} catch (Exception e){
 			assertFalse(fs.getDestination() == destFail);
-		}	
+		}
 	}
 	
+	/*
+	 * TEST GET NAME
+	 */
+	
 	@Test
-	public void testGetName() {
+	public void given_EmptyFileSet_when_GetName_then_ReturnsNull() {
 		
 		//test null in empty constructor
 		FileSet fs = new FileSet();
 		assertEquals(fs.getName(), null);
-		
-		//test when valid name is present
+	}
+	
+	@Test
+	public void given_FileSetWithName_when_GetName_then_ReturnsName() {
+		FileSet fs = new FileSet();
 		try { 
 			fs.setName(backupName);
 			assertEquals(fs.getName(),backupName);
@@ -270,8 +327,12 @@ public class FileSetTest {
 		}
 	}
 	
+	/*
+	 * TEST SET NAME
+	 */
+	
 	@Test
-	public void testSetName() {
+	public void given_FileSetWithValidName_when_SetBySetName_then_TestSucceeds() {
 	
 		//test valid input via setter
 		try {
@@ -281,6 +342,10 @@ public class FileSetTest {
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
+	}
+	
+	@Test
+	public void given_FileSetWithValidName_when_SetBySingleParamConstructor_then_TestSucceeds() {
 		
 		//test valid input via single param constructor
 		try {
@@ -289,7 +354,10 @@ public class FileSetTest {
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
-		
+	}
+	
+	@Test
+	public void given_FileSetWithValidName_when_SetByDualParamConstructor_then_TestSucceeds() {	
 		//test valid input via dual param constructor
 		try {
 			FileSet fs = new FileSet(backupName, dest);
@@ -297,7 +365,10 @@ public class FileSetTest {
 		} catch (Exception e) {
 			fail("could not add name to fileset");
 		}
-		
+	}
+	
+	@Test
+	public void given_FileSetWithInvalidName_when_SetBySetName_then_Exception() {		
 		//test invalid input via setter
 		try {
 			FileSet fs = new FileSet();
@@ -306,25 +377,11 @@ public class FileSetTest {
 		} catch (Exception e) {
 			assert(true);
 		}
-		
-		//test invalid input via single param constructor
-		try {
-			@SuppressWarnings("unused")
-			FileSet fs = new FileSet(invalidBackupName);
-			fail("Should not accept backup names with prohibited characters");
-		} catch (Exception e) {
-			assert(true);
-		}
-		
-		//test invalid input via single param constructor
-		try {
-			@SuppressWarnings("unused")
-			FileSet fs = new FileSet(invalidBackupName, dest);
-			fail("Should not accept backup names with prohibited characters");
-		} catch (Exception e) {
-			assert(true);
-		}
 	}
+	
+	/*
+	 * TEST SAVE
+	 */
 	
 	@Test
 	public void given_ValidPath_when_InvokeFileSetSave_then_Success() {
@@ -349,10 +406,9 @@ public class FileSetTest {
 	}
 	
 	@Test
-	public void testSave() {
+	public void given_EmptyFileSet_when_Saved_then_TestSucceeds() {
 		
 		String fullPathToFileSet = fsPathDir + backupName;
-		String invalidFullPathToFileSet = fsPathDir + invalidBackupName;
 		
 		//test save empty file set to be saved
 		//TODO - Null Pointer on save()
@@ -363,7 +419,11 @@ public class FileSetTest {
 		} catch (IOException e) {
 			fail("FileSet is required to have a name");
 		}
-		
+	}
+	
+	@Test
+	public void given_NamedEmptyFileSet_when_Saved_then_TestSucceeds() {
+		String fullPathToFileSet = fsPathDir + backupName;
 		// test save named file set at valid location
 		//TODO - Null Pointer on save()
 		try {
@@ -378,6 +438,10 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
+	}
+	@Test
+	public void given_NamedEmptyFileSet_when_SavedToInvalidDir_then_Exception() {
+		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
 		
 		//test save named file set at non-existent directory
 		try {
@@ -392,21 +456,11 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
-		
-		// test save named file set at "file" path
-		try {
-			FileSet fs = new FileSet(backupName);
-			try {
-				FileSet.save(fsPathFile, fs);
-				fail("Filepath should be a directory, not File");
-			} catch (IOException e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
-		
+	}
+	
+	@Test
+	public void given_NamedParameterizedFileSet_when_Saved_then_TestSucceeds() {
+		String fullPathToFileSet = fsPathDir + backupName;
 		//test save fully parameterized empty file set at valid location
 		//TODO - Null Pointer on save()
 		try {
@@ -421,13 +475,17 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
-		
+	}
+	
+	@Test
+	public void given_NamedParameterizedFileSet_when_SavedWithInvalidFileName_then_Exception() {
+		String invalidFullPathToFileSet = fsPathDir + invalidBackupName;
 		//test save fully parameterized empty file set at non-existent directory
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			try {
 				FileSet.save(invalidFullPathToFileSet, fs);
-				fail("Directory does not exist, should refuse save");
+				fail("Save name is invalid, should refuse save");
 			} catch (IOException e) {
 				assert(true);
 			}
@@ -435,21 +493,11 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
-		
-		//test save fully parameterized empty file set at "file" path
-		try {
-			FileSet fs = new FileSet(backupName, dest);
-			try {
-				FileSet.save(fsPathFile, fs);
-				fail("Filepath should be a directory, not File");
-			} catch (IOException e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
-		
+	}
+	
+	@Test
+	public void given_NamedParameterizedFileSetWithFiles_when_Saved_then_TestSucceeds() {
+		String fullPathToFileSet = fsPathDir + backupName;
 		//test save fully parameterized file set with files at valid location
 		//TODO - Null Pointer on save()
 		try {
@@ -466,8 +514,10 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
-		
-		//test save fully parameterized file set with files at non-existent directory
+	}
+	@Test
+	public void given_NamedParameterizedFileSetWithFiles_when_SavedWithInvalidPath_then_Exception() {	
+		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			fs.addElement(source);
@@ -475,23 +525,6 @@ public class FileSetTest {
 			try {
 				FileSet.save(invalidFullPathToFileSet, fs);
 				fail("Directory does not exist, should refuse save");
-			} catch (IOException e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
-		
-		//test save fully parameterized file set with files at "file" path
-		//TODO - Null Pointer on save()
-		try {
-			FileSet fs = new FileSet(backupName, dest);
-			fs.addElement(source);
-			fs.addElement(sourceb);
-			try {
-				FileSet.save(fullPathToFileSet, fs);
-				fail("Filepath should be a directory, not File");
 			} catch (IOException e) {
 				assert(true);
 			}
@@ -516,8 +549,12 @@ public class FileSetTest {
 		}
 	}
 	
+	/*
+	 * TEST READ
+	 */
 	@Test
-	public void testRead() {
+	public void given_ValidFileSet_when_InvokeReadWithValidPath_then_TestSucceeds() {
+		String fullPathToFileSet = fsPathDir + backupName;
 		//test with valid path argument
 		//TODO - Null Pointer on save()
 		try {
@@ -525,7 +562,7 @@ public class FileSetTest {
 			fs1.addElement(source);
 			fs1.addElement(sourceb);
 			try {
-				FileSet.save(fsPathDir, fs1);
+				FileSet.save(fullPathToFileSet, fs1);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
@@ -541,14 +578,17 @@ public class FileSetTest {
 			e1.printStackTrace();
 			fail("Could not create the file set");
 		}
-		
+	}
+	@Test
+	public void given_ValidFileSet_when_InvokeReadWithInvalidPath_then_Exception() {
+		String fullPathToFileSet = fsPathDir + backupName;
 		//test with invalid path argument
 		try {
 			FileSet fs1 = new FileSet(backupName, dest);
 			fs1.addElement(source);
 			fs1.addElement(sourceb);
 			try {
-				FileSet.save(fsPathDir, fs1);
+				FileSet.save(fullPathToFileSet, fs1);
 				assert(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
