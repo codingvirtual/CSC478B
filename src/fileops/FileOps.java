@@ -129,7 +129,6 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	public static Boolean isValidDest(FileSet fs) throws IOException {
 		Path destParent = Paths.get(fs.getDestination()).toRealPath(NOFOLLOW_LINKS);
 		Path destination = destParent.resolve(fs.getName());
-		// Check that the destination doesn't already exist and also that it is writable
 		if (Files.exists(destination) || !Files.isWritable(destParent)) {
 			return false;
 		}

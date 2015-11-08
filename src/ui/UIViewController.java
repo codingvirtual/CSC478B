@@ -19,6 +19,7 @@ package ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -27,6 +28,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Arc2D;
@@ -84,6 +86,8 @@ import java.awt.event.FocusEvent;
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static final long serialVersionUID = 1L;
 	static final Color drkGreen = new Color(0, 180, 0);
+	private static Boolean destOK = true;
+	private static Boolean nameOK = true;
 	private Document doc;
 	private Application mApp;
 	private FileSet mCurrentFileSet;
@@ -210,6 +214,16 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         	@Override
         	public void focusLost(FocusEvent e) {
         			txtNameBackup.setText(txtNameBackup.getText().trim());
+        			try {
+        				if (txtNameBackup.getText().isEmpty()) {
+        					throw new Exception();
+        				}
+        				mCurrentFileSet.setName(txtNameBackup.getText());
+        				nameOK = true;
+    				} catch (Exception e1) {
+    					System.err.println("Exception: invalid backup name");
+    					nameOK = false;
+    				}
         	}
         });
         
@@ -226,6 +240,16 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         	@Override
         	public void focusLost(FocusEvent e) {
         		txtDestination.setText(txtDestination.getText().trim());
+        		try {
+        			if (txtDestination.getText().isEmpty()) {
+        				throw new Exception();
+        			}
+					mCurrentFileSet.setDestination(txtDestination.getText());
+					destOK = true;
+				} catch (Exception e1) {
+					System.err.println("Exception: invalid destination path");
+					destOK = false;
+				}
         	}
         });
         grpRadioSyncSwitch = new ButtonGroup();
@@ -311,9 +335,14 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         			txtDestination.setText(fc.getSelectedFile().toString());
         			try {
 						mCurrentFileSet.setDestination(txtDestination.getText());
+						destOK = true;
 					} catch (Exception e1) {
-						// FIXME: user has somehow entered a "bad" destination. Make them fix it.
-						e1.printStackTrace();
+						JOptionPane.showMessageDialog(getRootPane(),
+            					"Please enter a valid destination path.",
+            					"Invalid Destination",
+            					JOptionPane.WARNING_MESSAGE);
+						System.err.println("Exception: invalid destination path");
+						destOK = false;
 					}
         		}
             }
@@ -322,67 +351,51 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         btnSave = new JButton();
         btnSave.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		try {
-					mCurrentFileSet.setName(txtNameBackup.getText());
-				} catch (Exception e2) {
-					// FIXME: Ideally, show the user a dialog box and get them to pick a different name
-					e2.printStackTrace();
-				}
+        		
+        		// validate file set and show dialogs if necessary
+        		if (!validateFileSet()) { return; }
+        		
 				mApp.saveDefaultFileSet();
+				
+				txtStatus.setCaretPosition(doc.getLength());
+				if (radioOn.isSelected()) {
+					try {
+	            		if (doc.getLength() == 0) {
+	            			doc.insertString(doc.getLength(), "Backup saved (ACTIVE).", null);
+	            		} else {
+	            			doc.insertString(doc.getLength(), "\nBackup saved (ACTIVE).", null);
+	            		}
+					} catch (BadLocationException e2) {
+						e2.printStackTrace();
+					}
+				} else {
+					try {
+	            		if (doc.getLength() == 0) {
+	            			doc.insertString(doc.getLength(), "Backup saved (INACTIVE).", null);
+	            		} else {
+	            			doc.insertString(doc.getLength(), "\nBackup saved (INACTIVE).", null);
+	            		}
+					} catch (BadLocationException e2) {
+						e2.printStackTrace();
+					}
+				}
+				
+				if (!panelProgress.isVisible()) { panelProgress.setVisible(true); }
+				panelProgress.remove(progressCirc);
+				panelProgress.revalidate();
+				panelProgress.repaint();
+				panelProgress.add(lblCheck);
+				panelProgress.revalidate();
+				panelProgress.repaint();
         	}
         });
         
         btnRun = new JButton();
         btnRun.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		try {
-        			if (txtDestination.getText().isEmpty() && txtNameBackup.getText().isEmpty()) {
-        				throw new Exception("invalid backup name and destination");
-        			}
-        			if (txtDestination.getText().isEmpty()) {
-    					throw new Exception("invalid destination path");
-        			}
-        			if (txtNameBackup.getText().isEmpty()) {
-						throw new Exception("invalid backup name");
-					}
-        		} catch (Exception e1) {
-        			if (txtDestination.getText().isEmpty() && txtNameBackup.getText().isEmpty()) {
-        				JOptionPane.showMessageDialog(getRootPane(),
-            					"-Please enter a valid destination path.\n"
-            						+ "-Please enter a valid backup name.",
-            					"Invalid Entries",
-            					JOptionPane.WARNING_MESSAGE);
-        			}
-        			else if (txtDestination.getText().isEmpty()) {
-        				JOptionPane.showMessageDialog(getRootPane(),
-            					"Please enter a valid destination path.",
-            					"Invalid Destination",
-            					JOptionPane.WARNING_MESSAGE);
-        			} else {
-        				JOptionPane.showMessageDialog(getRootPane(),
-    							"Please enter a valid backup name.",
-    							"Invalid Name",
-    							JOptionPane.WARNING_MESSAGE);
-        			}
-        			System.err.println("Exception: " + e1.getMessage());
-        			return;
-        		}
-				
         		
-				try {
-					mCurrentFileSet.setDestination(txtDestination.getText());
-					mCurrentFileSet.setName(txtNameBackup.getText());
-					if (FileOps.isValidDest(mCurrentFileSet) == false)  {
-    					throw new Exception("backup already exists");
-    				}
-				} catch (Exception e2) {
-					JOptionPane.showMessageDialog(getRootPane(),
-							"Either a backup already exists, or you cannot write to this location.",
-							"Invalid Destination",
-							JOptionPane.ERROR_MESSAGE);
-					System.err.println("Exception: " + e2.getMessage());
-					return;
-				}
+        		// validate file set and show dialogs if necessary
+        		if (!validateFileSet()) { return; }
 				
         		btnRun.setEnabled(false);
         		panelProgress.setVisible(true);
@@ -727,6 +740,51 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    private Boolean validateFileSet() {
+    	try {
+			if (!destOK && !nameOK) {
+				throw new Exception("invalid backup name and destination");
+			}
+			if (!destOK) {
+				throw new Exception("invalid destination path");
+			}
+			if (!nameOK) {
+				throw new Exception("invalid backup name");
+			}
+			mCurrentFileSet.setDestination(txtDestination.getText());
+			mCurrentFileSet.setName(txtNameBackup.getText());
+			if (!FileOps.isValidDest(mCurrentFileSet)) {
+				throw new Exception("backup already exists or cannot write to specified location");
+			}
+		} catch (Exception e1) {
+			if (!destOK && !nameOK) {
+				JOptionPane.showMessageDialog(getRootPane(),
+    					"-Please enter a valid destination path.\n"
+    						+ "-Please enter a valid backup name.",
+    					"Invalid Entries",
+    					JOptionPane.WARNING_MESSAGE);
+			}
+			else if (!destOK) {
+				JOptionPane.showMessageDialog(getRootPane(),
+    					"Please enter a valid destination path.",
+    					"Invalid Destination",
+    					JOptionPane.WARNING_MESSAGE);
+			} else if (!nameOK) {
+				JOptionPane.showMessageDialog(getRootPane(),
+						"Please enter a valid backup name.",
+						"Invalid Name",
+						JOptionPane.WARNING_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(getRootPane(),
+						"Either a backup already exists, or you cannot write to this location.",
+						"Invalid Destination",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			System.err.println("Exception: " + e1.getMessage());
+			return false;
+		}
+    	return true;
+    } 
 
     @Override public void handleProgress(List<Progress> progressItems) {
     	for (Progress p : progressItems) {
@@ -750,7 +808,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		btnRun.setEnabled(true);
 		txtStatus.setCaretPosition(doc.getLength());
 		try {
-			doc.insertString(doc.getLength(), "\nBACKUP COMPLETE.", null);
+			doc.insertString(doc.getLength(), "\nBackup complete.", null);
 			panelProgress.remove(progressCirc);
 			panelProgress.revalidate();
 			panelProgress.repaint();
