@@ -29,18 +29,18 @@ import core.FileSet;
  */
 public class FileOps extends SwingWorker<Void, Progress> {
 		
-	private final FileSet filesToCopy;
-	private final FileOpsMessageHandler messageHandler;
+	private final FileSet mFilesToCopy;
+	private final FileOpsMessageHandler mMessageHandler;
 	
 
 	public FileOps(FileSet files, FileOpsMessageHandler handler) {
-		this.filesToCopy = files;
-		this.messageHandler = handler;
+		mFilesToCopy = files;
+		mMessageHandler = handler;
 	}
 	
 	public FileOps(FileSet files) {
-		this.messageHandler = null;
-		this.filesToCopy = files;
+		mMessageHandler = null;
+		mFilesToCopy = files;
 	}
 
 	/* (non-Javadoc)
@@ -50,16 +50,16 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	public Void doInBackground() throws Exception {
 		System.out.println("starting backup");
 		
-		long totalBytes = 0;
+		final long totalBytes = mFilesToCopy.getTotalBytes();
 		long completedBytes = 0;
-		int totalFiles = this.filesToCopy.getSize();
+		final int totalFiles =mFilesToCopy.getSize();
 		int completedFiles = 0;
 		
 		// Create a File object from the destination path of the FileSet
-		Path destParent = Paths.get(filesToCopy.getDestination()).toRealPath(NOFOLLOW_LINKS);
+		Path destParent = Paths.get(mFilesToCopy.getDestination()).toRealPath(NOFOLLOW_LINKS);
 		System.out.println("created destination parent directory");
 		
-		Path destination = destParent.resolve(filesToCopy.getName());
+		Path destination = destParent.resolve(mFilesToCopy.getName());
 		System.out.println("created destination backup directory");
 		
 		// Check that the destination doesn't already exist and also that it is writable
@@ -70,29 +70,29 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		Files.createDirectories(destination);
 		System.out.println("created destination directory");
 		
-		ArrayList<Path> filesToCopy = new ArrayList<Path>();
+		ArrayList<Path> mFilesToCopy = new ArrayList<Path>();
 		for (int i = 0; i < totalFiles; i++) {
-			Path sourcePath = Paths.get(this.filesToCopy.get(i)).toRealPath(NOFOLLOW_LINKS);
+			Path sourcePath = Paths.get(this.mFilesToCopy.get(i)).toRealPath(NOFOLLOW_LINKS);
 			
 			// Validate the file is readable.
 			if (!Files.isReadable(sourcePath)) throw new IOException("File " + sourcePath.getFileName().toString() + " is not readable.");
 			
-			// Add the file size ("length") to the total number of bytes to be copied
-			totalBytes += Files.size(sourcePath);
-			
 			// Add the file to the ArrayList
-			filesToCopy.add(sourcePath);
+			mFilesToCopy.add(sourcePath);
 		}
 
 		// Notify observers that operation is about to begin.
 		publish(new Progress("", totalBytes, completedBytes, totalFiles, completedFiles));
 
 		// Copy all the files in the FileSet one by one
-		for (int i = 0; i < filesToCopy.size() && !isCancelled(); i++) {
-			Path sourcePath = filesToCopy.get(i);
+		for (int i = 0; i < mFilesToCopy.size() && !isCancelled(); i++) {
+			Path sourcePath = mFilesToCopy.get(i);
 			try {
 				Path destPath = destination.resolve(sourcePath.toString().substring(1));
 				Files.createDirectories(destPath.getParent());
+				String sourceCopied = sourcePath.toString();
+				System.out.println("Directory created");
+				System.out.println("copied " + sourceCopied);
 				// Files.copy(sourcePath, destPath);
 				// Update number of bytes copied
 				// completedBytes += Files.size(sourcePath);
@@ -101,22 +101,18 @@ public class FileOps extends SwingWorker<Void, Progress> {
 				File dp = new File(destPath.toString());
 				InputStream in = new FileInputStream(sp);
 		        OutputStream out = new FileOutputStream(dp);
-				byte[] buffer = new byte[1024];
+				byte[] buffer = new byte[2048];
 				int length;
 				while ((length = in.read(buffer)) > 0){
 				    out.write(buffer, 0, length);
 				    completedBytes += length;
-				    int progress = (int) Math.round(((double) completedBytes / (double) totalBytes) * 100);
-				    setProgress(progress);    // set circular progress
+					// Notify observers of new progress
+				    if (completedBytes % 32768 == 0) {
+				    	publish(new Progress(sourceCopied, totalBytes, completedBytes, totalFiles, completedFiles));
+				    }
 				}
 				in.close();
 				out.close();
-				
-				String sourceCopied = sourcePath.toString();
-				System.out.println("Directory created");
-				System.out.println("copied " + sourceCopied);
-				
-				// Notify observers of new progress
 				publish(new Progress(sourceCopied, totalBytes, completedBytes, totalFiles, completedFiles++));
 			} catch (Exception e) {
 				System.err.println("Failed trying to copy " + sourcePath.toString());
@@ -137,15 +133,15 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	
 	@Override
 	public void process(List<Progress> progressItems) {
-		if (messageHandler != null) {
-			messageHandler.handleProgress(progressItems);
+		if (mMessageHandler != null) {
+			mMessageHandler.handleProgress(progressItems);
 		}
 	}
 	
 	@Override
 	public void done() {
-		if (messageHandler != null) {
-			messageHandler.handleCompletion();
+		if (mMessageHandler != null) {
+			mMessageHandler.handleCompletion();
 		}
 	}
 }
