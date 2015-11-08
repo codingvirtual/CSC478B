@@ -23,6 +23,7 @@ DefaultGroupName={#MyAppName}
 OutputBaseFilename=Setup
 Compression=lzma
 SolidCompression=yes
+MinVersion=6.1.7600
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -32,4 +33,3 @@ Source: "E:\git\CSC478B\build\Mirror.jar"; DestDir: "{app}"; Flags: ignoreversio
 Source: "E:\git\CSC478B\res\*"; DestDir: "{app}\res"; Flags: ignoreversion
 Source: "E:\git\CSC478B\res\icons\*"; DestDir: "{app}\res\icons"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
