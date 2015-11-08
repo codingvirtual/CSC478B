@@ -83,7 +83,7 @@ import java.awt.event.FocusEvent;
 
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static final long serialVersionUID = 1L;
-	static final Color drkGreen = new Color(0, 158, 0);
+	static final Color drkGreen = new Color(0, 180, 0);
 	private Document doc;
 	private Application mApp;
 	private FileSet mCurrentFileSet;
@@ -214,7 +214,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         });
         
         txtStatus = new JTextPane();
-        txtStatus.setForeground(new Color(0, 128, 0));
+        txtStatus.setForeground(Color.GRAY);
         txtStatus.setFont(new Font("Helvetica Neue", Font.BOLD | Font.ITALIC, 13));
         txtStatus.setOpaque(false);
         txtStatus.setEditable(false);
@@ -231,7 +231,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
         grpRadioSyncSwitch = new ButtonGroup();
         grpRadioFreq = new ButtonGroup();
         try {
-			checkMark = ImageIO.read(new File("res/icons/green-check.png"));
+			checkMark = ImageIO.read(new File("res/icons/checkmark.png"));
 		} catch (IOException e3) {
 			e3.printStackTrace();
 		}
@@ -817,7 +817,7 @@ class ProgressCircle extends BasicProgressBarUI {
     }
     
     // set progressCirc string color
-    @Override protected Color getSelectionBackground() { return UIViewController.drkGreen; }
+    @Override protected Color getSelectionBackground() { return Color.GRAY; }
     
     @Override public void paint(Graphics g, JComponent c) {
         Insets b = progressBar.getInsets();   // area for border
@@ -852,7 +852,7 @@ class ProgressCircle extends BasicProgressBarUI {
         g2.fill(background);
 
         // draw the circular sector
-        g2.setPaint(new Color(150, 255, 105));
+        g2.setPaint(new Color(50, 204, 220));
         g2.fill(foreground);
         g2.dispose();
 
