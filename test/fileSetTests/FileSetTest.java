@@ -33,11 +33,11 @@ public class FileSetTest {
 	private String sourceFail = testRoot + "/Desktop/testFail.txt";
 	private String dest = testRoot + "/Google Drive/Test/";
 	private String destb = testRoot + "/Google Drive/Test2/";
-	private String destFail = "Q:/GoogleDrive/TestFail/";
-	private String destFail2 = "Q:/GoogleDrive/TestFail//..\\...//*";
+	private String destFail = "//..\\..//*//GoogleDrive/TestFail/";
+	private String destFail2 = "//..\\..//*//GoogleDrive/TestFail//..\\...//*";
 	private String fsPathDir = testRoot + "/Desktop/test/test/";
-	private String invalidFsPathDir = "Q:/Desktop/invalid/";
-	private String invalidFsPathDir2 = "Q:/Desktop//..\\...//*";
+	private String invalidFsPathDir = "//..\\..//*/Desktop/invalid/";
+	private String invalidFsPathDir2 = "//..\\..//*//Desktop//..\\...//*";
 	private String fsPathFile = testRoot + "/Desktop/test/testpath.txt";
 
 	//Backup "name" test variables
