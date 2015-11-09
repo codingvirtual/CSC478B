@@ -82,7 +82,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		}
 
 		// Notify observers that operation is about to begin.
-		//publish(new Progress("", totalBytes, completedBytes, totalFiles, completedFiles));
+		publish(new Progress("", totalBytes, completedBytes, totalFiles, completedFiles));
 
 		// Copy all the files in the FileSet one by one
 		for (int i = 0; i < mFilesToCopy.size() && !isCancelled(); i++) {
