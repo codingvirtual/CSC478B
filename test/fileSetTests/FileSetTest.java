@@ -575,7 +575,12 @@ public class FileSetTest {
 			try {
 				String path = fsPathDir + backupName;
 				FileSet fs2 = FileSet.read(path);
-				assertEquals(fs1,fs2);
+				assertEquals(fs1.getName(),fs2.getName());
+				assertEquals(fs1.getDestination(),fs2.getDestination());
+				assertEquals(fs1.getSize(), fs2.getSize());
+				for(int i=0;i<fs1.getSize();i++){
+					assertEquals(fs1.get(i),fs2.get(i));
+				}
 			} catch (Exception e) {
 				fail("IO Error on read()");
 			}
