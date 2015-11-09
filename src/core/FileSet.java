@@ -119,7 +119,7 @@ public class FileSet extends DefaultListModel<String> {
 					BufferedOutputStream(Files.newOutputStream(outFilePath)));
 			out.writeObject(fileSet);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new IOException(e);
 		} finally {
 			out.close();
 		}
