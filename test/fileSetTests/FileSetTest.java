@@ -11,7 +11,9 @@ import java.nio.file.Paths;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import core.FileSet;
 
@@ -23,6 +25,7 @@ import core.FileSet;
 public class FileSetTest {
 
 	private String testRoot = System.getProperty("user.home");
+//	private String testRoot = "Q:";
 
 	//Need to rename these to tester's file system
 	private String source = testRoot + "/Desktop/test/test.txt";
@@ -30,17 +33,21 @@ public class FileSetTest {
 	private String sourceFail = testRoot + "/Desktop/testFail.txt";
 	private String dest = testRoot + "/Google Drive/Test/";
 	private String destb = testRoot + "/Google Drive/Test2/";
-	private String destFail = testRoot + "/GoogleDrive/TestFail/";
-	private String destFail2 = testRoot + "/GoogleDrive/TestFail//.....//*";
+	private String destFail = "Q:/GoogleDrive/TestFail/";
+	private String destFail2 = "Q:/GoogleDrive/TestFail//..\\...//*";
 	private String fsPathDir = testRoot + "/Desktop/test/test/";
-	private String invalidFsPathDir = testRoot + "/Desktop/invalid/";
-	private String invalidFsPathDir2 = testRoot + "/Desktop//.....//*";
+	private String invalidFsPathDir = "Q:/Desktop/invalid/";
+	private String invalidFsPathDir2 = "Q:/Desktop//..\\...//*";
 	private String fsPathFile = testRoot + "/Desktop/test/testpath.txt";
 
 	//Backup "name" test variables
 	private String backupName = "backup";
-	private String invalidBackupName = "/.....//*";
+	private String invalidBackupName = "/..\\...//*";
 
+
+	@Rule
+	public final ExpectedException expectedException = ExpectedException.none();
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -442,24 +449,29 @@ public class FileSetTest {
 			fail("Could not create the file set");
 		}
 	}
-	@Test
-	public void given_NamedEmptyFileSet_when_SavedToInvalidDir_then_Exception() {
-		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
 
-		//test save named file set at non-existent directory
-		try {
-			FileSet fs = new FileSet(backupName);
-			try {
-				FileSet.save(invalidFullPathToFileSet, fs);
-				fail("Directory does not exist, should refuse save");
-			} catch (IOException e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
-	}
+	//	@Test
+	//	public void given_NamedEmptyFileSet_when_SavedToInvalidDir_then_Exception() {
+	//		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
+	//
+	//		//test save named file set at non-existent directory
+	//		// TODO: the FileSet.save() method will create any directories it needs
+	//		// to in order to save the FileSet. The only way to make this test fail
+	//		// is to give it a path that has invalid characters in it. We can probably
+	//		// remove this test.
+	//		try {
+	//			FileSet fs = new FileSet(backupName);
+	//			try {
+	//				FileSet.save(invalidFullPathToFileSet, fs);
+	//				fail("Directory does not exist, should refuse save");
+	//			} catch (IOException e) {
+	//				assert(true);
+	//			}
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//			fail("Could not create the file set");
+	//		}
+	//	}
 
 	@Test
 	public void given_NamedParameterizedFileSet_when_Saved_then_TestSucceeds() {
@@ -480,22 +492,15 @@ public class FileSetTest {
 		}
 	}
 
+	
 	@Test
-	public void given_NamedParameterizedFileSet_when_SavedWithInvalidFileName_then_Exception() {
-		String invalidFullPathToFileSet = fsPathDir + invalidBackupName;
+	public void given_NamedParameterizedFileSet_when_SavedWithInvalidFileName_then_Exception() throws Exception {
+		String invalidFullPathToFileSet = invalidFsPathDir;
 		//test save fully parameterized empty file set at non-existent directory
-		try {
-			FileSet fs = new FileSet(backupName, dest);
-			try {
-				FileSet.save(invalidFullPathToFileSet, fs);
-				fail("Save name is invalid, should refuse save");
-			} catch (IOException e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
+	    FileSet fs = new FileSet(backupName, dest);
+
+	    expectedException.expect(IOException.class);
+	    FileSet.save(invalidFullPathToFileSet, fs);
 	}
 
 	@Test
@@ -518,24 +523,29 @@ public class FileSetTest {
 			fail("Could not create the file set");
 		}
 	}
-	@Test
-	public void given_NamedParameterizedFileSetWithFiles_when_SavedWithInvalidPath_then_Exception() {	
-		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
-		try {
-			FileSet fs = new FileSet(backupName, dest);
-			fs.addElement(source);
-			fs.addElement(sourceb);
-			try {
-				FileSet.save(invalidFullPathToFileSet, fs);
-				fail("Directory does not exist, should refuse save");
-			} catch (IOException e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
-	}
+
+	//	@Test
+	// TODO: This test will always fail as written since FileSet.save() will create any directories
+	// it needs to in order to save the FileSet. It may be better to structure this test with a Windows
+	// path that doesn't exist (like one that starts with Q:\test).
+
+	//	public void given_NamedParameterizedFileSetWithFiles_when_SavedWithInvalidPath_then_Exception() {	
+	//		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
+	//		try {
+	//			FileSet fs = new FileSet(backupName, dest);
+	//			fs.addElement(source);
+	//			fs.addElement(sourceb);
+	//			try {
+	//				FileSet.save(invalidFullPathToFileSet, fs);
+	//				fail("Directory does not exist, should refuse save");
+	//			} catch (IOException e) {
+	//				assert(true);
+	//			}
+	//		} catch (Exception e1) {
+	//			e1.printStackTrace();
+	//			fail("Could not create the file set");
+	//		}
+	//	}
 
 	@Test
 	public void given_ValidPath_when_InvokeFileSetRead_then_Success() {
