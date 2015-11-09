@@ -115,8 +115,6 @@ public class FileSetTest {
 			System.out.println(FileSet.validFileName(invalidBackupName));
 			assertFalse(FileSet.validFileName(invalidBackupName));
 		} catch (IOException e) {
-			System.out.println("exception occurred");
-			e.printStackTrace();
 			assert(true);
 		}
 	}
