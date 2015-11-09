@@ -799,16 +799,16 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					doc.insertString(doc.getLength(), "\nSuccessfully copied " + p.sourceCopied, null);
 
 				} catch (BadLocationException e) {
-					e.printStackTrace();
+					System.err.println("Bad caret position; cannot insert string.");
 				}
 			}
 			int pctComplete = (int) ((p.completedBytes / (float) p.totalBytes) * 100);
 			if (progressCirc.getValue() < pctComplete) {
 				progressCirc.setValue(pctComplete);
-			}    	
-			System.out.println(pctComplete + "% complete.");
+			}
+			// System.out.println(pctComplete + "% complete.");
 		}
-		System.out.println("got " + progressItems.size() + " progress objects.");
+		// System.out.println("got " + progressItems.size() + " progress objects.");
 	}
 
 
