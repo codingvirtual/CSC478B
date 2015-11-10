@@ -83,6 +83,7 @@ import java.awt.event.FocusEvent;
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static final long serialVersionUID = 1L;
 	static final Color drkGreen = new Color(0, 180, 0);
+	static final Color errorRed = new Color(255, 178, 178);
 	private static Boolean backupExists = false;
 	private static Boolean cannotWrite = false;
 	private static Boolean destOK = true;
@@ -227,39 +228,36 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			public void focusLost(FocusEvent e) {
 				txtNameBackup.setText(txtNameBackup.getText().trim());
 				if (txtNameBackup.getText().isEmpty()) {
+					txtNameBackup.setBackground(errorRed);
 					nameOK = false;
 				} else {
 					try {
 						mCurrentFileSet.setName(txtNameBackup.getText());
+						if (txtNameBackup.getBackground() == errorRed) {
+							txtNameBackup.setBackground(Color.WHITE);
+						}
 						nameOK = true;
 					} catch (Exception e1) {
+						txtNameBackup.setBackground(errorRed);
 						System.err.println("Exception: invalid backup name");
 						nameOK = false;
 					}
 				}
 			}
-		});
-		txtDestination = new JTextField();
-		// set default destination to user's system-dependent home directory
-		txtDestination.setText(System.getProperty("user.home"));
-		txtDestination.addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusLost(FocusEvent e) {
-				txtDestination.setText(txtDestination.getText().trim());
-				if (txtDestination.getText().isEmpty()) {
-					destOK = false;
-				} else {
-					try {
-						mCurrentFileSet.setDestination(txtDestination.getText());
-						destOK = true;
-					} catch (Exception e1) {
-						System.err.println("Exception: invalid destination path");
-						destOK = false;
-					}
+			public void focusGained(FocusEvent e) {
+				if (txtNameBackup.getBackground() == errorRed) {
+					txtNameBackup.setBackground(Color.WHITE);
 				}
 			}
 		});
-
+		txtDestination = new JTextField();
+		txtDestination.setFocusable(false);
+		txtDestination.setRequestFocusEnabled(false);
+		txtDestination.setEditable(false);
+		// set default destination to user's system-dependent home directory
+		txtDestination.setText(System.getProperty("user.home"));
+		
 		// set initial name and destination
 		try {
 			mCurrentFileSet.setName(txtNameBackup.getText());
@@ -355,10 +353,14 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					txtDestination.setText(fc.getSelectedFile().toString());
 					try {
 						mCurrentFileSet.setDestination(txtDestination.getText());
+						if (txtDestination.getBackground() == errorRed) {
+							txtDestination.setBackground(Color.WHITE);
+						}
 						destOK = true;
 					} catch (Exception e1) {
+						txtDestination.setBackground(errorRed);
 						JOptionPane.showMessageDialog(getRootPane(),
-								"Please enter a valid destination path.",
+								"Please provide a valid destination path.",
 								"Invalid Destination",
 								JOptionPane.WARNING_MESSAGE);
 						System.err.println("Exception: invalid destination path");
@@ -755,7 +757,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		}
 		else if (!destOK) {
 			JOptionPane.showMessageDialog(getRootPane(),
-					"Please enter a valid destination path.",
+					"Please provide a valid destination path.",
 					"Invalid Destination",
 					JOptionPane.WARNING_MESSAGE);
 			return false;
@@ -765,6 +767,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					"Please enter a valid backup name.",
 					"Invalid Name",
 					JOptionPane.WARNING_MESSAGE);
+			txtNameBackup.requestFocus();
 			return false;
 		} else {
 			try {
