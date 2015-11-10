@@ -234,6 +234,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 						nameOK = true;
 					} catch (Exception e1) {
 						System.err.println("Exception: invalid backup name");
+						nameOK = false;
 					}
 				}
 			}
@@ -253,6 +254,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 						destOK = true;
 					} catch (Exception e1) {
 						System.err.println("Exception: invalid destination path");
+						destOK = false;
 					}
 				}
 			}
