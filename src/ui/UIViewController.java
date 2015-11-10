@@ -323,9 +323,13 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		});
 
 		btnAddFolder = new JButton();
-		btnAddFolder.setEnabled(false);
+		btnAddFolder.setEnabled(true);
 		btnAddFolder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(getRootPane(),
+						"This feature is coming soon...",
+						"Add Folder",
+						JOptionPane.WARNING_MESSAGE);
 			}
 		});
 
