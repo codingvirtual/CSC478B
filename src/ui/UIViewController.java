@@ -59,7 +59,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -134,9 +133,10 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		menuBar.add(menuOpen);
 		menuItemLog = new JMenuItem("Log");
 		menuItemLog.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-		menuOpen.add(menuItemLog);
-		JSeparator separator = new JSeparator();
-		menuOpen.add(separator);
+		// hide the log until it's ready for v2.0
+		// menuOpen.add(menuItemLog);
+		// JSeparator separator = new JSeparator();
+		// menuOpen.add(separator);
 		menuItemManual = new JMenuItem("User's Manual");
 		menuItemManual.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
 		menuOpen.add(menuItemManual);
