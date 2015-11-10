@@ -36,6 +36,8 @@ import fileops.Progress;
 */
 public class FileOpsTest implements FileOpsMessageHandler {
 
+	private static String testRoot = System.getProperty("user.home");
+	
 	private FileSet files = new FileSet();
 	
 	private int progressReceived = 0;
@@ -55,7 +57,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		File path = tempFolder.getRoot();
 		String dest = path.toString();
 		files.setDestination(dest);
-		files.addElement("/Users/zackburch/Desktop/test/test.txt");
+		files.addElement(testRoot + "/Desktop/test/test.txt");
 	}
 
 	/**
