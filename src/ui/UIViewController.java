@@ -35,6 +35,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -82,6 +84,8 @@ import java.awt.event.FocusEvent;
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static final long serialVersionUID = 1L;
 	static final Color drkGreen = new Color(0, 180, 0);
+	private static Boolean backupExists = false;
+	private static Boolean cannotWrite = false;
 	private static Boolean destOK = true;
 	private static Boolean nameOK = true;
 	private Document doc;
@@ -206,25 +210,6 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		lblDestNote.setForeground(Color.GRAY);
 		jXDatePicker = new JXDatePicker();
 		spinTime = new JSpinner();
-		txtNameBackup = new JTextField();
-		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-		txtNameBackup.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				txtNameBackup.setText(txtNameBackup.getText().trim());
-				try {
-					if (txtNameBackup.getText().isEmpty()) {
-						throw new Exception();
-					}
-					mCurrentFileSet.setName(txtNameBackup.getText());
-					nameOK = true;
-				} catch (Exception e1) {
-					System.err.println("Exception: invalid backup name");
-					nameOK = false;
-				}
-			}
-		});
-
 		txtStatus = new JTextPane();
 		txtStatus.setForeground(Color.GRAY);
 		txtStatus.setFont(new Font("Helvetica Neue", Font.BOLD | Font.ITALIC, 13));
@@ -233,29 +218,60 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		txtStatus.setBackground(new Color(0, 0, 0, 0));
 		txtStatus.setMargin(new java.awt.Insets(0, 0, 0, 0));
 		doc = txtStatus.getDocument();
+		txtNameBackup = new JTextField();
+		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
+		String date = new SimpleDateFormat("MM-dd-yy").format(new Date());
+		txtNameBackup.setText("BACKUP " + date);
+		txtNameBackup.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				txtNameBackup.setText(txtNameBackup.getText().trim());
+				if (txtNameBackup.getText().isEmpty()) {
+					nameOK = false;
+				} else {
+					try {
+						mCurrentFileSet.setName(txtNameBackup.getText());
+						nameOK = true;
+					} catch (Exception e1) {
+						System.err.println("Exception: invalid backup name");
+					}
+				}
+			}
+		});
 		txtDestination = new JTextField();
+		// set default destination to user's system-dependent home directory
+		txtDestination.setText(System.getProperty("user.home"));
 		txtDestination.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
 				txtDestination.setText(txtDestination.getText().trim());
-				try {
-					if (txtDestination.getText().isEmpty()) {
-						throw new Exception();
-					}
-					mCurrentFileSet.setDestination(txtDestination.getText());
-					destOK = true;
-				} catch (Exception e1) {
-					System.err.println("Exception: invalid destination path");
+				if (txtDestination.getText().isEmpty()) {
 					destOK = false;
+				} else {
+					try {
+						mCurrentFileSet.setDestination(txtDestination.getText());
+						destOK = true;
+					} catch (Exception e1) {
+						System.err.println("Exception: invalid destination path");
+					}
 				}
 			}
 		});
+
+		// set initial name and destination
+		try {
+			mCurrentFileSet.setName(txtNameBackup.getText());
+			mCurrentFileSet.setDestination(txtDestination.getText());
+		} catch (Exception e1) {
+			System.err.println("Exception: invalid backup name and/or destination path");
+		}
+
 		grpRadioSyncSwitch = new ButtonGroup();
 		grpRadioFreq = new ButtonGroup();
 		try {
 			checkMark = ImageIO.read(new File("res/icons/checkmark.png"));
-		} catch (IOException e3) {
-			e3.printStackTrace();
+		} catch (IOException e1) {
+			System.err.println("IOException: unable to locate resource");
 		}
 		lblCheck = new JLabel(new ImageIcon(checkMark));
 
@@ -363,8 +379,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 						} else {
 							doc.insertString(doc.getLength(), "\nBackup saved (ACTIVE).", null);
 						}
-					} catch (BadLocationException e2) {
-						e2.printStackTrace();
+					} catch (BadLocationException e1) {
+						System.err.println("Bad caret position; cannot insert string.");
 					}
 				} else {
 					try {
@@ -373,8 +389,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 						} else {
 							doc.insertString(doc.getLength(), "\nBackup saved (INACTIVE).", null);
 						}
-					} catch (BadLocationException e2) {
-						e2.printStackTrace();
+					} catch (BadLocationException e1) {
+						System.err.println("Bad caret position; cannot insert string.");
 					}
 				}
 
@@ -418,22 +434,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					} else {
 						doc.insertString(doc.getLength(), "\nBackup running...", null);
 					}
-				} catch (BadLocationException e2) {
-					e2.printStackTrace();
+				} catch (BadLocationException e1) {
+					System.err.println("Bad caret position; cannot insert string.");
 				}
 
 				FileOps worker = new FileOps(mCurrentFileSet, UIViewController.this);
-
-				//        		worker.addPropertyChangeListener(new PropertyChangeListener() {
-				//                    public void propertyChange(PropertyChangeEvent event) {
-				//                        if ("progress".equals(event.getPropertyName())) {
-				//                        	progressCirc.setIndeterminate(false);
-				//                            progressCirc.setValue((Integer)event.getNewValue());
-				//                        }
-				//                    }
-				//                });
-				worker.execute();  
-
+				worker.execute();
 			}
 		});
 
@@ -560,14 +566,6 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		lblDestination.setText("Destination:");
 
 		txtDestination.setFont(new Font("Helvetica Neue", Font.PLAIN, 14)); // NOI18N
-		// set default destination to user's system-dependent home directory
-		txtDestination.setText(System.getProperty("user.home"));
-		try {
-			mCurrentFileSet.setDestination(txtDestination.getText());
-			mCurrentFileSet.setName(txtNameBackup.getText());
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
 
 		lblDestNote.setFont(new Font("Helvetica Neue", Font.PLAIN, 12)); // NOI18N
 		lblDestNote.setText("A zip file containing all backup data will be stored at this location");
@@ -602,7 +600,6 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		panelNameBackup.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Name of Backup", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 12))); // NOI18N
 
 		txtNameBackup.setHorizontalAlignment(JTextField.CENTER);
-		txtNameBackup.setText("backup-m-d-yy");
 
 		javax.swing.GroupLayout gl_panelNameBackup = new javax.swing.GroupLayout(panelNameBackup);
 		panelNameBackup.setLayout(gl_panelNameBackup);
@@ -742,47 +739,58 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private Boolean validateFileSet() {
-		try {
-			if (!destOK && !nameOK) {
-				throw new Exception("invalid backup name and destination");
-			}
-			if (!destOK) {
-				throw new Exception("invalid destination path");
-			}
-			if (!nameOK) {
-				throw new Exception("invalid backup name");
-			}
-			mCurrentFileSet.setDestination(txtDestination.getText());
-			mCurrentFileSet.setName(txtNameBackup.getText());
-			if (!FileOps.isValidDest(mCurrentFileSet)) {
-				throw new Exception("backup already exists or cannot write to specified location");
-			}
-		} catch (Exception e1) {
-			if (!destOK && !nameOK) {
-				JOptionPane.showMessageDialog(getRootPane(),
-						"-Please enter a valid destination path.\n"
-								+ "-Please enter a valid backup name.",
-								"Invalid Entries",
-								JOptionPane.WARNING_MESSAGE);
-			}
-			else if (!destOK) {
-				JOptionPane.showMessageDialog(getRootPane(),
-						"Please enter a valid destination path.",
-						"Invalid Destination",
-						JOptionPane.WARNING_MESSAGE);
-			} else if (!nameOK) {
-				JOptionPane.showMessageDialog(getRootPane(),
-						"Please enter a valid backup name.",
-						"Invalid Name",
-						JOptionPane.WARNING_MESSAGE);
-			} else {
-				JOptionPane.showMessageDialog(getRootPane(),
-						"Either a backup already exists, or you cannot write to this location.",
-						"Invalid Destination",
-						JOptionPane.ERROR_MESSAGE);
-			}
-			System.err.println("Exception: " + e1.getMessage());
+		if (!destOK && !nameOK) {
+			JOptionPane.showMessageDialog(getRootPane(),
+					"-Please enter a valid destination path.\n"
+							+ "-Please enter a valid backup name.",
+							"Invalid Entries",
+							JOptionPane.WARNING_MESSAGE);
 			return false;
+		}
+		else if (!destOK) {
+			JOptionPane.showMessageDialog(getRootPane(),
+					"Please enter a valid destination path.",
+					"Invalid Destination",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		else if (!nameOK) {
+			JOptionPane.showMessageDialog(getRootPane(),
+					"Please enter a valid backup name.",
+					"Invalid Name",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		} else {
+			try {
+				mCurrentFileSet.setDestination(txtDestination.getText());
+				mCurrentFileSet.setName(txtNameBackup.getText());
+				if (FileOps.backupExists(mCurrentFileSet)) {
+					backupExists = true;
+					throw new Exception("backup already exists");
+				}
+				if (FileOps.cannotWrite(mCurrentFileSet)) {
+					cannotWrite = true;
+					throw new Exception("cannot write to specified location");
+				}
+			} catch (Exception e1) {
+				if (backupExists)  {
+					JOptionPane.showMessageDialog(getRootPane(),
+							"A backup with this name already exists.\n" +
+									"Please choose another name or change the destination to continue.",
+									"Backup Found",
+									JOptionPane.WARNING_MESSAGE);
+					backupExists = false;
+				} else if (cannotWrite) {
+					JOptionPane.showMessageDialog(getRootPane(),
+							"You cannot write to this location.\n" +
+									"Please choose another destination to continue.",
+									"No Access",
+									JOptionPane.ERROR_MESSAGE);
+					cannotWrite = false;
+				}
+				System.err.println("Exception: " + e1.getMessage());
+				return false;
+			}
 		}
 		return true;
 	} 
@@ -793,7 +801,6 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				txtStatus.setCaretPosition(doc.getLength());
 				try {
 					doc.insertString(doc.getLength(), "\nSuccessfully copied " + p.sourceCopied, null);
-
 				} catch (BadLocationException e) {
 					System.err.println("Bad caret position; cannot insert string.");
 				}
@@ -823,7 +830,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			panelProgress.revalidate();
 			panelProgress.repaint();
 		} catch (BadLocationException e) {
-			e.printStackTrace();
+			System.err.println("Bad caret position; cannot insert string.");
 		} finally {
 			System.out.println("got completion notice from FileOps");
 		}

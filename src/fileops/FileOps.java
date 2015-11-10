@@ -119,13 +119,21 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		return null;
 	}
 
-	public static Boolean isValidDest(FileSet fs) throws IOException {
+	public static Boolean backupExists(FileSet fs) throws IOException {
 		Path destParent = Paths.get(fs.getDestination()).toRealPath(NOFOLLOW_LINKS);
 		Path destination = destParent.resolve(fs.getName());
-		if (Files.exists(destination) || !Files.isWritable(destParent)) {
-			return false;
+		if (Files.exists(destination)) {
+			return true;
 		}
-		return true;
+		return false;
+	}
+
+	public static Boolean cannotWrite(FileSet fs) throws IOException {
+		Path destParent = Paths.get(fs.getDestination()).toRealPath(NOFOLLOW_LINKS);
+		if (!Files.isWritable(destParent)) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
