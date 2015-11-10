@@ -257,7 +257,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		txtDestination.setEditable(false);
 		// set default destination to user's system-dependent home directory
 		txtDestination.setText(System.getProperty("user.home"));
-		
+
 		// set initial name and destination
 		try {
 			mCurrentFileSet.setName(txtNameBackup.getText());
@@ -747,6 +747,13 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private Boolean validateFileSet() {
+		if (mCurrentFileSet.isEmpty()) {
+			JOptionPane.showMessageDialog(getRootPane(),
+					"Please add at least one source to continue.",
+					"No Source(s)",
+					JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
 		if (!destOK && !nameOK) {
 			JOptionPane.showMessageDialog(getRootPane(),
 					"-Please enter a valid destination path.\n"
