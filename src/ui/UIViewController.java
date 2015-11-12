@@ -66,7 +66,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.MatteBorder;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -97,7 +96,6 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	 * @throws Exception 
 	 */
 	public UIViewController(Application app) throws Exception {
-
 		mApp = app;
 		mCurrentFileSet = mApp.getCurrentFileSet();
 
@@ -122,10 +120,11 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			e.printStackTrace();
 		}
-
-
+		
+		
 		setResizable(false);
-		setSize(new Dimension(685, 711));
+		setSize(new Dimension(685, 711));    // 685, 711
+		getContentPane().setBackground(new Color(242, 242, 242));
 		getContentPane().setFont(new Font("Helvetica Neue", 0, 14));
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -173,7 +172,9 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		listSources = new JList<String>(listModel);
 		listSources.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
 		panelSettings = new JPanel();
+		panelSettings.setEnabled(false);
 		panelFreq = new JPanel();
+		panelFreq.setEnabled(false);
 		panelFreq.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
 		panelBackup = new JPanel();
 		panelNameBackup = new JPanel();
@@ -201,16 +202,26 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		scrollStatus = new JScrollPane();
 		scrollStatus.setViewportBorder(null);
 		lblAppTitle = new JLabel();
-		lblAppTitle.setBorder(new MatteBorder(0, 0, 1, 0, Color.BLACK));
+		lblAppTitle.setIcon(new ImageIcon(UIViewController.class.getResource("/icons/mirror.png")));
+		lblAppTitle.setFocusTraversalKeysEnabled(false);
+		lblAppTitle.setRequestFocusEnabled(false);
+		lblAppTitle.setFocusable(false);
+		lblAppTitle.setIconTextGap(0);
 		lblSchedSync = new JLabel();
+		lblSchedSync.setEnabled(false);
 		lblDate = new JLabel();
+		lblDate.setEnabled(false);
 		lblTime = new JLabel();
+		lblTime.setEnabled(false);
 		lblSources = new JLabel();
 		lblDestination = new JLabel();
 		lblDestNote = new JLabel();
 		lblDestNote.setForeground(Color.GRAY);
 		jXDatePicker = new JXDatePicker();
+		jXDatePicker.setEnabled(false);
+		jXDatePicker.getEditor().setEnabled(false);
 		spinTime = new JSpinner();
+		spinTime.setEnabled(false);
 		txtStatus = new JTextPane();
 		txtStatus.setForeground(Color.GRAY);
 		txtStatus.setFont(new Font("Helvetica Neue", Font.BOLD | Font.ITALIC, 13));
@@ -268,6 +279,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 
 		grpRadioSyncSwitch = new ButtonGroup();
 		grpRadioFreq = new ButtonGroup();
+		
 		try {
 			checkMark = ImageIO.read(new File("res/icons/checkmark.png"));
 		} catch (IOException e1) {
@@ -276,12 +288,14 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		lblCheck = new JLabel(new ImageIcon(checkMark));
 
 		radioOn = new JRadioButton();
+		radioOn.setEnabled(false);
 		radioOn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 
 		radioOff = new JRadioButton();
+		radioOff.setEnabled(false);
 		radioOff.setSelected(true);
 		radioOff.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -289,18 +303,21 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		});
 
 		radioDaily = new JRadioButton();
+		radioDaily.setEnabled(false);
 		radioDaily.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 
 		radioWeekly = new JRadioButton();
+		radioWeekly.setEnabled(false);
 		radioWeekly.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 
 		radioMonthly = new JRadioButton();
+		radioMonthly.setEnabled(false);
 		radioMonthly.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -518,50 +535,65 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 						.addContainerGap(10, Short.MAX_VALUE))
 				);
 		panelFreq.setLayout(gl_panelFreq);
+		
+		JLabel lblComingSoon = new JLabel("Coming soon...");
+		lblComingSoon.setForeground(Color.LIGHT_GRAY);
+		lblComingSoon.setFont(new Font("Helvetica Neue", Font.PLAIN, 20));
 
 		javax.swing.GroupLayout gl_panelSettings = new javax.swing.GroupLayout(panelSettings);
 		gl_panelSettings.setHorizontalGroup(
-				gl_panelSettings.createParallelGroup(Alignment.LEADING)
+			gl_panelSettings.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelSettings.createSequentialGroup()
-						.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelSettings.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(lblSchedSync)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(radioOn)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(radioOff))
+						.addGroup(gl_panelSettings.createSequentialGroup()
+							.addGap(33)
+							.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING, false)
 								.addGroup(gl_panelSettings.createSequentialGroup()
-										.addContainerGap()
-										.addComponent(lblSchedSync)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(radioOn)
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(radioOff))
+									.addComponent(lblDate)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(lblTime))
+								.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE))
+							.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panelSettings.createSequentialGroup()
-										.addGap(33)
-										.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING, false)
-												.addGroup(gl_panelSettings.createSequentialGroup()
-														.addComponent(lblDate)
-														.addPreferredGap(ComponentPlacement.RELATED)
-														.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-														.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(lblTime))
-												.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE)))
-						.addContainerGap(207, Short.MAX_VALUE))
-				);
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
+								.addGroup(Alignment.TRAILING, gl_panelSettings.createSequentialGroup()
+									.addPreferredGap(ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
+									.addComponent(lblComingSoon)
+									.addPreferredGap(ComponentPlacement.RELATED)))))
+					.addContainerGap(207, Short.MAX_VALUE))
+		);
 		gl_panelSettings.setVerticalGroup(
-				gl_panelSettings.createParallelGroup(Alignment.LEADING)
+			gl_panelSettings.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelSettings.createSequentialGroup()
-						.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblSchedSync)
-								.addComponent(radioOn)
-								.addComponent(radioOff))
-						.addGap(18)
-						.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
-								.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblDate)
-								.addComponent(lblTime)
-								.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGap(18)
-						.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(25, Short.MAX_VALUE))
-				);
+					.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblSchedSync)
+						.addComponent(radioOn)
+						.addComponent(radioOff))
+					.addGap(18)
+					.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
+						.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblDate)
+						.addComponent(lblTime)
+						.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panelSettings.createSequentialGroup()
+							.addGap(18)
+							.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panelSettings.createSequentialGroup()
+							.addGap(39)
+							.addComponent(lblComingSoon)))
+					.addContainerGap(39, Short.MAX_VALUE))
+		);
 		panelSettings.setLayout(gl_panelSettings);
 
 		panelBackup.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BACKUP", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 14))); // NOI18N
@@ -713,34 +745,33 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		scrollSources.setViewportView(listSources);
 		panelBackup.setLayout(gl_panelBackup);
 
-		lblAppTitle.setFont(new Font("Helvetica Neue", Font.PLAIN, 15)); // NOI18N
-		lblAppTitle.setText("    Mirror Machine (Name TBD)");
+		lblAppTitle.setFont(new Font("Helvetica Neue", Font.PLAIN, 15));
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		layout.setHorizontalGroup(
-				layout.createParallelGroup(Alignment.TRAILING)
+			layout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addGroup(layout.createParallelGroup(Alignment.LEADING)
-								.addGroup(layout.createSequentialGroup()
-										.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-												.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-												.addComponent(panelBackup, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE))
-										.addContainerGap())
-								.addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-										.addComponent(lblAppTitle)
-										.addGap(15))))
-				);
+					.addGap(10)
+					.addGroup(layout.createParallelGroup(Alignment.LEADING)
+						.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+							.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+							.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE))
+						.addGroup(layout.createSequentialGroup()
+							.addGap(584)
+							.addComponent(lblAppTitle)))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
 		layout.setVerticalGroup(
-				layout.createParallelGroup(Alignment.LEADING)
+			layout.createParallelGroup(Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-						.addComponent(lblAppTitle, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addGap(12)
-						.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-						.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addContainerGap())
-				);
+					.addContainerGap()
+					.addComponent(lblAppTitle)
+					.addGap(1)
+					.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE)
+					.addGap(20)
+					.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+		);
 		getContentPane().setLayout(layout);
 
 		pack();
