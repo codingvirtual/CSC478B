@@ -151,22 +151,24 @@ public class FileOps extends SwingWorker<Void, Progress> {
 			mMessageHandler.handleCompletion();
 		}
 	}
-	
+
 	private void validateFileSet(FileSet files) throws Exception {
-		String exceptionString = null;
+		String exceptionString = "";
+		
 		if (files == null) { 
 			exceptionString.concat("FileSet cannot be null.\n");
+		} else {
+			if (files.getSize() == 0) {
+				exceptionString.concat("FileSet contains no files. Aborting backup operation.\n");
+			}
+			if (files.getName().length() == 0) {
+				exceptionString.concat("FileSet has no name for the backup. Aborting backup operation.\n");
+			}
+			if (files.getDestination().length() == 0) {
+				exceptionString.concat("No destination path specified in FileSet. Aborting backup operation.\n");
+			}
 		}
-		if (files.getSize() == 0) {
-			exceptionString.concat("FileSet contains no files. Aborting backup operation.\n");
-		}
-		if (files.getName().length() == 0) {
-			exceptionString.concat("FileSet has no name for the backup. Aborting backup operation.\n");
-		}
-		if (files.getDestination().length() == 0) {
-			exceptionString.concat("No destination path specified in FileSet. Aborting backup operation.\n");
-		}
-		if (exceptionString != null) {
+		if (exceptionString.length() > 1) {
 			throw new Exception(exceptionString);
 		}
 	}
