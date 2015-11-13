@@ -161,10 +161,10 @@ public class FileOps extends SwingWorker<Void, Progress> {
 			if (files.getSize() == 0) {
 				exceptionString.concat("FileSet contains no files. Aborting backup operation.\n");
 			}
-			if (files.getName().length() == 0) {
+			if (files.getName() == null || files.getName().length() == 0) {
 				exceptionString.concat("FileSet has no name for the backup. Aborting backup operation.\n");
 			}
-			if (files.getDestination().length() == 0) {
+			if (files.getDestination() == null || files.getDestination().length() == 0) {
 				exceptionString.concat("No destination path specified in FileSet. Aborting backup operation.\n");
 			}
 		}
