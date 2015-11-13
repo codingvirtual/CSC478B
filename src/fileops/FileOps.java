@@ -33,12 +33,14 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	private final FileOpsMessageHandler mMessageHandler;
 
 
-	public FileOps(FileSet files, FileOpsMessageHandler handler) {
+	public FileOps(FileSet files, FileOpsMessageHandler handler) throws Exception {
+		validateFileSet(files);
 		mFilesToCopy = files;
 		mMessageHandler = handler;
 	}
 
-	public FileOps(FileSet files) {
+	public FileOps(FileSet files) throws Exception {
+		validateFileSet(files);
 		mMessageHandler = null;
 		mFilesToCopy = files;
 	}
@@ -147,6 +149,25 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	public void done() {
 		if (mMessageHandler != null) {
 			mMessageHandler.handleCompletion();
+		}
+	}
+	
+	private void validateFileSet(FileSet files) throws Exception {
+		String exceptionString = null;
+		if (files == null) { 
+			exceptionString.concat("FileSet cannot be null.\n");
+		}
+		if (files.getSize() == 0) {
+			exceptionString.concat("FileSet contains no files. Aborting backup operation.\n");
+		}
+		if (files.getName().length() == 0) {
+			exceptionString.concat("FileSet has no name for the backup. Aborting backup operation.\n");
+		}
+		if (files.getDestination().length() == 0) {
+			exceptionString.concat("No destination path specified in FileSet. Aborting backup operation.\n");
+		}
+		if (exceptionString != null) {
+			throw new Exception(exceptionString);
 		}
 	}
 }
