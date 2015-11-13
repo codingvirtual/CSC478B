@@ -463,7 +463,13 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					System.err.println("Bad caret position; cannot insert string.");
 				}
 
-				FileOps worker = new FileOps(mCurrentFileSet, UIViewController.this);
+				FileOps worker = null;
+				try {
+					worker = new FileOps(mCurrentFileSet, UIViewController.this);
+				} catch (Exception e1) {
+					// TODO Add code to handle failure to create the FileOps worker
+					e1.printStackTrace();
+				}
 				worker.execute();
 			}
 		});

@@ -87,9 +87,10 @@ public class FileOpsTest implements FileOpsMessageHandler {
 
 	/**
 	 * Test method for {@link fileops.FileOps#run()}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void given_FullyParameterizedFileSetWithFile_when_TestRun_TestSucceeds() {
+	public void given_FullyParameterizedFileSetWithFile_when_TestRun_TestSucceeds() throws Exception {
 		FileSet files = new FileSet();
 		try {
 			files.setName("Copy");
@@ -130,7 +131,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 	
 	@Test
-	public void given_CompletelyEmptyFileSet_when_RunFileOps_then_Exception() {
+	public void given_CompletelyEmptyFileSet_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		
 		FileOps testOps = new FileOps(files, this);
@@ -153,7 +154,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 	
 	@Test
-	public void given_FullyParameterizedFileSetWithNoFiles_when_RunFileOps_then_Exception() {
+	public void given_FullyParameterizedFileSetWithNoFiles_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		try {
 			files.setName("Copy");
@@ -188,7 +189,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 	
 	@Test
-	public void given_NamedFileSetWithSingleFileNoDest_when_RunFileOps_then_Exception() {
+	public void given_NamedFileSetWithSingleFileNoDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		try {
 			files.setName("Copy");
@@ -218,7 +219,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 	
 	@Test
-	public void given_UnnamedFileSetWithSingleFileAndDest_when_RunFileOps_then_Exception() {
+	public void given_UnnamedFileSetWithSingleFileAndDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		File path = tempFolder.getRoot();
 		String dest = path.toString();
