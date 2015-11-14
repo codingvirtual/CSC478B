@@ -477,12 +477,11 @@ public class FileSetTest {
 	public void given_NamedParameterizedFileSet_when_Saved_then_TestSucceeds() {
 		String fullPathToFileSet = fsPathDir + backupName;
 		//test save fully parameterized empty file set at valid location
-		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			try {
 				FileSet.save(fullPathToFileSet, fs);
-				assert(true);
+				assertTrue(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
 			}

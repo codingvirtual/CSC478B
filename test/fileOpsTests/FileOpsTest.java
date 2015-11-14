@@ -149,7 +149,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 			latch.await();
 			fail("Should not accept completely empty FileSet");
 		} catch (Exception e) {
-			assert(true);
+			assertTrue(true);
 		}
 	}
 	
