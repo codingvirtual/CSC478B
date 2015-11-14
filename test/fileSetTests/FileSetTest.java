@@ -113,13 +113,9 @@ public class FileSetTest {
 	}
 
 	@Test
-	public void given_invalid_fileName_when_validated_then_testFails() {
-		try {
-			System.out.println(FileSet.validFileName(invalidBackupName));
-			assertFalse(FileSet.validFileName(invalidBackupName));
-		} catch (IOException e) {
-			assertTrue(true);
-		}
+	public void given_invalid_fileName_when_validated_then_testFails() throws Exception{
+		expectedException.expect(IOException.class);
+		System.out.println(FileSet.validFileName(invalidBackupName));
 	}
 
 	/*
@@ -141,34 +137,12 @@ public class FileSetTest {
 	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 */
 	@Test
-	public void given_InvalidPath_when_TryingToAddToFileSet_then_ExceptionShouldOccur() {
-		FileSet fs = new FileSet();
-
-		try {
-			//test adding an invalid filename
-			fs.addElement(sourceFail);
-			assertFalse(fs.contains(sourceFail));
-			fail("Adding an invalid filename or path should have caused an excpetion.");
-		} catch (Exception e) {
-			assertTrue(true);
-		}
-	}
-
-	/**
-	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
-	 */
-	@Test
-	public void given_InvalidPath_when_AddingToFileSet_then_ExceptionShouldOccur() {
+	public void given_InvalidPath_when_AddingToFileSet_then_ExceptionShouldOccur() throws Exception{
 		FileSet fs = new FileSet();
 
 		//test adding an invalid filename, which should throw an exception
-		try {
-			fs.addElement(sourceFail);
-			assertTrue(false);
-		} catch (Exception e) {
-			assertFalse(fs.contains(sourceFail));
-			assertTrue(true);
-		}
+		expectedException.expect(IllegalArgumentException.class);
+		fs.addElement(sourceFail);
 	}
 
 	/**
@@ -300,14 +274,11 @@ public class FileSetTest {
 	}
 
 	@Test
-	public void given_InvalidDestination_when_SetDest_then_Exception(){
+	public void given_InvalidDestination_when_SetDest_then_Exception() throws Exception{
 		FileSet fs = new FileSet();
 		//test adding invalid destination does not replace old destination
-		try { 
-			fs.setDestination(destFail);
-		} catch (Exception e){
-			assertFalse(fs.getDestination() == destFail);
-		}
+		expectedException.expect(IOException.class);
+		fs.setDestination(destFail);
 	}
 
 	/*
@@ -374,15 +345,11 @@ public class FileSetTest {
 	}
 
 	@Test
-	public void given_FileSetWithInvalidName_when_SetBySetName_then_Exception() {		
+	public void given_FileSetWithInvalidName_when_SetBySetName_then_Exception() throws Exception{		
 		//test invalid input via setter
-		try {
-			FileSet fs = new FileSet();
-			fs.setName(invalidBackupName);
-			fail("Should not accept backup names with prohibited characters");
-		} catch (Exception e) {
-			assertTrue(true);
-		}
+		FileSet fs = new FileSet();
+		expectedException.expect(IOException.class);
+		fs.setName(invalidBackupName);
 	}
 
 	/*
@@ -546,6 +513,7 @@ public class FileSetTest {
 	public void given_ValidFileSet_when_InvokeReadWithInvalidPath_then_Exception() throws Exception{
 		String fullPathToFileSet = fsPathDir + backupName;
 		//test with invalid path argument
+		//try {
 			FileSet fs1 = new FileSet(backupName, dest);
 			fs1.addElement(source);
 			fs1.addElement(sourceb);
