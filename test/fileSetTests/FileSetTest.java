@@ -25,7 +25,6 @@ import core.FileSet;
 public class FileSetTest {
 
 	private String testRoot = System.getProperty("user.home");
-//	private String testRoot = "Q:";
 
 	//Need to rename these to tester's file system
 	private String source = testRoot + "/Desktop/test/test.txt";
@@ -34,11 +33,8 @@ public class FileSetTest {
 	private String dest = testRoot + "/Google Drive/Test/";
 	private String destb = testRoot + "/Google Drive/Test2/";
 	private String destFail = "//..\\..//*//GoogleDrive/TestFail/";
-	private String destFail2 = "//..\\..//*//GoogleDrive/TestFail//..\\...//*";
 	private String fsPathDir = testRoot + "/Desktop/test/test/";
 	private String invalidFsPathDir = "//..\\..//*/Desktop/invalid/";
-	private String invalidFsPathDir2 = "//..\\..//*//Desktop//..\\...//*";
-	private String fsPathFile = testRoot + "/Desktop/test/testpath.txt";
 
 	//Backup "name" test variables
 	private String backupName = "backup";
@@ -122,7 +118,7 @@ public class FileSetTest {
 			System.out.println(FileSet.validFileName(invalidBackupName));
 			assertFalse(FileSet.validFileName(invalidBackupName));
 		} catch (IOException e) {
-			assert(true);
+			assertTrue(true);
 		}
 	}
 
@@ -385,7 +381,7 @@ public class FileSetTest {
 			fs.setName(invalidBackupName);
 			fail("Should not accept backup names with prohibited characters");
 		} catch (Exception e) {
-			assert(true);
+			assertTrue(true);
 		}
 	}
 
@@ -421,7 +417,6 @@ public class FileSetTest {
 		String fullPathToFileSet = fsPathDir + backupName;
 
 		//test save empty file set to be saved
-		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet();
 			FileSet.save(fullPathToFileSet, fs);
@@ -435,12 +430,11 @@ public class FileSetTest {
 	public void given_NamedEmptyFileSet_when_Saved_then_TestSucceeds() {
 		String fullPathToFileSet = fsPathDir + backupName;
 		// test save named file set at valid location
-		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName);
 			try {
 				FileSet.save(fullPathToFileSet, fs);
-				assert(true);
+				assertTrue(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
 			}
@@ -450,39 +444,15 @@ public class FileSetTest {
 		}
 	}
 
-	//	@Test
-	//	public void given_NamedEmptyFileSet_when_SavedToInvalidDir_then_Exception() {
-	//		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
-	//
-	//		//test save named file set at non-existent directory
-	//		// TODO: the FileSet.save() method will create any directories it needs
-	//		// to in order to save the FileSet. The only way to make this test fail
-	//		// is to give it a path that has invalid characters in it. We can probably
-	//		// remove this test.
-	//		try {
-	//			FileSet fs = new FileSet(backupName);
-	//			try {
-	//				FileSet.save(invalidFullPathToFileSet, fs);
-	//				fail("Directory does not exist, should refuse save");
-	//			} catch (IOException e) {
-	//				assert(true);
-	//			}
-	//		} catch (Exception e1) {
-	//			e1.printStackTrace();
-	//			fail("Could not create the file set");
-	//		}
-	//	}
-
 	@Test
 	public void given_NamedParameterizedFileSet_when_Saved_then_TestSucceeds() {
 		String fullPathToFileSet = fsPathDir + backupName;
 		//test save fully parameterized empty file set at valid location
-		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			try {
 				FileSet.save(fullPathToFileSet, fs);
-				assert(true);
+				assertTrue(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
 			}
@@ -507,14 +477,13 @@ public class FileSetTest {
 	public void given_NamedParameterizedFileSetWithFiles_when_Saved_then_TestSucceeds() {
 		String fullPathToFileSet = fsPathDir + backupName;
 		//test save fully parameterized file set with files at valid location
-		//TODO - Null Pointer on save()
 		try {
 			FileSet fs = new FileSet(backupName, dest);
 			fs.addElement(source);
 			fs.addElement(sourceb);
 			try {
 				FileSet.save(fullPathToFileSet, fs);
-				assert(true);
+				assertTrue(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
 			}
@@ -523,29 +492,6 @@ public class FileSetTest {
 			fail("Could not create the file set");
 		}
 	}
-
-	//	@Test
-	// TODO: This test will always fail as written since FileSet.save() will create any directories
-	// it needs to in order to save the FileSet. It may be better to structure this test with a Windows
-	// path that doesn't exist (like one that starts with Q:\test).
-
-	//	public void given_NamedParameterizedFileSetWithFiles_when_SavedWithInvalidPath_then_Exception() {	
-	//		String invalidFullPathToFileSet = invalidFsPathDir + backupName;
-	//		try {
-	//			FileSet fs = new FileSet(backupName, dest);
-	//			fs.addElement(source);
-	//			fs.addElement(sourceb);
-	//			try {
-	//				FileSet.save(invalidFullPathToFileSet, fs);
-	//				fail("Directory does not exist, should refuse save");
-	//			} catch (IOException e) {
-	//				assert(true);
-	//			}
-	//		} catch (Exception e1) {
-	//			e1.printStackTrace();
-	//			fail("Could not create the file set");
-	//		}
-	//	}
 
 	@Test
 	public void given_ValidPath_when_InvokeFileSetRead_then_Success() {
@@ -569,14 +515,13 @@ public class FileSetTest {
 	public void given_ValidFileSet_when_InvokeReadWithValidPath_then_TestSucceeds() {
 		String fullPathToFileSet = fsPathDir + backupName;
 		//test with valid path argument
-		//TODO - Null Pointer on save()
 		try {
 			FileSet fs1 = new FileSet(backupName, dest);
 			fs1.addElement(source);
 			fs1.addElement(sourceb);
 			try {
 				FileSet.save(fullPathToFileSet, fs1);
-				assert(true);
+				assertTrue(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
 			}
@@ -598,30 +543,22 @@ public class FileSetTest {
 		}
 	}
 	@Test
-	public void given_ValidFileSet_when_InvokeReadWithInvalidPath_then_Exception() {
+	public void given_ValidFileSet_when_InvokeReadWithInvalidPath_then_Exception() throws Exception{
 		String fullPathToFileSet = fsPathDir + backupName;
 		//test with invalid path argument
-		try {
 			FileSet fs1 = new FileSet(backupName, dest);
 			fs1.addElement(source);
 			fs1.addElement(sourceb);
 			try {
 				FileSet.save(fullPathToFileSet, fs1);
-				assert(true);
+				assertTrue(true);
 			} catch (IOException e) {
 				fail("Could not save the file set");
 			}
-			try {
-				String path = fsPathDir + backupName + "1";
-				@SuppressWarnings("unused")
-				FileSet fs2 = FileSet.read(path);
-				fail("Should not accept non-existant filepath");
-			} catch (Exception e) {
-				assert(true);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			fail("Could not create the file set");
-		}
+			
+			String path = fsPathDir + backupName + "1";
+			expectedException.expect(IOException.class);
+			@SuppressWarnings("unused")
+			FileSet fs2 = FileSet.read(path);
 	}
 }
