@@ -33,13 +33,13 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	private final FileOpsMessageHandler mMessageHandler;
 
 
-	public FileOps(FileSet files, FileOpsMessageHandler handler) throws Exception {
+	public FileOps(FileSet files, FileOpsMessageHandler handler) throws IllegalArgumentException {
 		validateFileSet(files);
 		mFilesToCopy = files;
 		mMessageHandler = handler;
 	}
 
-	public FileOps(FileSet files) throws Exception {
+	public FileOps(FileSet files) throws IllegalArgumentException {
 		validateFileSet(files);
 		mMessageHandler = null;
 		mFilesToCopy = files;
@@ -152,24 +152,24 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		}
 	}
 
-	private void validateFileSet(FileSet files) throws Exception {
+	public static void validateFileSet(FileSet files) throws IllegalArgumentException {
 		String exceptionString = "";
 		
 		if (files == null) { 
-			exceptionString.concat("FileSet cannot be null.\n");
+			exceptionString = exceptionString.concat("FileSet cannot be null.\n");
 		} else {
 			if (files.getSize() == 0) {
-				exceptionString.concat("FileSet contains no files. Aborting backup operation.\n");
+				exceptionString = exceptionString.concat("FileSet contains no files. Aborting backup operation.\n");
 			}
 			if (files.getName() == null || files.getName().length() == 0) {
-				exceptionString.concat("FileSet has no name for the backup. Aborting backup operation.\n");
+				exceptionString = exceptionString.concat("FileSet has no name for the backup. Aborting backup operation.\n");
 			}
 			if (files.getDestination() == null || files.getDestination().length() == 0) {
-				exceptionString.concat("No destination path specified in FileSet. Aborting backup operation.\n");
+				exceptionString = exceptionString.concat("No destination path specified in FileSet. Aborting backup operation.\n");
 			}
 		}
 		if (exceptionString.length() > 1) {
-			throw new Exception(exceptionString);
+			throw new IllegalArgumentException(exceptionString);
 		}
 	}
 }
