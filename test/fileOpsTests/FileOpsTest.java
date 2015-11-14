@@ -23,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import core.FileSet;
@@ -31,24 +32,27 @@ import fileops.FileOpsMessageHandler;
 import fileops.Progress;
 
 /**
-* @author Greg
-*
-*/
+ * @author Greg
+ *
+ */
 public class FileOpsTest implements FileOpsMessageHandler {
 
 	private static String testRoot = System.getProperty("user.home");
 	private String fileName = testRoot + "/Desktop/test/test.txt";
-	
-	
-	
+
+
+
 	private int progressReceived = 0;
 	private Boolean completionReceived = false;
 	final CountDownLatch latch = new CountDownLatch(1);
-	
-	
+
+
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
-	
+
+	@Rule
+	public final ExpectedException expectedException = ExpectedException.none();
+
 	/**
 	 * @throws java.lang.Exception
 	 */
@@ -85,6 +89,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		latch.countDown();
 	}
 
+
 	/**
 	 * Test method for {@link fileops.FileOps#run()}.
 	 * @throws Exception 
@@ -105,7 +110,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 			fail("Could not set destination");
 		}
 		files.addElement(fileName);
-		
+
 		FileOps testOps = new FileOps(files, this);
 		try {
 			final ExecutorService threadPool = Executors.newFixedThreadPool(1);
@@ -129,123 +134,102 @@ public class FileOpsTest implements FileOpsMessageHandler {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	public void given_CompletelyEmptyFileSet_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
-		
+
+		expectedException.expect(IllegalArgumentException.class);
 		FileOps testOps = new FileOps(files, this);
-		try {
-			final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-			threadPool.submit(new Runnable() {
-				public void run() {
-					try {
-						testOps.run();
-					} catch (final Throwable e) {
-						e.printStackTrace();
-					}
+		final ExecutorService threadPool = Executors.newFixedThreadPool(1);
+		threadPool.submit(new Runnable() {
+			public void run() {
+				try {
+					testOps.run();
+				} catch (final Throwable e) {
+					e.printStackTrace();
 				}
-			});
-			latch.await();
-			fail("Should not accept completely empty FileSet");
-		} catch (Exception e) {
-			assertTrue(true);
-		}
+			}
+		});
+		latch.await();
+		fail("Should not accept completely empty FileSet");
 	}
-	
+
+	@Test
+	public void given_CompletelyEmptyFileSet_when_ValidateFileSetIsCalled_then_Exception() throws Exception {
+		FileSet files = new FileSet();
+
+		expectedException.expect(Exception.class);
+		FileOps.validateFileSet(files);
+	}
+
+
 	@Test
 	public void given_FullyParameterizedFileSetWithNoFiles_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
-		try {
-			files.setName("Copy");
-		} catch (Exception e1) {
-			fail("could not set fileset name");
-		}
+		files.setName("Copy");
 		File path = tempFolder.getRoot();
 		String dest = path.toString();
-		try {
-			files.setDestination(dest);
-		} catch (Exception e1) {
-			fail("could not set fileset destination");
-		}
-		
+		files.setDestination(dest);
+
+		expectedException.expect(IllegalArgumentException.class);
 		FileOps testOps = new FileOps(files, this);
-		try {
-			final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-			threadPool.submit(new Runnable() {
-				public void run() {
-					try {
-						testOps.run();
-					} catch (final Throwable e) {
-						e.printStackTrace();
-					}
+		final ExecutorService threadPool = Executors.newFixedThreadPool(1);
+		threadPool.submit(new Runnable() {
+			public void run() {
+				try {
+					testOps.run();
+				} catch (final Throwable e) {
+					e.printStackTrace();
 				}
-			});
-			latch.await();
-			fail("Should not accept FileSet without files");
-		} catch (Exception e) {
-			assert(true);
-		}
+			}
+		});
+		latch.await();
+		fail("Should not accept FileSet without files");
 	}
-	
+
 	@Test
 	public void given_NamedFileSetWithSingleFileNoDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
-		try {
-			files.setName("Copy");
-		} catch (Exception e1) {
-			fail("could not set fileset name");
-		}
-		
+		files.setName("Copy");
+
 		files.addElement(fileName);
-		
+
+		expectedException.expect(IllegalArgumentException.class);
 		FileOps testOps = new FileOps(files, this);
-		try {
-			final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-			threadPool.submit(new Runnable() {
-				public void run() {
-					try {
-						testOps.run();
-					} catch (final Throwable e) {
-						e.printStackTrace();
-					}
+		final ExecutorService threadPool = Executors.newFixedThreadPool(1);
+		threadPool.submit(new Runnable() {
+			public void run() {
+				try {
+					testOps.run();
+				} catch (final Throwable e) {
+					e.printStackTrace();
 				}
-			});
-			latch.await();
-			fail("Should not accept FileSet without destination");
-		} catch (Exception e) {
-			assert(true);
-		}
+			}
+		});
+		latch.await();
 	}
-	
+
 	@Test
 	public void given_UnnamedFileSetWithSingleFileAndDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		File path = tempFolder.getRoot();
 		String dest = path.toString();
-		try {
-			files.setDestination(dest);
-		} catch (Exception e1) {
-			fail("could not set fileset destination");
-		}
+		files.setDestination(dest);
 		files.addElement(fileName);
-		
+
+		expectedException.expect(IllegalArgumentException.class);
 		FileOps testOps = new FileOps(files, this);
-		try {
-			final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-			threadPool.submit(new Runnable() {
-				public void run() {
-					try {
-						testOps.run();
-					} catch (final Throwable e) {
-						e.printStackTrace();
-					}
+		final ExecutorService threadPool = Executors.newFixedThreadPool(1);
+		threadPool.submit(new Runnable() {
+			public void run() {
+				try {
+					testOps.run();
+				} catch (final Throwable e) {
+					e.printStackTrace();
 				}
-			});
-			latch.await();
-			fail("Should not accept unnamed FileSet");
-		} catch (Exception e) {
-			assert(true);
-		}
+			}
+		});
+		latch.await();
 	}
 }
