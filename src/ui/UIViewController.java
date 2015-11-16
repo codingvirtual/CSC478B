@@ -24,6 +24,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -35,7 +36,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -137,10 +140,10 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		} catch (Exception e) {
 			// set to System L&F if Nimbus isn't available
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			e.printStackTrace();
+			System.err.println("Nimbus is unavailable; System look and feel presented.");
 		}
 
-
+		
 		setTitle("Mirror");
 		setSize(new Dimension(685, 711));
 		setResizable(false);
@@ -251,9 +254,9 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		txtStatus.setMargin(new java.awt.Insets(0, 0, 0, 0));
 		doc = txtStatus.getDocument();
 		txtNameBackup = new JTextField();
-		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-		String date = new SimpleDateFormat("MM-dd-yy").format(new Date());
-		txtNameBackup.setText("BACKUP " + date);
+		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 12));
+		String date = new SimpleDateFormat("MM.dd.yy-HH.mm").format(new Date());
+		txtNameBackup.setText("Backup" + date);
 		txtNameBackup.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
