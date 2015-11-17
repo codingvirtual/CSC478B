@@ -143,7 +143,31 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			System.err.println("Nimbus is unavailable; System look and feel presented.");
 		}
 
-		
+		File icon16 = new File("res/icons/icon16.png");
+		File icon32 = new File("res/icons/icon32.png");
+		File icon64 = new File("res/icons/icon64.png");
+		File icon128 = new File("res/icons/icon128.png");
+
+		final List<Image> icons  = new ArrayList<Image>();
+		icons.add(ImageIO.read(icon16));
+		icons.add(ImageIO.read(icon32));
+		icons.add(ImageIO.read(icon64));
+		icons.add(ImageIO.read(icon128));
+
+		/* dynamically load Apple's Application.class since it cannot
+		 * be instantiated on Windows platforms
+		 */
+		if (System.getProperty("os.name").startsWith("Mac OS")) {
+			Class<?> c = Class.forName("com.apple.eawt.Application");
+			Object obj = c.newInstance();
+			Class<?>[] paramTypes = new Class[1];
+			paramTypes[0] = Image.class;
+			// use reflection to access the appropriate method
+			Method m = c.getMethod("setDockIconImage", paramTypes);
+			m.invoke(obj, ImageIO.read(icon128));
+		}
+
+		setIconImages(icons);
 		setTitle("Mirror");
 		setSize(new Dimension(685, 711));
 		setResizable(false);
