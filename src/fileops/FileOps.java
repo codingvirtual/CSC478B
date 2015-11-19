@@ -1,6 +1,5 @@
 package fileops;
 
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -58,26 +57,24 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		int completedFiles = 0;
 
 		// Create a File object from the destination path of the FileSet
-		Path destParent = Paths.get(mFilesToCopy.getDestination()).toRealPath(NOFOLLOW_LINKS);
-		System.out.println("created destination parent directory");
+		Path destParent = Paths.get(mFilesToCopy.getDestination());
+		System.out.println("Set destination parent directory to: " + destParent);
 
-		Path destination = destParent.resolve(mFilesToCopy.getName());
-		System.out.println("created destination backup directory");
-
+		Path destinationDir = destParent.resolve(mFilesToCopy.getName());
+		System.out.println("Set destination backup directory to: " + destinationDir);
 		// Check that the destination doesn't already exist and also that it is writable
-		if (Files.exists(destination) || !Files.isWritable(destParent)) {
+		if (Files.exists(destinationDir) || !Files.isWritable(destParent)) {
 			throw new IOException("Destination already exists - copying aborted");
 		}
 
-		Files.createDirectories(destination);
-		System.out.println("created destination directory");
+		Files.createDirectories(destinationDir);
 
 		ArrayList<Path> mFilesToCopy = new ArrayList<Path>();
 		for (int i = 0; i < totalFiles; i++) {
-			Path sourcePath = Paths.get(this.mFilesToCopy.get(i)).toRealPath(NOFOLLOW_LINKS);
+			Path sourcePath = Paths.get(this.mFilesToCopy.get(i));
 
 			// Validate the file is readable.
-			if (!Files.isReadable(sourcePath)) throw new IOException("File " + sourcePath.getFileName().toString() + " is not readable.");
+			if (!Files.isReadable(sourcePath)) throw new IOException("File " + sourcePath.getFileName() + " is not readable.");
 
 			// Add the file to the ArrayList
 			mFilesToCopy.add(sourcePath);
@@ -90,17 +87,27 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		for (int i = 0; i < mFilesToCopy.size() && !isCancelled(); i++) {
 			Path sourcePath = mFilesToCopy.get(i);
 			try {
-				Path destPath = destination.resolve(sourcePath.toString().substring(1));
+				int subStringIndex = 1;
+				
+				System.out.println(sourcePath.toString());
+				System.out.println(sourcePath.toString().substring(subStringIndex, subStringIndex + 1));
+				if (sourcePath.toString().substring(subStringIndex, subStringIndex + 1).equals(":")) {
+					subStringIndex = 3;
+				}
+				System.out.println(sourcePath.toString().substring(subStringIndex));
+				System.out.println(destinationDir.resolve(sourcePath.toString().substring(subStringIndex)));
+
+				Path destPath = destinationDir.resolve(sourcePath.toString().substring(subStringIndex));
+				System.out.println("Full path to destination set to: " + destPath);
 				Files.createDirectories(destPath.getParent());
 				String sourceCopied = sourcePath.toString();
-				System.out.println("Directory created");
 				System.out.println("copied " + sourceCopied);
 				// Files.copy(sourcePath, destPath);
 				// Update number of bytes copied
 				// completedBytes += Files.size(sourcePath);
 
-				File sp = new File(sourcePath.toString());
-				File dp = new File(destPath.toString());
+				File sp = sourcePath.toFile();
+				File dp = destPath.toFile();
 				InputStream in = new FileInputStream(sp);
 				OutputStream out = new FileOutputStream(dp);
 				byte[] buffer = new byte[1024];
@@ -122,7 +129,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	}
 
 	public static Boolean backupExists(FileSet fs) throws IOException {
-		Path destParent = Paths.get(fs.getDestination()).toRealPath(NOFOLLOW_LINKS);
+		Path destParent = Paths.get(fs.getDestination());
 		Path destination = destParent.resolve(fs.getName());
 		if (Files.exists(destination)) {
 			return true;
@@ -131,7 +138,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	}
 
 	public static Boolean cannotWrite(FileSet fs) throws IOException {
-		Path destParent = Paths.get(fs.getDestination()).toRealPath(NOFOLLOW_LINKS);
+		Path destParent = Paths.get(fs.getDestination());
 		if (!Files.isWritable(destParent)) {
 			return true;
 		}
