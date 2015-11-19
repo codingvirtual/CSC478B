@@ -24,6 +24,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -35,7 +36,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -77,6 +80,8 @@ import fileops.FileOpsMessageHandler;
 import fileops.Progress;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
@@ -87,15 +92,33 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static Boolean cannotWrite = false;
 	private static Boolean destOK = true;
 	private static Boolean nameOK = true;
+	private String defaultName;
 	private Document doc;
 	private Application mApp;
 	private FileSet mCurrentFileSet;
+	private FileOps worker;
 
 	/**
 	 * Creates new form UIViewController
 	 * @throws Exception 
 	 */
 	public UIViewController(Application app) throws Exception {
+		addWindowListener(new WindowAdapter() {
+			@Override public void windowClosing(WindowEvent e) {
+				if (worker != null && !worker.isDone()) {
+					JOptionPane.showMessageDialog(getRootPane(),
+							"A backup is currently in progress.\n" +
+									"To avoid creating a corrupt or incomplete backup, please wait.",
+									"Backup Running",
+									JOptionPane.WARNING_MESSAGE);
+					// v2.0 - signal cancel, set mayInterruptIfRunning parameter to true
+					// worker.cancel(true);
+				} else {
+					System.exit(0);
+				}
+			}
+		});
+
 		mApp = app;
 		mCurrentFileSet = mApp.getCurrentFileSet();
 
@@ -118,12 +141,37 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		} catch (Exception e) {
 			// set to System L&F if Nimbus isn't available
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			e.printStackTrace();
+			System.err.println("Nimbus is unavailable; System look and feel presented.");
 		}
-		
-		
+
+		File icon16 = new File("res/icons/icon16.png");
+		File icon32 = new File("res/icons/icon32.png");
+		File icon64 = new File("res/icons/icon64.png");
+		File icon128 = new File("res/icons/icon128.png");
+
+		final List<Image> icons  = new ArrayList<Image>();
+		icons.add(ImageIO.read(icon16));
+		icons.add(ImageIO.read(icon32));
+		icons.add(ImageIO.read(icon64));
+		icons.add(ImageIO.read(icon128));
+
+		/* dynamically load Apple's Application.class since it cannot
+		 * be instantiated on Windows platforms
+		 */
+		if (System.getProperty("os.name").startsWith("Mac OS")) {
+			Class<?> c = Class.forName("com.apple.eawt.Application");
+			Object obj = c.newInstance();
+			Class<?>[] paramTypes = new Class[1];
+			paramTypes[0] = Image.class;
+			// use reflection to access the appropriate method
+			Method m = c.getMethod("setDockIconImage", paramTypes);
+			m.invoke(obj, ImageIO.read(icon128));
+		}
+
+		setIconImages(icons);
+		setTitle("Mirror");
+		setSize(new Dimension(685, 711));
 		setResizable(false);
-		setSize(new Dimension(685, 711));    // 685, 711
 		getContentPane().setBackground(new Color(242, 242, 242));
 		getContentPane().setFont(new Font("Helvetica Neue", 0, 14));
 		menuBar = new JMenuBar();
@@ -231,9 +279,9 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		txtStatus.setMargin(new java.awt.Insets(0, 0, 0, 0));
 		doc = txtStatus.getDocument();
 		txtNameBackup = new JTextField();
-		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
-		String date = new SimpleDateFormat("MM-dd-yy").format(new Date());
-		txtNameBackup.setText("BACKUP " + date);
+		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 12));
+		defaultName = getBackupDateTime();
+		txtNameBackup.setText(defaultName);
 		txtNameBackup.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -279,7 +327,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 
 		grpRadioSyncSwitch = new ButtonGroup();
 		grpRadioFreq = new ButtonGroup();
-		
+
 		try {
 			checkMark = ImageIO.read(new File("res/icons/checkmark.png"));
 		} catch (IOException e1) {
@@ -463,7 +511,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					System.err.println("Bad caret position; cannot insert string.");
 				}
 
-				FileOps worker = null;
+				worker = null;
 				try {
 					worker = new FileOps(mCurrentFileSet, UIViewController.this);
 				} catch (Exception e1) {
@@ -475,7 +523,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		});
 
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		panelSettings.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "SETTINGS", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 14))); // NOI18N
 		panelSettings.setFont(new Font("Helvetica Neue", Font.PLAIN, 16)); // NOI18N
@@ -524,9 +572,9 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				.addGroup(gl_panelFreq.createSequentialGroup()
 						.addContainerGap()
 						.addComponent(radioDaily)
-						.addPreferredGap(ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-						.addComponent(radioWeekly)
-						.addGap(18)
+						.addGap(21)
+						.addComponent(radioWeekly, GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+						.addGap(13)
 						.addComponent(radioMonthly)
 						.addContainerGap())
 				);
@@ -541,65 +589,64 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 						.addContainerGap(10, Short.MAX_VALUE))
 				);
 		panelFreq.setLayout(gl_panelFreq);
-		
+
 		JLabel lblComingSoon = new JLabel("Coming soon...");
 		lblComingSoon.setForeground(Color.LIGHT_GRAY);
-		lblComingSoon.setFont(new Font("Helvetica Neue", Font.PLAIN, 20));
+		lblComingSoon.setFont(new Font("Helvetica Neue", Font.PLAIN, 18));
 
 		javax.swing.GroupLayout gl_panelSettings = new javax.swing.GroupLayout(panelSettings);
 		gl_panelSettings.setHorizontalGroup(
-			gl_panelSettings.createParallelGroup(Alignment.LEADING)
+				gl_panelSettings.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelSettings.createSequentialGroup()
-					.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelSettings.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblSchedSync)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(radioOn)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(radioOff))
-						.addGroup(gl_panelSettings.createSequentialGroup()
-							.addGap(33)
-							.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panelSettings.createSequentialGroup()
-									.addComponent(lblDate)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(lblTime))
-								.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE))
-							.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
+										.addContainerGap()
+										.addComponent(lblSchedSync)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(radioOn)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(radioOff))
 								.addGroup(gl_panelSettings.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
-								.addGroup(Alignment.TRAILING, gl_panelSettings.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
-									.addComponent(lblComingSoon)
-									.addPreferredGap(ComponentPlacement.RELATED)))))
-					.addContainerGap(207, Short.MAX_VALUE))
-		);
+										.addGap(33)
+										.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING, false)
+												.addGroup(gl_panelSettings.createSequentialGroup()
+														.addComponent(lblDate)
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+														.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+														.addComponent(lblTime))
+												.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE))
+										.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
+												.addGroup(gl_panelSettings.createSequentialGroup()
+														.addPreferredGap(ComponentPlacement.RELATED)
+														.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, 149, GroupLayout.PREFERRED_SIZE))
+												.addGroup(gl_panelSettings.createSequentialGroup()
+														.addGap(110)
+														.addComponent(lblComingSoon)))))
+						.addContainerGap(132, Short.MAX_VALUE))
+				);
 		gl_panelSettings.setVerticalGroup(
-			gl_panelSettings.createParallelGroup(Alignment.LEADING)
+				gl_panelSettings.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelSettings.createSequentialGroup()
-					.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblSchedSync)
-						.addComponent(radioOn)
-						.addComponent(radioOff))
-					.addGap(18)
-					.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
-						.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblDate)
-						.addComponent(lblTime)
-						.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_panelSettings.createSequentialGroup()
-							.addGap(18)
-							.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_panelSettings.createSequentialGroup()
-							.addGap(39)
-							.addComponent(lblComingSoon)))
-					.addContainerGap(39, Short.MAX_VALUE))
-		);
+						.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblSchedSync)
+								.addComponent(radioOn)
+								.addComponent(radioOff))
+						.addGap(18)
+						.addGroup(gl_panelSettings.createParallelGroup(Alignment.BASELINE)
+								.addComponent(jXDatePicker, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblDate)
+								.addComponent(lblTime)
+								.addComponent(spinTime, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_panelSettings.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panelSettings.createSequentialGroup()
+										.addGap(18)
+										.addComponent(panelFreq, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_panelSettings.createSequentialGroup()
+										.addGap(48)
+										.addComponent(lblComingSoon)))
+						.addContainerGap(39, Short.MAX_VALUE))
+				);
 		panelSettings.setLayout(gl_panelSettings);
 
 		panelBackup.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "BACKUP", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Helvetica Neue", 0, 14))); // NOI18N
@@ -755,35 +802,40 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		layout.setHorizontalGroup(
-			layout.createParallelGroup(Alignment.TRAILING)
+				layout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(10)
-					.addGroup(layout.createParallelGroup(Alignment.LEADING)
-						.addGroup(layout.createParallelGroup(Alignment.TRAILING)
-							.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-							.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE))
-						.addGroup(layout.createSequentialGroup()
-							.addGap(584)
-							.addComponent(lblAppTitle)))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
+						.addContainerGap()
+						.addGroup(layout.createParallelGroup(Alignment.LEADING)
+								.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+										.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+										.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE))
+								.addGroup(layout.createSequentialGroup()
+										.addGap(584)
+										.addComponent(lblAppTitle)))
+						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
 		layout.setVerticalGroup(
-			layout.createParallelGroup(Alignment.LEADING)
+				layout.createParallelGroup(Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblAppTitle)
-					.addGap(1)
-					.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE)
-					.addGap(20)
-					.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
+						.addContainerGap()
+						.addComponent(lblAppTitle)
+						.addGap(1)
+						.addComponent(panelSettings, GroupLayout.PREFERRED_SIZE, 219, GroupLayout.PREFERRED_SIZE)
+						.addGap(20)
+						.addComponent(panelBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				);
 		getContentPane().setLayout(layout);
 
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
 
 	private Boolean validateFileSet() {
+		// update current date and time
+		if (txtNameBackup.getText().equals(defaultName)) {
+			defaultName = getBackupDateTime();
+			txtNameBackup.setText(defaultName);
+		}
 		if (mCurrentFileSet.isEmpty()) {
 			JOptionPane.showMessageDialog(getRootPane(),
 					"Please add at least one source to continue.",
@@ -846,7 +898,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			}
 		}
 		return true;
-	} 
+	}
+	
+	private String getBackupDateTime() {
+		String date = new SimpleDateFormat("MM.dd.yy-HH.mm").format(new Date());
+		return "Backup" + date;
+	}
 
 	@Override public void handleProgress(List<Progress> progressItems) {
 		for (Progress p : progressItems) {
