@@ -11,7 +11,6 @@
 
 package core;
 
-import static java.nio.file.LinkOption.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.EOFException;
@@ -226,9 +225,9 @@ public class FileSet extends DefaultListModel<String> {
 		if (destination == null) {
 			throw new IllegalArgumentException("Destination is null");
 		}
-		Path testDest = Paths.get(destination).toRealPath(NOFOLLOW_LINKS);
-		if (!Files.isDirectory(testDest, NOFOLLOW_LINKS)) throw new IOException("Destination does not exist or is not a directory");
-		this.destination = testDest.toRealPath(NOFOLLOW_LINKS).toString();
+		Path testDest = Paths.get(destination);
+		if (!Files.isDirectory(testDest)) throw new IOException("Destination does not exist or is not a directory");
+		this.destination = testDest.toString();
 	}
 	
 
