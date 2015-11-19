@@ -314,8 +314,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		txtDestination.setFocusable(false);
 		txtDestination.setRequestFocusEnabled(false);
 		txtDestination.setEditable(false);
-		// set default destination to user's system-dependent home directory
-		txtDestination.setText(System.getProperty("user.home"));
+		if (mCurrentFileSet.getDestination() != null) {
+			txtDestination.setText(mCurrentFileSet.getDestination());
+		} else {
+			// set default destination to user's system-dependent home directory
+			txtDestination.setText(System.getProperty("user.home"));
+		}
 
 		// set initial name and destination
 		try {
