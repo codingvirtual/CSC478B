@@ -92,6 +92,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static Boolean cannotWrite = false;
 	private static Boolean destOK = true;
 	private static Boolean nameOK = true;
+	private String defaultName;
 	private Document doc;
 	private Application mApp;
 	private FileSet mCurrentFileSet;
@@ -279,8 +280,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		doc = txtStatus.getDocument();
 		txtNameBackup = new JTextField();
 		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 12));
-		String date = new SimpleDateFormat("MM.dd.yy-HH.mm").format(new Date());
-		txtNameBackup.setText("Backup" + date);
+		defaultName = getBackupDateTime();
+		txtNameBackup.setText(defaultName);
 		txtNameBackup.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -830,6 +831,11 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private Boolean validateFileSet() {
+		// update current date and time
+		if (txtNameBackup.getText().equals(defaultName)) {
+			defaultName = getBackupDateTime();
+			txtNameBackup.setText(defaultName);
+		}
 		if (mCurrentFileSet.isEmpty()) {
 			JOptionPane.showMessageDialog(getRootPane(),
 					"Please add at least one source to continue.",
@@ -892,7 +898,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			}
 		}
 		return true;
-	} 
+	}
+	
+	private String getBackupDateTime() {
+		String date = new SimpleDateFormat("MM.dd.yy-HH.mm").format(new Date());
+		return "Backup" + date;
+	}
 
 	@Override public void handleProgress(List<Progress> progressItems) {
 		for (Progress p : progressItems) {
