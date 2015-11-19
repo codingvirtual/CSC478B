@@ -145,6 +145,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		}
 
 		File icon16 = new File("res/icons/icon16.png");
+		System.out.println(icon16.toString());
 		File icon32 = new File("res/icons/icon32.png");
 		File icon64 = new File("res/icons/icon64.png");
 		File icon128 = new File("res/icons/icon128.png");
