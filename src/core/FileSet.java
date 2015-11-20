@@ -133,7 +133,6 @@ public class FileSet extends DefaultListModel<String> {
 				BasicFileAttributes fileAttrs = Files.getFileAttributeView(filePath, BasicFileAttributeView.class).readAttributes();
 				totalBytes += fileAttrs.size();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				throw new IllegalArgumentException("Attributes of file " + path + " are not readable.");
 			}
 
@@ -153,7 +152,6 @@ public class FileSet extends DefaultListModel<String> {
 				BasicFileAttributes fileAttrs = Files.getFileAttributeView(filePath, BasicFileAttributeView.class).readAttributes();
 				totalBytes -= fileAttrs.size();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				throw new IllegalArgumentException("Attributes of file " + path + " are not readable.");
 			}
 
