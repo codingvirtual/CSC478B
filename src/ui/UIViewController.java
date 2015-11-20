@@ -448,18 +448,23 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 
 				try {
 					mApp.saveDefaultFileSet();
-				} catch (IOException exception) {
-					// FIXME: add a dialog box to inform the user that saving the default file set failed.
-					exception.printStackTrace();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(getRootPane(),
+							"The backup could not be saved.\n" +
+									"Please make sure you have sufficient privileges.",
+									"Failed to Save",
+									JOptionPane.ERROR_MESSAGE);
+					System.err.println("IOException: failed to save backup");
+					return;
 				}
 
 				txtStatus.setCaretPosition(doc.getLength());
 				if (radioOn.isSelected()) {
 					try {
 						if (doc.getLength() == 0) {
-							doc.insertString(doc.getLength(), "Backup saved (ACTIVE).", null);
+							doc.insertString(doc.getLength(), "Backup saved (ACTIVE)", null);
 						} else {
-							doc.insertString(doc.getLength(), "\nBackup saved (ACTIVE).", null);
+							doc.insertString(doc.getLength(), "\nBackup saved (ACTIVE)", null);
 						}
 					} catch (BadLocationException e1) {
 						System.err.println("Bad caret position; cannot insert string.");
@@ -467,9 +472,9 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				} else {
 					try {
 						if (doc.getLength() == 0) {
-							doc.insertString(doc.getLength(), "Backup saved (INACTIVE).", null);
+							doc.insertString(doc.getLength(), "Backup saved (INACTIVE)", null);
 						} else {
-							doc.insertString(doc.getLength(), "\nBackup saved (INACTIVE).", null);
+							doc.insertString(doc.getLength(), "\nBackup saved (INACTIVE)", null);
 						}
 					} catch (BadLocationException e1) {
 						System.err.println("Bad caret position; cannot insert string.");
@@ -908,7 +913,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		}
 		return true;
 	}
-	
+
 	private String getBackupDateTime() {
 		String date = new SimpleDateFormat("MM.dd.yy-HH.mm").format(new Date());
 		return "Backup" + date;
