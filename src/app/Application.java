@@ -13,6 +13,7 @@
 package app;
 
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,19 +76,14 @@ public class Application {
 	}
 
 
-	public void saveDefaultFileSet() {
+	public void saveDefaultFileSet() throws IOException {
 		/**
 		 * Saves FileSet to the default location (whatever that may be)
 		 */
 		Path defaultFSPath = Paths.get(System.getProperty("user.home"));
 		defaultFSPath = defaultFSPath.resolve("Mirror");
 		defaultFSPath = defaultFSPath.resolve("DefaultFileSet");
-		try {
-			FileSet.save(defaultFSPath.toString(), mCurrentFileSet);
-		} catch (Exception e) {
-			// FIXME: generate an error if unable to set name (this shouldn't happen)
-			e.printStackTrace();
-		}
+		FileSet.save(defaultFSPath.toString(), mCurrentFileSet);
 	}
 
 	public static void main(String args[]) {

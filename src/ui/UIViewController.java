@@ -446,7 +446,12 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				// validate file set and show dialogs if necessary
 				if (!validateFileSet()) { return; }
 
-				mApp.saveDefaultFileSet();
+				try {
+					mApp.saveDefaultFileSet();
+				} catch (IOException exception) {
+					// FIXME: add a dialog box to inform the user that saving the default file set failed.
+					exception.printStackTrace();
+				}
 
 				txtStatus.setCaretPosition(doc.getLength());
 				if (radioOn.isSelected()) {
