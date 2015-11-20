@@ -112,27 +112,21 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		files.addElement(fileName);
 
 		FileOps testOps = new FileOps(files, this);
-		try {
-			final ExecutorService threadPool = Executors.newFixedThreadPool(1);
-			threadPool.submit(new Runnable() {
-				public void run() {
-					try {
-						testOps.run();
-					} catch (final Throwable e) {
-						e.printStackTrace();
-					}
+		final ExecutorService threadPool = Executors.newFixedThreadPool(1);
+		threadPool.submit(new Runnable() {
+			public void run() {
+				try {
+					testOps.run();
+				} catch (final Throwable e) {
+					e.printStackTrace();
 				}
-			});
-			latch.await();
-			System.out.println("completion: " + completionReceived);
-			System.out.println("progressReceived: " + progressReceived);
-			assertTrue(completionReceived);
-			assertTrue(progressReceived > 0);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			fail("Running FileOps failed");
-			e.printStackTrace();
-		}
+			}
+		});
+		latch.await();
+		System.out.println("completion: " + completionReceived);
+		System.out.println("progressReceived: " + progressReceived);
+		assertTrue(completionReceived);
+		assertTrue(progressReceived > 0);
 	}
 
 	@Test
