@@ -264,6 +264,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		lblSources = new JLabel();
 		lblDestination = new JLabel();
 		lblDestNote = new JLabel();
+		lblDestNote.setVisible(false);
+		lblDestNote.setEnabled(false);
 		lblDestNote.setForeground(Color.GRAY);
 		jXDatePicker = new JXDatePicker();
 		jXDatePicker.setEnabled(false);
