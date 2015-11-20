@@ -92,12 +92,6 @@ public class Application {
 
 	public static void main(String args[]) {
 
-		//	    try {
-		//			java.awt.EventQueue.invokeAndWait(new Runnable() {
-
-
-
-
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -112,14 +106,5 @@ public class Application {
 			}
 		});
 
-
-
-		//		} catch (InvocationTargetException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		} catch (InterruptedException e) {
-		//			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//		}
 	}     
 }
