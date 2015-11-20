@@ -529,8 +529,13 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				try {
 					worker = new FileOps(mCurrentFileSet, UIViewController.this);
 				} catch (Exception e1) {
-					// TODO Add code to handle failure to create the FileOps worker
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(getRootPane(),
+							"The backup failed to run.\n" +
+									"Please try again.",
+									"Unknown Error",
+									JOptionPane.ERROR_MESSAGE);
+					System.err.println("Exception: failed to run backup");
+					return;
 				}
 				worker.execute();
 			}
