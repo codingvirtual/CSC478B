@@ -75,7 +75,6 @@ public class ApplicationTest {
 			// Also, the list of paths to back up should be empty.
 			assertEquals(app.getCurrentFileSet().getSize(), 0);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Unable to create new Application object");
 		}
@@ -113,14 +112,12 @@ public class ApplicationTest {
 		try {
 			fs = new FileSet("testFileSet");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			fail("This failure should not occur.");
 			e.printStackTrace();
 		}
 		try {
 			app = new Application();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			fail("This failure should not occur.");
 			e.printStackTrace();
 		}
@@ -128,7 +125,6 @@ public class ApplicationTest {
 		try {
 			fs2 = app.getCurrentFileSet();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			fail("Exception while trying to get current"
 					+ "file set.");
@@ -163,7 +159,6 @@ public class ApplicationTest {
 		try {
 			Files.deleteIfExists(defaultFSPath);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			assertFalse(Files.exists(defaultFSPath));
