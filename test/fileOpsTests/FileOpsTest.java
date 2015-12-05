@@ -19,8 +19,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,7 +30,7 @@ import fileops.FileOpsMessageHandler;
 import fileops.Progress;
 
 /**
- * @author Greg
+ * @author Greg, Zack
  *
  */
 public class FileOpsTest implements FileOpsMessageHandler {
@@ -53,19 +51,6 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	@Rule
 	public final ExpectedException expectedException = ExpectedException.none();
 
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
 
 	/* (non-Javadoc)
 	 * @see fileops.FileOpsMessageHandler#handleProgress(java.util.List)
@@ -89,12 +74,12 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		latch.countDown();
 	}
 
-
+	@Test
 	/**
 	 * Test method for {@link fileops.FileOps#run()}.
+	 * Test run() completes successfully when given a valid fileset with a file
 	 * @throws Exception 
 	 */
-	@Test
 	public void given_FullyParameterizedFileSetWithFile_when_TestRun_TestSucceeds() throws Exception {
 		FileSet files = new FileSet();
 		try {
@@ -130,6 +115,10 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 
 	@Test
+	/**
+	 * Test exception thrown if calling run() on empty fileset
+	 * @throws Exception
+	 */
 	public void given_CompletelyEmptyFileSet_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 
@@ -150,6 +139,10 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 
 	@Test
+	/**
+	 * Given empty fileset, validation fails and exception is thrown
+	 * @throws Exception
+	 */
 	public void given_CompletelyEmptyFileSet_when_ValidateFileSetIsCalled_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 
@@ -159,6 +152,11 @@ public class FileOpsTest implements FileOpsMessageHandler {
 
 
 	@Test
+	/**
+	 * Test if a fully parameterized fileset without files is called to run(), an
+	 * exception is thrown
+	 * @throws Exception
+	 */
 	public void given_FullyParameterizedFileSetWithNoFiles_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		files.setName("Copy");
@@ -183,6 +181,11 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 
 	@Test
+	/**
+	 * Test if a named fileset with a file, but no destination is called to run(),
+	 * an exception is thrown
+	 * @throws Exception
+	 */
 	public void given_NamedFileSetWithSingleFileNoDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		files.setName("Copy");
@@ -205,6 +208,11 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 
 	@Test
+	/**
+	 * Test if an unnamed FileSet with a destination and file is called to run(),
+	 * then exception is thrown
+	 * @throws Exception
+	 */
 	public void given_UnnamedFileSetWithSingleFileAndDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		File path = tempFolder.getRoot();
