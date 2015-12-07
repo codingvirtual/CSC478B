@@ -1,7 +1,7 @@
 /**
  *
- * @author Greg Palen
- * @version 0.1.0
+ * @author Will Code For A's
+ * @version 1.0.0
  *
  * <h3>Revision History</h3>
  * <p>
