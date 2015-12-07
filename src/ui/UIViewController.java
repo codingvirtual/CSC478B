@@ -461,22 +461,24 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				}
 
 				txtStatus.setCaretPosition(doc.getLength());
+				// Scheduled backup is ON
 				if (radioOn.isSelected()) {
 					try {
 						if (doc.getLength() == 0) {
-							doc.insertString(doc.getLength(), "Backup saved (ACTIVE)", null);
+							doc.insertString(doc.getLength(), "Backup settings saved.", null);
 						} else {
-							doc.insertString(doc.getLength(), "\nBackup saved (ACTIVE)", null);
+							doc.insertString(doc.getLength(), "\nBackup settings saved.", null);
 						}
 					} catch (BadLocationException e1) {
 						System.err.println("Bad caret position; cannot insert string.");
 					}
 				} else {
+					// Scheduled backup is OFF
 					try {
 						if (doc.getLength() == 0) {
-							doc.insertString(doc.getLength(), "Backup saved (INACTIVE)", null);
+							doc.insertString(doc.getLength(), "Backup settings saved.", null);
 						} else {
-							doc.insertString(doc.getLength(), "\nBackup saved (INACTIVE)", null);
+							doc.insertString(doc.getLength(), "\nBackup settings saved.", null);
 						}
 					} catch (BadLocationException e1) {
 						System.err.println("Bad caret position; cannot insert string.");
