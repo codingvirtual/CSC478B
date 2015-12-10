@@ -4,3 +4,4 @@ bin
 *._decrypted*
 build
 /.settings/
+/node_modules/
