@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fileSetTests;
+package TestSuite;
 
 import static org.junit.Assert.*;
 

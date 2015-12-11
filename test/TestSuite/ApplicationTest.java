@@ -9,7 +9,7 @@
  * 
  * </p>
  */
-package ApplicationTests;
+package TestSuite;
 
 import static org.junit.Assert.*;
 
