@@ -71,7 +71,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	 * Test method for {@link fileops.FileOps#run()}.
 	 * Test run() completes successfully when given a valid FileSet with a file
 	 * 
-	 * @throws Exception 
+	 * @throws Exception if the testOps operation fails for any reason.
 	 */
 	@Test
 	public void given_FullyParameterizedFileSetWithFile_when_TestRun_TestSucceeds() throws Exception {
@@ -94,11 +94,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		final ExecutorService threadPool = Executors.newFixedThreadPool(1);
 		threadPool.submit(new Runnable() {
 			public void run() {
-				try {
-					testOps.run();
-				} catch (final Throwable e) {
-					e.printStackTrace();
-				}
+				testOps.run();
 			}
 		});
 		latch.await();
