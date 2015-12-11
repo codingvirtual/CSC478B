@@ -216,6 +216,11 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	 */
 
 	private void initComponents() {
+		/**
+		 * TODO: 1.1.1.1
+		 * The user must be able to create a list of files that the application
+		 * is to operate on.
+		 */
 		listModel = mCurrentFileSet;
 		listSources = new JList<String>(listModel);
 		listSources.setFont(new Font("Helvetica Neue", Font.PLAIN, 14));
@@ -280,6 +285,11 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		txtStatus.setBackground(new Color(0, 0, 0, 0));
 		txtStatus.setMargin(new java.awt.Insets(0, 0, 0, 0));
 		doc = txtStatus.getDocument();
+		/**
+		 * TODO: 1.1.7.1
+		 * The user shall name a backup, and the backup shall be saved in a folder with
+		 * the chosen name at the root of the destination.
+		 */
 		txtNameBackup = new JTextField();
 		txtNameBackup.setFont(new Font("Helvetica Neue", Font.PLAIN, 12));
 		defaultName = getBackupDateTime();
@@ -312,6 +322,11 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 				}
 			}
 		});
+		/**
+		 * TODO: 1.1.2.1
+		 * The user shall be able to specify a destination folder or drive for the backup
+		 * operation to store the backup into.
+		 */
 		txtDestination = new JTextField();
 		txtDestination.setFocusable(false);
 		txtDestination.setRequestFocusEnabled(false);
@@ -377,6 +392,11 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			}
 		});
 
+		/**
+		 * TODO: 1.1.3.1
+		 * The user must be able to modify the list of files to operate on prior to backup.
+		 * After backup, the user can modify the list and save as a new backup.
+		 */
 		btnAddFile = new JButton();
 		btnAddFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -495,6 +515,10 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 			}
 		});
 
+		/**
+		 * TODO: 1.1.4.1
+		 * The user shall have the capability of executing a backup on demand.
+		 */
 		btnRun = new JButton();
 		btnRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -529,6 +553,10 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 					System.err.println("Bad caret position; cannot insert string.");
 				}
 
+				/**
+				 *  TODO: 1.1.5.1
+				 *  The user must be notified of the status of any backup (failure or success).
+				 */
 				worker = null;
 				try {
 					worker = new FileOps(mCurrentFileSet, UIViewController.this);
@@ -928,6 +956,10 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 		return "Backup" + date;
 	}
 
+	/**
+	 *  TODO: 1.1.5.1
+	 *  The user must be notified of the status of any backup (failure or success).
+	 */
 	@Override public void handleProgress(List<Progress> progressItems) {
 		for (Progress p : progressItems) {
 			if (p.sourceCopied != "") {
