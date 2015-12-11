@@ -1,15 +1,4 @@
-/**
- *
- * @author Will Code For A's
- * @version 1.0.0
- *
- * <h3>Revision History</h3>
- * <p>
- * 0.1.0	GP	Initial revision
- * 0.1.1	AR	Add SwingUtilities to main()
- * 
- * </p>
- */
+
 package app;
 
 
@@ -23,13 +12,27 @@ import ui.UIViewController;
 import core.FileSet;
 
 /**
- * @author Greg
+ * Defines the Application context (for storage of global objects). Also serves as a proxy for the Model in the Model-View-Controller pattern.
+ *
+ * @author Greg Palen
+ * @version 1.0
+ * 
  *
  */
-public class Application {
 
+public class Application {
+	
+	/**
+	 * Holds the active FileSet that the UI will display (the "Model").
+	 */
 	private FileSet mCurrentFileSet;
 
+	/**
+	 * Standard Public Constructor with no arguments. Upon exit, a default file set will have either been loaded or instantiated.
+	 * @see getDefaultFileSet
+	 * 
+	 * @throws Exception if there are errors while attempting to locate or read the default FileSet
+	 */
 	public Application() throws Exception {
 		// look for current FileSet file on disk
 		// if exists, read it and set the currentFileSet to it
@@ -57,6 +60,10 @@ public class Application {
 		this.mCurrentFileSet = fileSet;
 	}
 
+	/**f
+	 * Loads
+	 * @throws Exception
+	 */
 	private void getDefaultFileSet() throws Exception {
 		/**
 		 * Reads a FileSet from the specified location
