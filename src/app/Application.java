@@ -13,22 +13,28 @@ import core.FileSet;
 
 /**
  * Defines the Application context (for storage of global objects). Also serves as a proxy for the Model in the Model-View-Controller pattern.
+ * <br /><br />
+ * Extend this class and override getDefaultFileSet and saveDefaultFileSet to alter the default location that the active FileSet is stored.
  *
  * @author Greg Palen
  * @version 1.0
  * 
  *
  */
-
 public class Application {
 	
 	/**
-	 * Holds the active FileSet that the UI will display (the "Model").
+	 * Holds the active {@link FileSet} (the "Model") that both the {@link UIViewController} (the View-Controller) will interact with 
+	 * as well as the model that the {@link FileOps} class uses for its operations.
+	 * 
+	 * @see UIViewController
 	 */
 	private FileSet mCurrentFileSet;
 
 	/**
-	 * Standard Public Constructor with no arguments. Upon exit, a default file set will have either been loaded or instantiated.
+	 * Standard default constructor to instantiate the entire application. Upon return, a default file set will have either been loaded or instantiated and
+	 * the user interface will be displayed.
+	 * 
 	 * @see getDefaultFileSet
 	 * 
 	 * @throws Exception if there are errors while attempting to locate or read the default FileSet
@@ -41,8 +47,12 @@ public class Application {
 	}
 
 	/**
-	 * @return the currentFileSet
-	 * @throws Exception 
+	 * Method to retrieve the current {@link FileSet} from the application context.
+	 * <br /><br />
+	 * If there is no {@link FileSet} defined in the context, a new default (empty) {@link FileSet} will be created.
+	 * @return the current {@link FileSet}
+	 * @throws Exception (propagated by {@link #getDefaultFileSet}
+	 * @see #getDefaultFileSet()
 	 */
 	public FileSet getCurrentFileSet() throws Exception {
 		if (mCurrentFileSet == null) {
@@ -52,7 +62,9 @@ public class Application {
 	}
 
 	/**
+	 * Takes a {@link FileSet} and sets it as the current {@link FileSet} for the application to operate on.
 	 * @param currentFileSet the currentFileSet to set
+	 * @throws NullPointerException if the passed {@link FileSet} is null.
 	 */
 	public void setCurrentFileSet(FileSet fileSet) {
 		if (fileSet == null) throw new NullPointerException("Attempted to set the current FileSet"
@@ -60,14 +72,12 @@ public class Application {
 		this.mCurrentFileSet = fileSet;
 	}
 
-	/**f
-	 * Loads
-	 * @throws Exception
+	/**
+	 * Loads a {@link FileSet} from the user's home directory (platform-dependent location). The default {@link FileSet} will
+	 * be stored in a sub-directory named <code>Mirror</code> within the user's home directory in a file named <code>DefaultFileSet</code>.
+	 * @throws Exception if the sub-directory or file does not exist or is not readable (for example due to bad permissions).
 	 */
 	private void getDefaultFileSet() throws Exception {
-		/**
-		 * Reads a FileSet from the specified location
-		 */
 		Path defaultFileSet = Paths.get(System.getProperty("user.home"));
 		defaultFileSet = defaultFileSet.resolve("Mirror");
 		defaultFileSet = defaultFileSet.resolve("DefaultFileSet");
@@ -82,19 +92,29 @@ public class Application {
 		}
 	}
 
-
+	/**
+	 * Saves the current in-memory {@link FileSet} to the default location.
+	 * 
+	 * @see #getDefaultFileSet()
+	 * @throws IOException if the file or sub-directory doesn't exist or if the file is unreadable (for example due to bad permissions).
+	 */
 	public void saveDefaultFileSet() throws IOException {
-		/**
-		 * Saves FileSet to the default location (whatever that may be)
-		 */
 		Path defaultFSPath = Paths.get(System.getProperty("user.home"));
 		defaultFSPath = defaultFSPath.resolve("Mirror");
 		defaultFSPath = defaultFSPath.resolve("DefaultFileSet");
 		FileSet.save(defaultFSPath.toString(), mCurrentFileSet);
 	}
 
+	/**
+	 * Called by the JVM at runtime to launch the application. Upon execution, <code>main()</code> will attempt to create and open the
+	 * User Interface.
+	 * @param args - Standard command line arguments
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalClassException
+	 * @throws UnsupportedLookAndFeelException
+	 */
 	public static void main(String args[]) {
-
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
