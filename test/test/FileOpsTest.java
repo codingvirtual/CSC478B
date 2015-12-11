@@ -5,7 +5,7 @@
  * @version 0.1.0
  *
  */
-package TestSuite;
+package test;
 
 import static org.junit.Assert.*;
 
