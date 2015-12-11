@@ -1,13 +1,9 @@
 /**
+ * Put a summary of the overall class here.
  *
- * @author Greg Palen
+ * @author Zack Burch
  * @version 0.1.0
  *
- * <h3>Revision History</h3>
- * <p>
- * 0.1.0	GP	Initial revision
- * 
- * </p>
  */
 package fileOpsTests;
 
@@ -29,10 +25,6 @@ import fileops.FileOps;
 import fileops.FileOpsMessageHandler;
 import fileops.Progress;
 
-/**
- * @author Greg, Zack
- *
- */
 public class FileOpsTest implements FileOpsMessageHandler {
 
 	private static String testRoot = System.getProperty("user.home");
@@ -74,12 +66,14 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		latch.countDown();
 	}
 
-	@Test
+
 	/**
 	 * Test method for {@link fileops.FileOps#run()}.
-	 * Test run() completes successfully when given a valid fileset with a file
+	 * Test run() completes successfully when given a valid FileSet with a file
+	 * 
 	 * @throws Exception 
 	 */
+	@Test
 	public void given_FullyParameterizedFileSetWithFile_when_TestRun_TestSucceeds() throws Exception {
 		FileSet files = new FileSet();
 		try {
