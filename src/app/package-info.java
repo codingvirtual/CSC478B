@@ -1,5 +1,5 @@
 /**
- * This file documents the package as a whole.
+ * Contains the {@link Application} class which is the foundation class for the entire application.
  */
 
 package app;
