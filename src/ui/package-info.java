@@ -1,5 +1,5 @@
 /**
- * Package containing user interface classes.
+ * Contains user interface classes.
  */
 
 package ui;
