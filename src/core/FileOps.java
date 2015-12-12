@@ -15,10 +15,10 @@ import javax.swing.SwingWorker;
 import core.FileSet;
 
 /**
- * The FileOps class defines the operation and behavior of the entire backup operation.
+ * The FileOps class defines the operation and behavior of the entire backup process.
  * 
  * @author Greg Palen
- * @version 1.0
+ * @version 1.0.0
  *
  */
 public class FileOps extends SwingWorker<Void, Progress> {
@@ -27,19 +27,38 @@ public class FileOps extends SwingWorker<Void, Progress> {
 	private final FileOpsMessageHandler mMessageHandler;
 
 
+	/**	Constructor
+	 * 
+	 * @param files An existing {@link FileSet} that defines parameters of the copy operation (source, destination).
+	 * @param handler An instance of {@link FileOpsMessageHandler} that will receive progress updates as the operation proceeds.
+	 * 
+	 * @throws IllegalArgumentException
+	 * 	{@link FileSet} doesn't exist or is unreadable.
+	 * 
+	 * @see FileSet
+	 * @see FileOpsMessageHandler
+	 */
 	public FileOps(FileSet files, FileOpsMessageHandler handler) throws IllegalArgumentException {
 		validateFileSet(files);
 		mFilesToCopy = files;
 		mMessageHandler = handler;
 	}
 
+	/**	Constructor 
+	 * 
+	 * @param files An existing {@link FileSet} that defines parameters of the copy operation (source, destination).
+	 * @throws IllegalArgumentException
+	 */
 	public FileOps(FileSet files) throws IllegalArgumentException {
 		validateFileSet(files);
 		mMessageHandler = null;
 		mFilesToCopy = files;
 	}
 
-	/* (non-Javadoc)
+	/** Defines the copy operation, passing {@link Progress} updates back to a {@link FileOpsMessageHandler} if
+	 * one was specified using the appropriate constructor.
+	 * 
+	 * @throws Exception
 	 * @see javax.swing.SwingWorker#doInBackground()
 	 */
 	@Override
@@ -123,6 +142,13 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		return null;
 	}
 
+	/** Utility function that checks if a particular {@link FileSet} exists on the file system.
+	 * 
+	 * @param fs	The {@link FileSet} to check.
+	 * @return Boolean	True if the {@link FileSet} is valid and readable.
+	 * @throws IOException
+	 * 	Invalid or unreadable {@link FileSet}
+	 */
 	public static Boolean backupExists(FileSet fs) throws IOException {
 		Path destParent = Paths.get(fs.getDestination());
 		Path destination = destParent.resolve(fs.getName());
@@ -132,6 +158,13 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		return false;
 	}
 
+	/**	Utility function that tests if the destination directory specified in a {@link FileSet} can be written
+	 * to (it must exist and have sufficient permissions to be written to).
+	 * @param fs {@link FileSet} to extract the destination directory from.
+	 * @return Boolean True if the destination is NOT writable
+	 * @throws IOException
+	 * 	Generally due to a native file system error
+	 */
 	public static Boolean cannotWrite(FileSet fs) throws IOException {
 		Path destParent = Paths.get(fs.getDestination());
 		if (!Files.isWritable(destParent)) {
@@ -140,6 +173,11 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		return false;
 	}
 
+	/**	Posts a Progress object to the registered handler that represents the current status of the operation.
+	 * 
+	 * @see Progress
+	 * 
+	 */
 	@Override
 	public void process(List<Progress> progressItems) {
 		if (mMessageHandler != null) {
@@ -147,6 +185,9 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		}
 	}
 
+	/**	Posts a Progress object to the registered handler that represents completion of the operation.
+	 * 
+	 */
 	@Override
 	public void done() {
 		if (mMessageHandler != null) {
