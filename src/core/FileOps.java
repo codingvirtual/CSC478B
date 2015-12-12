@@ -18,13 +18,8 @@ import core.FileSet;
  * The FileOps class defines the operation and behavior of the entire backup operation.
  * 
  * @author Greg Palen
- * @version 0.1.0
+ * @version 1.0
  *
- * <h3>Revision History</h3>
- * <p>
- * 0.1.0	GP	Initial revision
- * 0.1.1	AR	Use i/o streams to set progress status
- * </p>
  */
 public class FileOps extends SwingWorker<Void, Progress> {
 
