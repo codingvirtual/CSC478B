@@ -1,19 +1,3 @@
-/**
- * Creates a graphical user interface to control backup operations.
- * 
- * @author Ashley
- * @version 0.1.1
- *
- * <h3>Revision History</h3>
- * <p>
- * 0.1.0	AR	Initial revision
- * 0.1.1	GP 	Add code to link Add File, Remove Selection, Browse, and Run
- * 				buttons to associated code in UIController
- * 0.1.2	AR	Add status text & circular progress bar
- * 0.1.3	AR	Display warning dialog boxes
- * </p>
- */
-
 package ui;
 
 import java.awt.Color;
@@ -83,7 +67,13 @@ import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-
+/**
+ * Creates a graphical user interface to control backup operations.
+ * 
+ * @author Ashley Robertson
+ * @version 1.0
+ *
+ */
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	private static final long serialVersionUID = 1L;
 	static final Color drkGreen = new Color(0, 180, 0);
