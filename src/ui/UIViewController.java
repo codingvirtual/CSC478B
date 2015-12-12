@@ -98,7 +98,7 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	/** The current file set. */
 	private FileSet mCurrentFileSet;
 	/** The object that relies on {@code SwingWorker<Void, Progress>} to run the backup in a background thread.
-	 *  @see fileops.FileOps#doInBackground() */
+	 *  @see core.FileOps#doInBackground() */
 	private FileOps worker;
 
 	/**
@@ -880,6 +880,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	
 	/**
 	 * Validates the source file set before every save or run.
+	 * 
+	 * @return true if the file set is valid or false if the file set is invalid
 	 */
 	private Boolean validateFileSet() {
 		// update current date and time
@@ -967,8 +969,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	
 	/**
 	 * Receives progress data chunks from {@code FileOpsMessageHandler}.
-	 * @see fileops.FileOpsMessageHandler
-	 * @see fileops.FileOps#process(List)
+	 * @see core.FileOpsMessageHandler
+	 * @see core.FileOps#process(List)
 	 */
 	@Override public void handleProgress(List<Progress> progressItems) {
 		for (Progress p : progressItems) {
@@ -991,8 +993,8 @@ public class UIViewController extends JFrame implements FileOpsMessageHandler {
 	
 	/**
 	 * Receives the completion notice from {@code FileOpsMessageHandler}.
-	 * @see fileops.FileOpsMessageHandler
-	 * @see fileops.FileOps#done()
+	 * @see core.FileOpsMessageHandler
+	 * @see core.FileOps#done()
 	 */
 	@Override public void handleCompletion() {
 		btnRun.setEnabled(true);
