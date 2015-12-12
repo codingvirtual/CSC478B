@@ -1,14 +1,3 @@
-/**
- *
- * @author Greg Palen
- * @version 0.1.0
- *
- * <h3>Revision History</h3>
- * <p>
- * 0.1.0	GP	Initial revision
- * 
- * </p>
- */
 package test;
 
 import static org.junit.Assert.*;
@@ -26,9 +15,11 @@ import app.Application;
 import core.FileSet;
 
 /**
- * @author Greg
- *
- */
+*
+* @author Greg Palen
+* @version 1.0
+*
+*/
 public class ApplicationTest {
 	
 	Path defaultFSPath = Paths.get(System.getProperty("user.home"));
