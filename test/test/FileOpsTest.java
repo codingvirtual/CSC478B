@@ -14,9 +14,9 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import core.FileSet;
-import fileops.FileOps;
-import fileops.FileOpsMessageHandler;
-import fileops.Progress;
+import core.FileOps;
+import core.FileOpsMessageHandler;
+import core.Progress;
 
 /**
  * Put a summary of the overall class here.
