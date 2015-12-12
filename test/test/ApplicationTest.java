@@ -17,7 +17,7 @@ import core.FileSet;
 /** Provides tests of functionality of the main Application class
 *
 * @author Greg Palen
-* @version 1.0
+* @version 1.0.0
 * @see Application
 *
 */

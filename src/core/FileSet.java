@@ -21,8 +21,8 @@ import javax.swing.DefaultListModel;
  * a schedule option for recurring, scheduled backups, and of course a destination indicating where to write
  * the backup to.
  * 
- * @author Greg
- * @version 1.0
+ * @author Greg Palen
+ * @version 1.0.0
  * 
  */
 

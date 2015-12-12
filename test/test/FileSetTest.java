@@ -15,8 +15,9 @@ import core.FileSet;
 /**
  * Full test harness for the {@link FileSet} class.  These tests ensure that
  * all methods associated with a FileSet perform to specification.
+ * 
  * @author Zack Burch
- * @version 1.0
+ * @version 1.0.0
  */
 public class FileSetTest {
 

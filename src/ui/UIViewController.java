@@ -71,7 +71,7 @@ import java.awt.event.WindowEvent;
  * Creates a graphical user interface to control backup operations.
  * 
  * @author Ashley Robertson
- * @version 1.0
+ * @version 1.0.0
  *
  */
 public class UIViewController extends JFrame implements FileOpsMessageHandler {
