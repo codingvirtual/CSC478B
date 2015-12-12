@@ -13,15 +13,25 @@ import org.junit.rules.ExpectedException;
 import core.FileSet;
 
 /**
+ * Full test harness for the {@link FileSet} class.  These tests ensure that
+ * all methods associated with a FileSet perform to specification.
+ * 
  * @author Zack Burch
- * @version 1.0
+ * @version 1.0.0
  */
 public class FileSetTest {
 
 	private String testRoot = System.getProperty("user.home");
 
 	/**
-	 * TODO: Javadoc to explain how to set up the file system for the tests
+	 * To set up your system to run these tests, you must first
+	 * do the following...
+	 * 
+	 *  1) Create a folder on your desktop that contains two text files,
+	 *  "test.txt" and "test2.txt"
+	 *  
+	 *  2) Mount Google Drive on your machine.  In the root of your Google
+	 *  Drive, create two folders titled: "Test" and "Test2"
 	 */
 	private String source = testRoot + "/Desktop/test/test.txt";
 	private String sourceb = testRoot + "/Desktop/test/test2.txt";

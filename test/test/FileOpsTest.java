@@ -24,7 +24,7 @@ import core.Progress;
  * specification.
  *
  * @author Zack Burch
- * @version 1.0
+ * @version 1.0.0
  *
  */
 public class FileOpsTest implements FileOpsMessageHandler {
