@@ -14,10 +14,11 @@ import org.junit.Test;
 import app.Application;
 import core.FileSet;
 
-/**
+/** Provides tests of functionality of the main Application class
 *
 * @author Greg Palen
 * @version 1.0
+* @see Application
 *
 */
 public class ApplicationTest {
