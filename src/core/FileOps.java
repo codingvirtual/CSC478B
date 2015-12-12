@@ -23,11 +23,20 @@ import core.FileSet;
  */
 public class FileOps extends SwingWorker<Void, Progress> {
 
+	/**	Contains the {@link FileSet} that the copy process will operate on.
+	 * 
+	 */
 	private final FileSet mFilesToCopy;
+	/**	Contains the {@link FileOpsMessageHandler} that will be called back to with {@link Progress} updates.
+	 * 
+	 */
 	private final FileOpsMessageHandler mMessageHandler;
 
 
-	/**	Constructor
+	/**	Constructor that takes a {@link FileSet} to conduct operations with and a {@link FileOpsMessageHandler}
+	 * that will take call-backs with {@link Progress} updates as the operation progresses.
+	 * <br />
+	 * <p>Use this constructor when it is desired to receive {@link Progress} updates as the copy operation proceeds.
 	 * 
 	 * @param files An existing {@link FileSet} that defines parameters of the copy operation (source, destination).
 	 * @param handler An instance of {@link FileOpsMessageHandler} that will receive progress updates as the operation proceeds.
@@ -44,7 +53,8 @@ public class FileOps extends SwingWorker<Void, Progress> {
 		mMessageHandler = handler;
 	}
 
-	/**	Constructor 
+	/**	Constructor that takes a {@link FileSet} to conduct operations on. Use this constructor when there is
+	 * no need to receive {@link Progress} updates as the operation proceeds.
 	 * 
 	 * @param files An existing {@link FileSet} that defines parameters of the copy operation (source, destination).
 	 * @throws IllegalArgumentException
