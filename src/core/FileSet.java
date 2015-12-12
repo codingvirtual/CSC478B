@@ -1,14 +1,3 @@
-/**
- * Contains a complete specification for a backup operation.
- * The FileSet contains a complete spec for a backup operation including a collection of paths,
- * a schedule option for recurring, scheduled backups, and of course a destination indicating where to write
- * the backup to.
- * 
- * @author Greg
- * @version 1.0
- * 
- */
-
 package core;
 
 import java.io.BufferedInputStream;
@@ -25,6 +14,17 @@ import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import javax.swing.DefaultListModel;
+
+/**
+ * Contains a complete specification for a backup operation.
+ * The FileSet contains a complete spec for a backup operation including a collection of paths,
+ * a schedule option for recurring, scheduled backups, and of course a destination indicating where to write
+ * the backup to.
+ * 
+ * @author Greg
+ * @version 1.0
+ * 
+ */
 
 public class FileSet extends DefaultListModel<String> {
 

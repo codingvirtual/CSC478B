@@ -1,11 +1,4 @@
-/**
- * Put a summary of the overall class here.
- *
- * @author Zack Burch
- * @version 0.1.0
- *
- */
-package TestSuite;
+package test;
 
 import static org.junit.Assert.*;
 
@@ -21,10 +14,17 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import core.FileSet;
-import fileops.FileOps;
-import fileops.FileOpsMessageHandler;
-import fileops.Progress;
+import core.FileOps;
+import core.FileOpsMessageHandler;
+import core.Progress;
 
+/**
+ * Put a summary of the overall class here.
+ *
+ * @author Zack Burch
+ * @version 1.0
+ *
+ */
 public class FileOpsTest implements FileOpsMessageHandler {
 
 	private static String testRoot = System.getProperty("user.home");

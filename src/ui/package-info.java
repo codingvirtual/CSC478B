@@ -1,5 +1,5 @@
 /**
- * This file documents the package as a whole.
+ * Contains user interface classes.
  */
 
 package ui;
