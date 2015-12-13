@@ -19,7 +19,9 @@ import core.FileOpsMessageHandler;
 import core.Progress;
 
 /**
- * Put a summary of the overall class here.
+ * Full test harness for the {@link FileOps} class.  These tests ensure all
+ * methods in FileOps accept only valid arguments and perform according to
+ * specification.
  *
  * @author Zack Burch
  * @version 1.0.0
@@ -104,11 +106,13 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		assertTrue(progressReceived > 0);
 	}
 
-	@Test
+
 	/**
+	 * Test method for {@link fileops.FileOps#run()}.
 	 * Test exception thrown if calling run() on empty fileset
 	 * @throws Exception
 	 */
+	@Test
 	public void given_CompletelyEmptyFileSet_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 
@@ -128,11 +132,13 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		fail("Should not accept completely empty FileSet");
 	}
 
-	@Test
+
 	/**
+	 * Test method for {@link fileops.FileOps#validateFileSet()}.
 	 * Given empty fileset, validation fails and exception is thrown
 	 * @throws Exception
 	 */
+	@Test
 	public void given_CompletelyEmptyFileSet_when_ValidateFileSetIsCalled_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 
@@ -141,12 +147,14 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	}
 
 
-	@Test
+
 	/**
+	 * Test method for {@link fileops.FileOps#run()}.
 	 * Test if a fully parameterized fileset without files is called to run(), an
 	 * exception is thrown
 	 * @throws Exception
 	 */
+	@Test
 	public void given_FullyParameterizedFileSetWithNoFiles_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		files.setName("Copy");
@@ -170,12 +178,13 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		fail("Should not accept FileSet without files");
 	}
 
-	@Test
 	/**
+	 * Test method for {@link fileops.FileOps#run()}.
 	 * Test if a named fileset with a file, but no destination is called to run(),
 	 * an exception is thrown
 	 * @throws Exception
 	 */
+	@Test
 	public void given_NamedFileSetWithSingleFileNoDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		files.setName("Copy");
@@ -197,12 +206,13 @@ public class FileOpsTest implements FileOpsMessageHandler {
 		latch.await();
 	}
 
-	@Test
 	/**
+	 * Test method for {@link fileops.FileOps#run()}.
 	 * Test if an unnamed FileSet with a destination and file is called to run(),
 	 * then exception is thrown
 	 * @throws Exception
 	 */
+	@Test
 	public void given_UnnamedFileSetWithSingleFileAndDest_when_RunFileOps_then_Exception() throws Exception {
 		FileSet files = new FileSet();
 		File path = tempFolder.getRoot();
