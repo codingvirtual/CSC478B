@@ -56,7 +56,6 @@ public class FileSetTest {
 
 
 	/**
-	 * Test method for {@link core.FileSet#FileSet()}.
 	 * Test to ensure an empty file set can be created via an empty constructor
 	 */
 	@Test
@@ -67,7 +66,6 @@ public class FileSetTest {
 
 
 	/**
-	 * Test method for {@link core.FileSet#FileSet(java.lang.String)}.
 	 * Test to ensure a named fileset can be created when given a valid fileset
 	 * name to the constructor
 	 */
@@ -84,7 +82,6 @@ public class FileSetTest {
 
 
 	/**
-	 * Test method for {@link core.FileSet#FileSet(java.lang.String, java.lang.String)}.
 	 * Test to ensure a named fileset with a destination can be created when 
 	 * given a valid fileset name and valid destination to the constructor
 	 */
@@ -132,7 +129,6 @@ public class FileSetTest {
 
 
 	/**
-	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 * Test addElement() works correctly when adding a valid path
 	 */
 	@Test
@@ -145,7 +141,6 @@ public class FileSetTest {
 	
 
 	/**
-	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 * Test addElement() throws exception when adding an invalid path
 	 */
 	@Test
@@ -159,7 +154,6 @@ public class FileSetTest {
 	
 
 	/**
-	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 * Test addElement() does not add the same path twice when added sequentially
 	 */
 	@Test
@@ -177,7 +171,6 @@ public class FileSetTest {
 	
 
 	/**
-	 * Test method for {@link core.FileSet#addPath(java.lang.String)}.
 	 * Test addElement() does not add the same path twice when added with second
 	 * file in between
 	 */
@@ -202,7 +195,6 @@ public class FileSetTest {
 	
 
 	/**
-	 * Test method for {@link core.FileSet#removePath(java.io.File)}.
 	 * Test an existing file can be removed from a fileset via removeElement()
 	 */
 	@Test
@@ -235,7 +227,6 @@ public class FileSetTest {
 	
 
 	/**
-	 * Test method for {@link core.FileSet#getDestination()}.
 	 * Test that null is returned when requesting the destination path from
 	 * a FileSet without a destination assigned
 	 */
@@ -271,7 +262,6 @@ public class FileSetTest {
 	//TEST SET DESTINATION
 
 	/**
-	 * Test method for {@link core.FileSet#setDestination(java.lang.String)}.
 	 * Test that setDestination() completes successfully when a valid path is given
 	 */
 	@Test
