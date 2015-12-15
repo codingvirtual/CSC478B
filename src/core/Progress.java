@@ -14,7 +14,7 @@ package core;
  * <p>Anything else is "in progress" and the user of this class can decide how to calculate
  * percentage completion.</p>
  * 
- * <p>The FileOps class reports back a Progress object to it's Observers in the following manner:</p>
+ * <p>The FileOps class reports back a Progress object to it's Observers in the following manner:
  * <ol>
  * 
  * <li>	Right before the copy operation begins and after basic destination path validation is
@@ -31,6 +31,8 @@ package core;
  * 		should equal totalFiles. It is suggested to use the completedFiles == totalFiles
  * 		comparison just in case the File System erroneously reports file sizes.</li>
  * </ol>
+ * </p>
+ * <p>Requirement 1.1.5.1: The user must be notified of the status of any backup (failure or success).</p>
  * 
  * @author Greg Palen
  * 

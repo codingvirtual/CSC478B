@@ -16,6 +16,15 @@ import core.FileSet;
 
 /**
  * The FileOps class defines the operation and behavior of the entire backup process.
+ * <p>
+ * Traces to the following requirements:<br />
+ * <ul>
+ * <li>Requirement 1.1.4.1: The user shall have the capability of executing a backup on demand.</li>
+ * <li>Requirement 1.1.5.1: The user must be notified of the status of any backup (failure or success).</li>
+ * <li>Requirement 1.1.7.5: The user shall name a backup, and the backup shall be saved in a folder with the chosen
+ *	name at the root of the destination.</li>
+ * </ul>
+ * </p>
  * 
  * @author Greg Palen
  * @version 1.0.0
@@ -24,11 +33,14 @@ import core.FileSet;
 public class FileOps extends SwingWorker<Void, Progress> {
 
 	/**	Contains the {@link FileSet} that the copy process will operate on.
-	 * 
+	 *  
 	 */
 	private final FileSet mFilesToCopy;
+
 	/**	Contains the {@link FileOpsMessageHandler} that will be called back to with {@link Progress} updates.
-	 * 
+	 *	<p>
+	 * 	Requirement 1.1.5.1: The user must be notified of the status of any backup (failure or success).
+	 * </p>
 	 */
 	private final FileOpsMessageHandler mMessageHandler;
 
@@ -67,6 +79,16 @@ public class FileOps extends SwingWorker<Void, Progress> {
 
 	/** Defines the copy operation, passing {@link Progress} updates back to a {@link FileOpsMessageHandler} if
 	 * one was specified using the appropriate constructor.
+	 * 
+	 * <p>
+	 * Traces to the following requirements:<br />
+	 * <ul>
+	 * <li>Requirement 1.1.4.1: The user shall have the capability of executing a backup on demand.</li>
+	 * <li>Requirement 1.1.5.1: The user must be notified of the status of any backup (failure or success).</li>
+	 * <li>Requirement 1.1.7.5: The user shall name a backup, and the backup shall be saved in a folder with the chosen
+	 *	name at the root of the destination.</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @throws Exception
 	 * @see javax.swing.SwingWorker#doInBackground()
@@ -112,7 +134,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 			Path sourcePath = mFilesToCopy.get(i);
 			try {
 				int subStringIndex = 1;
-				
+
 				System.out.println(sourcePath.toString());
 				System.out.println(sourcePath.toString().substring(subStringIndex, subStringIndex + 1));
 				if (sourcePath.toString().substring(subStringIndex, subStringIndex + 1).equals(":")) {
@@ -185,6 +207,10 @@ public class FileOps extends SwingWorker<Void, Progress> {
 
 	/**	Posts a Progress object to the registered handler that represents the current status of the operation.
 	 * 
+	 * 	<p>
+	 * 	Requirement 1.1.5.1: The user must be notified of the status of any backup (failure or success).
+	 * </p>
+	 * 
 	 * @see Progress
 	 * 
 	 */
@@ -197,6 +223,10 @@ public class FileOps extends SwingWorker<Void, Progress> {
 
 	/**	Posts a Progress object to the registered handler that represents completion of the operation.
 	 * 
+	 * 	<p>
+	 * 	Requirement 1.1.5.1: The user must be notified of the status of any backup (failure or success).
+	 * </p>
+	 * 
 	 */
 	@Override
 	public void done() {
@@ -207,7 +237,7 @@ public class FileOps extends SwingWorker<Void, Progress> {
 
 	public static void validateFileSet(FileSet files) throws IllegalArgumentException {
 		String exceptionString = "";
-		
+
 		if (files == null) { 
 			exceptionString = exceptionString.concat("FileSet cannot be null.\n");
 		} else {
