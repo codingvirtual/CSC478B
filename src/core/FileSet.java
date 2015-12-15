@@ -27,7 +27,17 @@ import javax.swing.DefaultListModel;
  * be found at <code>/home/someuser/backup/2015-12-10/home/someuser/mytest</code>.</p>
  * <p>The destination path, FileSet name, and all sources must be valid paths in the file system and must be absolute references.</p>
  * 
- * 
+ * <p>Traces to the following requirements:
+ * <ul>
+ * <li>Requirement 1.1.1.1: The user must be able to create a list of files that the application is to operate on.</li>
+ * <li>Requirement 1.1.2.1: The user shall be able to specify a destination folder or drive for the backup operation
+ * to store the backup into.</li>
+ * <li>Requirement 1.1.3.1: The user must be able to modify the list of files to operate on prior to backup. After
+ * backup, the user can modify the list and save as a new backup.</li>
+ * <li>Requirement 1.1.7.5: The user shall name a backup, and the backup shall be saved in a folder with the chosen
+ * name at the root of the destination.</li>
+ * </ul>
+ * </p>
  * @author Greg Palen
  * @version 1.0.0
  * 
@@ -41,15 +51,21 @@ public class FileSet extends DefaultListModel<String> {
 
 	/**	The full path to the destination directory to copy the source files into.
 	 * 
+	 * <p>Requirement 1.1.2.1: The user shall be able to specify a destination folder or drive for the backup operation
+	 * to store the backup into.</p>
+	 * 
 	 */
 	private String destination;
-	
+
 	/**	<p>The name of this FileSet object. Also becomes the name of the directory that is created to store the backup into.</p>
 	 * <p>This name is appended to the {@link #destination} above to form the full {@link Path} to the backup directory.
 	 * 
+	 * <p>Requirement 1.1.7.5: The user shall name a backup, and the backup shall be saved in a folder with the chosen
+	 * name at the root of the destination.</p>
+	 * 
 	 */
 	private String name;
-	
+
 	/**	The total number of bytes to be copied as reported by the file system.
 	 * 
 	 */
@@ -65,7 +81,7 @@ public class FileSet extends DefaultListModel<String> {
 
 	}
 
-	/** Convenience onstructor used to create a new FileSet and set the {@link #name} of the FileSet at the same time. Use this constructor
+	/** Convenience constructor used to create a new FileSet and set the {@link #name} of the FileSet at the same time. Use this constructor
 	 * when you know what {@link #name} you want to give to the FileSet.
 	 * 
 	 * @param name	String representing the name to give to the FileSet. This name must conform to the file naming rules of the host file system/platform.
@@ -161,6 +177,9 @@ public class FileSet extends DefaultListModel<String> {
 
 	/**	Adds the specified path to the list of sources that the FileSet is going to copy.
 	 * 
+	 *  <p>Requirement 1.1.1.1: The user must be able to create a list of files that the application is to operate on.</p>
+	 *  <p>Requirement 1.1.3.1: The user must be able to modify the list of files to operate on prior to backup. After
+	 * backup, the user can modify the list and save as a new backup.</p>
 	 */
 	public void addElement(String path) throws IllegalArgumentException {
 		if (super.contains(path)) return;
@@ -181,6 +200,10 @@ public class FileSet extends DefaultListModel<String> {
 
 	/**	Removes the specified path from the list of sources that the FileSet is going to copy. Nothing happens if the supplied
 	 * path does not exist in the current FileSet list of sources.
+	 * 
+	 * 	<p>Requirement 1.1.1.1: The user must be able to create a list of files that the application is to operate on.</p>
+	 *  <p>Requirement 1.1.3.1: The user must be able to modify the list of files to operate on prior to backup. After
+	 * backup, the user can modify the list and save as a new backup.</p>
 	 * 
 	 * @param path	A string representing an absolute path to a file to be backed up as part of the copy operation.
 	 * 
@@ -204,7 +227,7 @@ public class FileSet extends DefaultListModel<String> {
 		} 
 	}
 
-	
+
 	// --- Utility Methods -- //
 
 	/**	Utility method to determine if a given path is valid. To be valid, the path must:
@@ -245,7 +268,7 @@ public class FileSet extends DefaultListModel<String> {
 			throw new IOException("FileSet with name " + fileName + " could not be created.");
 		}
 	}
-	
+
 	// --- Getters & Setters -- //
 
 	/**
@@ -257,6 +280,10 @@ public class FileSet extends DefaultListModel<String> {
 
 	/**
 	 * Sets the name of the FileSet (which will become the file name if the FileSet is saved)
+	 * 
+	 * <p>Requirement 1.1.7.5: The user shall name a backup, and the backup shall be saved in a folder with the chosen
+	 * name at the root of the destination.</p>
+	 * 
 	 * @param name the name to set
 	 */ 
 	public void setName(String name) throws Exception {
@@ -279,6 +306,9 @@ public class FileSet extends DefaultListModel<String> {
 	/**	Sets the destination directory the backup will get created in. This represents the absolute {@link Path} to a directory that
 	 * 	will contain the backup. 
 	 * 
+	 * <p>Requirement 1.1.2.1: The user shall be able to specify a destination folder or drive for the backup operation
+	 * to store the backup into.</p>
+	 * 
 	 * @param destination String representing the absolute path to a directory to write the backup into.
 	 * @throws Exception when the directory contains illegal characters for the underlying file system/platform or if the specified
 	 * destination cannot be written into (due to permissions typically).
@@ -292,7 +322,7 @@ public class FileSet extends DefaultListModel<String> {
 		if (!Files.isDirectory(testDest)) throw new IOException("Destination does not exist or is not a directory");
 		this.destination = testDest.toString();
 	}
-	
+
 
 	/**
 	 * @return the totalBytes of all files that are in the FileSet at the time this call is made.

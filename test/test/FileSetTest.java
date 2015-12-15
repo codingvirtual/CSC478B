@@ -68,6 +68,7 @@ public class FileSetTest {
 	/**
 	 * Test to ensure a named fileset can be created when given a valid fileset
 	 * name to the constructor
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_ValidFileSetName_when_CreatingFileSet_then_Success() {
@@ -84,6 +85,7 @@ public class FileSetTest {
 	/**
 	 * Test to ensure a named fileset with a destination can be created when 
 	 * given a valid fileset name and valid destination to the constructor
+	 * (Requirements 1.1.2.1 & 1.1.7.5)
 	 */
 	@Test
 	public void given_ValidDestValidName_when_Validated_then_TestSucceeds() {
@@ -104,6 +106,7 @@ public class FileSetTest {
 
 	/**
 	 * Test to ensure validFileName() works correctly for valid backup names
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_valid_fileName_when_validated_then_testPasses() {
@@ -116,6 +119,7 @@ public class FileSetTest {
 	
 	/**
 	 * Test to ensure validFileName() throws exception for invalid backup names
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_invalid_fileName_when_validated_then_testFails() throws Exception{
@@ -130,6 +134,7 @@ public class FileSetTest {
 
 	/**
 	 * Test addElement() works correctly when adding a valid path
+	 * (Requirement 1.1.1.1)
 	 */
 	@Test
 	public void given_ValidPath_when_AddingToFileSet_then_ExceptionShouldntOccur() {
@@ -142,6 +147,7 @@ public class FileSetTest {
 
 	/**
 	 * Test addElement() throws exception when adding an invalid path
+	 * (Requirement 1.1.1.1)
 	 */
 	@Test
 	public void given_InvalidPath_when_AddingToFileSet_then_ExceptionShouldOccur() throws Exception{
@@ -155,6 +161,7 @@ public class FileSetTest {
 
 	/**
 	 * Test addElement() does not add the same path twice when added sequentially
+	 * (Requirement 1.1.1.1)
 	 */
 	@Test
 	public void given_ValidPath_when_AddingItTwice_then_DuplicateShouldntOccur() {
@@ -173,6 +180,7 @@ public class FileSetTest {
 	/**
 	 * Test addElement() does not add the same path twice when added with second
 	 * file in between
+	 * (Requirement 1.1.1.1)
 	 */
 	@Test
 	public void given_ValidPath_when_AddingItTwiceWithValidFileBetween_then_DuplicateShouldntOccur() {
@@ -196,6 +204,7 @@ public class FileSetTest {
 
 	/**
 	 * Test an existing file can be removed from a fileset via removeElement()
+	 * (Requirement 1.1.3.1)
 	 */
 	@Test
 	public void given_ExistingFile_when_RemovingPath_then_TestSucceeds() {
@@ -210,6 +219,7 @@ public class FileSetTest {
 	/**
 	 * Test exception is thrown when attempting to remove a non-existing file 
 	 * from a fileset
+	 * (Requirement 1.1.3.1)
 	 */
 	@Test
 	public void given_EmptyFileSet_when_RemovingFile_then_FileSetRemainsEmpty(){
@@ -229,6 +239,7 @@ public class FileSetTest {
 	/**
 	 * Test that null is returned when requesting the destination path from
 	 * a FileSet without a destination assigned
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_EmptyFileSet_when_GetDestination_then_NullReturned() {
@@ -246,6 +257,7 @@ public class FileSetTest {
 	/**
 	 * Test destination is returned successfully via getDestination() when a FileSet
 	 * contains a valid destination
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_FileSetWithDest_when_GetDestination_then_DestinationReturned(){
@@ -263,6 +275,7 @@ public class FileSetTest {
 
 	/**
 	 * Test that setDestination() completes successfully when a valid path is given
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_EmptyFileSet_when_SetDestWithValidDest_then_TestSucceeds() {
@@ -280,6 +293,7 @@ public class FileSetTest {
 	 * Test that setDestination() completes successfully when a valid path is given
 	 * to a FileSet that already has a destination, and that the new destination
 	 * is returned upon calling getDestination()
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_FileSetWithDest_when_SetDestWithNewValidDest_then_TestSucceeds() {
@@ -307,6 +321,7 @@ public class FileSetTest {
 	/**
 	 * Test that exception is thrown when an invalid path is passed to 
 	 * setDestination()
+	 * (Requirement 1.1.2.1)
 	 */
 	@Test
 	public void given_InvalidDestination_when_SetDest_then_Exception() throws Exception{
@@ -323,6 +338,7 @@ public class FileSetTest {
 
 	/**
 	 * Test that null is returned when calling getName() on an empty FileSet
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_EmptyFileSet_when_GetName_then_ReturnsNull() {
@@ -336,6 +352,7 @@ public class FileSetTest {
 	/**
 	 * Test that a name is returned when calling getName() on a FileSet
 	 * with a valid name
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_FileSetWithName_when_GetName_then_ReturnsName() {
@@ -355,6 +372,7 @@ public class FileSetTest {
 
 	/**
 	 * Test setName() successfully stores valid backup name
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_FileSetWithValidName_when_SetBySetName_then_TestSucceeds() {
@@ -373,6 +391,7 @@ public class FileSetTest {
 	/**
 	 * Test passing only a valid backup name as parameter to constructor successfully 
 	 * stores backup name
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_FileSetWithValidName_when_SetBySingleParamConstructor_then_TestSucceeds() {
@@ -390,6 +409,7 @@ public class FileSetTest {
 	/**
 	 * Test passing a valid backup name AND destination as parameters to constructor 
 	 * successfully stores backup name
+	 * (Requirements 1.1.7.5 & 1.1.2.1)
 	 */
 	@Test
 	public void given_FileSetWithValidName_when_SetByDualParamConstructor_then_TestSucceeds() {	
@@ -405,6 +425,7 @@ public class FileSetTest {
 
 	/**
 	 * Test passing an invalid backup name to setName() results in exception
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_FileSetWithInvalidName_when_SetBySetName_then_Exception() throws Exception{		
@@ -421,6 +442,7 @@ public class FileSetTest {
 
 	/**
 	 * Test saving a valid named fileset object to a valid path succeeds
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_ValidPath_when_InvokeFileSetSave_then_Success() {
@@ -447,6 +469,7 @@ public class FileSetTest {
 
 	/**
 	 * Test saving a valid empty fileset object to a valid path succeeds
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_EmptyFileSet_when_Saved_then_TestSucceeds() {
@@ -466,6 +489,7 @@ public class FileSetTest {
 
 	/**
 	 * Test saving a valid named fileset object to a valid path succeeds
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_NamedEmptyFileSet_when_Saved_then_TestSucceeds() {
@@ -489,6 +513,7 @@ public class FileSetTest {
 	/**
 	 * Test saving a valid fully parameterized fileset object to a valid 
 	 * path succeeds
+	 * (Requirements 1.1.7.5 & 1.1.2.1)
 	 */
 	@Test
 	public void given_NamedParameterizedFileSet_when_Saved_then_TestSucceeds() {
@@ -512,6 +537,7 @@ public class FileSetTest {
 
 	/**
 	 * Test saving valid fileset object to invalid object results in exception
+	 * (Requirement 1.1.7.5)
 	 * @throws Exception
 	 */
 	@Test
@@ -528,6 +554,7 @@ public class FileSetTest {
 	/**
 	 * Test saving a valid fully parameterized fileset object with files to a valid 
 	 * path succeeds
+	 * (Requirements 1.1.7.5 & 1.1.1.1 & 1.1.2.1)
 	 */
 	@Test
 	public void given_NamedParameterizedFileSetWithFiles_when_Saved_then_TestSucceeds() {
@@ -557,6 +584,7 @@ public class FileSetTest {
 	/**
 	 * Given a valid filepath where a fileset object is stored, read() returns
 	 * the fileset and allows getName() to be called.
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void given_ValidPath_when_InvokeFileSetRead_then_Success() {
@@ -577,6 +605,7 @@ public class FileSetTest {
 	/**
 	 * Given a valid file {@link Path} where a {@link FileSet} object is stored with files, 
 	 * core.FileOps.read() returns the same {@link FileSet}
+	 * (Requirements 1.1.7.5, 1.1.1.1, 1.1.2.1)
 	 */
 	@Test
 	public void given_ValidFileSet_when_InvokeReadWithValidPath_then_TestSucceeds() {
@@ -613,6 +642,7 @@ public class FileSetTest {
 
 	/**
 	 * Given an invalid path, read() throws an exception
+	 * (Requirement 1.1.7.5)
 	 * @throws Exception
 	 */
 	@Test

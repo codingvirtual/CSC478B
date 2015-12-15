@@ -44,6 +44,7 @@ public class ApplicationTest {
 
 	/**
 	 * Test method for {@link app.Application#Application()}.
+	 * (Requirements 1.1.1.1, 1.1.2.1, 1.1.3.1, 1.1.4.1, 1.1.5.1, 1.1.7.5)
 	 * @throws IOException 
 	 */
 	@Test
@@ -75,6 +76,7 @@ public class ApplicationTest {
 
 	/**
 	 * Test method for {@link app.Application#getCurrentFileSet()}.
+	 * (Requirement 1.1.7.5)
 	 */
 	@Test
 	public void testGetCurrentFileSet() throws Exception {
@@ -93,6 +95,7 @@ public class ApplicationTest {
 
 	/**
 	 * Test method for {@link app.Application#setCurrentFileSet(core.FileSet)}.
+	 * (Requirement 1.1.7.5)
 	 * @throws  
 	 */
 	@Test
@@ -126,6 +129,7 @@ public class ApplicationTest {
 	}
 
 	@Test
+	//(Requirement 1.1.7.5)
 	public void testSaveDefaultFileSet() throws Exception {
 		// Delete any default file set that may exist
 		deleteDefaultFileSet();
@@ -145,6 +149,7 @@ public class ApplicationTest {
 		
 	}
 	
+	//(Requirement 1.1.7.5)
 	private void deleteDefaultFileSet() {
 		// Deletes any existing default file set, which would be located in the user's
 		// home directory within a sub-directory named "Mirror" and have the name "DefaultFileSet"
