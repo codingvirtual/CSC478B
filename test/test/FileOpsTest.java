@@ -71,7 +71,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 
 	/**
 	 * Test run() completes successfully when given a valid FileSet with a file
-	 * 
+	 * (Requirement 1.1.4.1)
 	 * @throws Exception if the testOps operation fails for any reason.
 	 */
 	@Test
@@ -108,6 +108,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 
 	/**
 	 * Test exception thrown if calling run() on empty fileset
+	 * (Requirement 1.1.4.1)
 	 * @throws Exception
 	 */
 	@Test
@@ -133,6 +134,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 
 	/**
 	 * Given empty fileset, validation fails and exception is thrown
+	 * (Requirement 1.1.4.1)
 	 * @throws Exception
 	 */
 	@Test
@@ -148,6 +150,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	/**
 	 * Test if a fully parameterized fileset without files is called to run(), an
 	 * exception is thrown
+	 * (Requirement 1.1.4.1)
 	 * @throws Exception
 	 */
 	@Test
@@ -177,6 +180,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	/**
 	 * Test if a named fileset with a file, but no destination is called to run(),
 	 * an exception is thrown
+	 * (Requirement 1.1.4.1)
 	 * @throws Exception
 	 */
 	@Test
@@ -204,6 +208,7 @@ public class FileOpsTest implements FileOpsMessageHandler {
 	/**
 	 * Test if an unnamed FileSet with a destination and file is called to run(),
 	 * then exception is thrown
+	 * (Requirement 1.1.4.1)
 	 * @throws Exception
 	 */
 	@Test
